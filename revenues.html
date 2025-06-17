@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الإيرادات - نظام إدارة التاكسي</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            direction: rtl;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .controls {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-input, .date-input, .select-input {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            direction: rtl;
+        }
+
+        .search-input:focus, .date-input:focus, .select-input:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .summary-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #10b981;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .revenues-table {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: #f9fafb;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .table-content {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .revenue-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 100px;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f3f4f6;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .revenue-item:hover {
+            background: #f9fafb;
+        }
+
+        .driver-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .driver-avatar {
+            width: 40px;
+            height: 40px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .driver-details {
+            flex: 1;
+        }
+
+        .driver-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .driver-phone {
+            color: #6b7280;
+            font-size: 0.8rem;
+        }
+
+        .amount {
+            font-weight: bold;
+            color: #10b981;
+            font-size: 1.1rem;
+        }
+
+        .payment-method {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .method-cash {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .method-link {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .date-cell {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .view-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: #2563eb;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            direction: rtl;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            direction: rtl;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .save-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .cancel-btn {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #10b981;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-filters {
+                justify-content: center;
+            }
+
+            .revenue-item {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+                text-align: center;
+            }
+
+            .summary-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💰 إدارة الإيرادات</h1>
+        <div class="nav-buttons">
+            <a href="admin-dashboard.html" class="nav-btn" id="dashboardLink">لوحة التحكم</a>
+            <button class="nav-btn" onclick="logout()">تسجيل الخروج</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="controls">
+            <div class="search-filters">
+                <input type="text" class="search-input" id="searchInput" placeholder="البحث عن سائق...">
+                <input type="date" class="date-input" id="dateFrom" title="من تاريخ">
+                <input type="date" class="date-input" id="dateTo" title="إلى تاريخ">
+                <select class="select-input" id="paymentMethodFilter">
+                    <option value="">جميع طرق الدفع</option>
+                    <option value="cash">كاش</option>
+                    <option value="link">لينك</option>
+                </select>
+            </div>
+            <button class="add-btn" onclick="openAddModal()">تسجيل إيراد جديد</button>
+        </div>
+
+        <div class="summary-cards">
+            <div class="summary-card">
+                <div class="summary-amount" id="todayTotal">0.000</div>
+                <div class="summary-label">إيرادات اليوم (د.ك)</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-amount" id="weekTotal">0.000</div>
+                <div class="summary-label">إيرادات الأسبوع (د.ك)</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-amount" id="monthTotal">0.000</div>
+                <div class="summary-label">إيرادات الشهر (د.ك)</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-amount" id="totalRevenues">0</div>
+                <div class="summary-label">إجمالي الإيرادات</div>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>جاري تحميل الإيرادات...</p>
+        </div>
+
+        <div class="revenues-table" id="revenuesTable" style="display: none;">
+            <div class="table-header">
+                سجل الإيرادات
+            </div>
+            <div class="table-content" id="revenuesContent">
+                <!-- سيتم ملء الإيرادات هنا -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal إضافة إيراد -->
+    <div id="revenueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>تسجيل إيراد جديد</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <form id="revenueForm">
+                <div class="form-group">
+                    <label for="driverSelect">السائق</label>
+                    <select id="driverSelect" required>
+                        <option value="">اختر السائق</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="revenueAmount">المبلغ (د.ك)</label>
+                    <input type="number" id="revenueAmount" step="0.001" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="revenueDate">التاريخ</label>
+                    <input type="date" id="revenueDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentMethod">طريقة الدفع</label>
+                    <select id="paymentMethod" required>
+                        <option value="">اختر طريقة الدفع</option>
+                        <option value="cash">كاش</option>
+                        <option value="link">لينك</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="revenueNotes">ملاحظات</label>
+                    <textarea id="revenueNotes" rows="3" placeholder="ملاحظات إضافية (اختياري)"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="closeModal()">إلغاء</button>
+                    <button type="submit" class="save-btn">حفظ الإيراد</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs, addDoc, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let revenues = [];
+        let drivers = [];
+        let filteredRevenues = [];
+
+        // Check authentication
+        auth.onAuthStateChanged((user) => {
+            if (!user || !['admin', 'accountant'].includes(localStorage.getItem('userRole'))) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Set dashboard link based on role
+            const userRole = localStorage.getItem('userRole');
+            document.getElementById('dashboardLink').href = userRole === 'admin' ? 'admin-dashboard.html' : 'accountant-dashboard.html';
+            
+            loadData();
+        });
+
+        // Load data
+        async function loadData() {
+            try {
+                await Promise.all([
+                    loadRevenues(),
+                    loadDrivers()
+                ]);
+
+                calculateSummary();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('revenuesTable').style.display = 'block';
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('loading').innerHTML = '<p>حدث خطأ في تحميل البيانات</p>';
+            }
+        }
+
+        // Load revenues
+        async function loadRevenues() {
+            const revenuesQuery = query(collection(db, 'revenues'), orderBy('date', 'desc'));
+            const revenuesSnapshot = await getDocs(revenuesQuery);
+            revenues = [];
+            revenuesSnapshot.forEach(doc => {
+                revenues.push({ id: doc.id, ...doc.data() });
+            });
+            filteredRevenues = [...revenues];
+            displayRevenues(filteredRevenues);
+        }
+
+        // Load drivers
+        async function loadDrivers() {
+            const driversSnapshot = await getDocs(collection(db, 'drivers'));
+            drivers = [];
+            driversSnapshot.forEach(doc => {
+                drivers.push({ id: doc.id, ...doc.data() });
+            });
+            populateDriverSelect();
+        }
+
+        // Display revenues
+        function displayRevenues(revenuesToShow) {
+            const content = document.getElementById('revenuesContent');
+            
+            if (revenuesToShow.length === 0) {
+                content.innerHTML = '<div style="padding: 2rem; text-align: center; color: #6b7280;">لا توجد إيرادات</div>';
+                return;
+            }
+
+            content.innerHTML = revenuesToShow.map(revenue => {
+                const driver = drivers.find(d => d.id === revenue.driverId);
+                const date = revenue.date.toDate ? revenue.date.toDate() : new Date(revenue.date);
+                
+                return `
+                    <div class="revenue-item">
+                        <div class="driver-info">
+                            <div class="driver-avatar">
+                                ${driver ? driver.name.charAt(0) : '؟'}
+                            </div>
+                            <div class="driver-details">
+                                <div class="driver-name">${driver ? driver.name : 'سائق محذوف'}</div>
+                                <div class="driver-phone">${driver ? driver.phone || 'غير محدد' : ''}</div>
+                            </div>
+                        </div>
+                        <div class="amount">${revenue.amount.toFixed(3)} د.ك</div>
+                        <div class="payment-method method-${revenue.paymentMethod}">
+                            ${revenue.paymentMethod === 'cash' ? 'كاش' : 'لينك'}
+                        </div>
+                        <div class="date-cell">${date.toLocaleDateString('ar')}</div>
+                        <div class="date-cell">${revenue.collectedBy || 'غير محدد'}</div>
+                        <div class="actions">
+                            <button class="action-btn view-btn" onclick="viewRevenue('${revenue.id}')">عرض</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Calculate summary
+        function calculateSummary() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const weekStart = new Date();
+            weekStart.setDate(weekStart.getDate() - 7);
+            weekStart.setHours(0, 0, 0, 0);
+            
+            const monthStart = new Date();
+            monthStart.setDate(1);
+            monthStart.setHours(0, 0, 0, 0);
+
+            let todayTotal = 0;
+            let weekTotal = 0;
+            let monthTotal = 0;
+
+            revenues.forEach(revenue => {
+                const revenueDate = revenue.date.toDate ? revenue.date.toDate() : new Date(revenue.date);
+                const amount = revenue.amount || 0;
+
+                if (revenueDate >= today) {
+                    todayTotal += amount;
+                }
+                if (revenueDate >= weekStart) {
+                    weekTotal += amount;
+                }
+                if (revenueDate >= monthStart) {
+                    monthTotal += amount;
+                }
+            });
+
+            document.getElementById('todayTotal').textContent = todayTotal.toFixed(3);
+            document.getElementById('weekTotal').textContent = weekTotal.toFixed(3);
+            document.getElementById('monthTotal').textContent = monthTotal.toFixed(3);
+            document.getElementById('totalRevenues').textContent = revenues.length;
+        }
+
+        // Populate driver select
+        function populateDriverSelect() {
+            const select = document.getElementById('driverSelect');
+            const activeDrivers = drivers.filter(driver => driver.contractStatus === 'active');
+            
+            select.innerHTML = '<option value="">اختر السائق</option>' +
+                activeDrivers.map(driver => `
+                    <option value="${driver.id}">${driver.name} - ${driver.phone || 'غير محدد'}</option>
+                `).join('');
+        }
+
+        // Filter functions
+        document.getElementById('searchInput').addEventListener('input', filterRevenues);
+        document.getElementById('dateFrom').addEventListener('change', filterRevenues);
+        document.getElementById('dateTo').addEventListener('change', filterRevenues);
+        document.getElementById('paymentMethodFilter').addEventListener('change', filterRevenues);
+
+        function filterRevenues() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            const paymentMethod = document.getElementById('paymentMethodFilter').value;
+
+            filteredRevenues = revenues.filter(revenue => {
+                const driver = drivers.find(d => d.id === revenue.driverId);
+                const revenueDate = revenue.date.toDate ? revenue.date.toDate() : new Date(revenue.date);
+                
+                // Search filter
+                const matchesSearch = !searchTerm || 
+                    (driver && driver.name.toLowerCase().includes(searchTerm)) ||
+                    (driver && driver.phone && driver.phone.includes(searchTerm));
+
+                // Date filters
+                const matchesDateFrom = !dateFrom || revenueDate >= new Date(dateFrom);
+                const matchesDateTo = !dateTo || revenueDate <= new Date(dateTo + 'T23:59:59');
+
+                // Payment method filter
+                const matchesPaymentMethod = !paymentMethod || revenue.paymentMethod === paymentMethod;
+
+                return matchesSearch && matchesDateFrom && matchesDateTo && matchesPaymentMethod;
+            });
+
+            displayRevenues(filteredRevenues);
+        }
+
+        // Modal functions
+        window.openAddModal = () => {
+            document.getElementById('revenueForm').reset();
+            document.getElementById('revenueDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('revenueModal').style.display = 'block';
+        };
+
+        window.closeModal = () => {
+            document.getElementById('revenueModal').style.display = 'none';
+        };
+
+        window.viewRevenue = (revenueId) => {
+            const revenue = revenues.find(r => r.id === revenueId);
+            const driver = drivers.find(d => d.id === revenue.driverId);
+            
+            alert(`تفاصيل الإيراد:
+السائق: ${driver ? driver.name : 'غير محدد'}
+المبلغ: ${revenue.amount.toFixed(3)} د.ك
+طريقة الدفع: ${revenue.paymentMethod === 'cash' ? 'كاش' : 'لينك'}
+التاريخ: ${(revenue.date.toDate ? revenue.date.toDate() : new Date(revenue.date)).toLocaleDateString('ar')}
+الملاحظات: ${revenue.notes || 'لا توجد ملاحظات'}`);
+        };
+
+        // Form submission
+        document.getElementById('revenueForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                driverId: document.getElementById('driverSelect').value,
+                amount: parseFloat(document.getElementById('revenueAmount').value),
+                date: new Date(document.getElementById('revenueDate').value),
+                paymentMethod: document.getElementById('paymentMethod').value,
+                notes: document.getElementById('revenueNotes').value,
+                collectedBy: localStorage.getItem('userName') || 'غير محدد',
+                createdAt: new Date(),
+                createdBy: localStorage.getItem('userId')
+            };
+
+            try {
+                await addDoc(collection(db, 'revenues'), formData);
+                alert('تم تسجيل الإيراد بنجاح');
+                closeModal();
+                await loadRevenues();
+                calculateSummary();
+            } catch (error) {
+                console.error('Error adding revenue:', error);
+                alert('حدث خطأ في تسجيل الإيراد');
+            }
+        });
+
+        // Set today's date as default
+        document.getElementById('revenueDate').value = new Date().toISOString().split('T')[0];
+
+        // Logout function
+        window.logout = async () => {
+            try {
+                await signOut(auth);
+                localStorage.clear();
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        };
+    </script>
+</body>
+</html>
+
