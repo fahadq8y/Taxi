@@ -60,6 +60,33 @@
             padding: 0 1rem;
         }
 
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #10b981;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
         .controls {
             background: white;
             padding: 1.5rem;
@@ -108,123 +135,74 @@
             transform: translateY(-2px);
         }
 
-        .summary-cards {
+        .revenues-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
-            margin-bottom: 2rem;
         }
 
-        .summary-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .summary-amount {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #10b981;
-            margin-bottom: 0.5rem;
-        }
-
-        .summary-label {
-            color: #6b7280;
-            font-size: 0.9rem;
-        }
-
-        .revenues-table {
+        .revenue-card {
             background: white;
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             overflow: hidden;
+            transition: transform 0.2s;
         }
 
-        .table-header {
-            background: #f9fafb;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e5e7eb;
+        .revenue-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .revenue-header {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .revenue-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .revenue-icon {
+            font-size: 2rem;
+        }
+
+        .revenue-body {
+            padding: 1.5rem;
+        }
+
+        .revenue-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .info-value {
             font-weight: 600;
             color: #374151;
         }
 
-        .table-content {
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .revenue-item {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 100px;
-            gap: 1rem;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #f3f4f6;
-            align-items: center;
-            transition: background 0.3s;
-        }
-
-        .revenue-item:hover {
-            background: #f9fafb;
-        }
-
-        .driver-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .driver-avatar {
-            width: 40px;
-            height: 40px;
-            background: #10b981;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
-        .driver-details {
-            flex: 1;
-        }
-
-        .driver-name {
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .driver-phone {
-            color: #6b7280;
-            font-size: 0.8rem;
-        }
-
-        .amount {
-            font-weight: bold;
-            color: #10b981;
-            font-size: 1.1rem;
-        }
-
-        .payment-method {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .method-cash {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .method-link {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .date-cell {
+        .revenue-description {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
             color: #6b7280;
             font-size: 0.9rem;
         }
@@ -232,14 +210,16 @@
         .actions {
             display: flex;
             gap: 0.5rem;
+            justify-content: flex-end;
         }
 
         .action-btn {
-            padding: 0.25rem 0.5rem;
+            padding: 0.5rem 1rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
+            font-weight: 500;
             transition: all 0.2s;
         }
 
@@ -250,6 +230,15 @@
 
         .view-btn:hover {
             background: #2563eb;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
         }
 
         .modal {
@@ -369,6 +358,17 @@
             100% { transform: rotate(360deg); }
         }
 
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
         @media (max-width: 768px) {
             .header {
                 padding: 1rem;
@@ -390,14 +390,18 @@
                 justify-content: center;
             }
 
-            .revenue-item {
+            .revenue-info {
                 grid-template-columns: 1fr;
-                gap: 0.5rem;
-                text-align: center;
             }
 
-            .summary-cards {
-                grid-template-columns: repeat(2, 1fr);
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -406,57 +410,57 @@
     <div class="header">
         <h1>💰 إدارة الإيرادات</h1>
         <div class="nav-buttons">
-            <a href="admin-dashboard.html" class="nav-btn" id="dashboardLink">لوحة التحكم</a>
+            <a href="admin-dashboard.html" class="nav-btn">لوحة التحكم</a>
             <button class="nav-btn" onclick="logout()">تسجيل الخروج</button>
         </div>
     </div>
 
     <div class="container">
+        <!-- إحصائيات سريعة -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="todayRevenue">0.000</div>
+                <div class="stat-label">إيرادات اليوم (د.ك)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="weeklyRevenue">0.000</div>
+                <div class="stat-label">إيرادات الأسبوع (د.ك)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="monthlyRevenue">0.000</div>
+                <div class="stat-label">إيرادات الشهر (د.ك)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalRevenues">0</div>
+                <div class="stat-label">إجمالي الإيرادات</div>
+            </div>
+        </div>
+
+        <!-- أدوات التحكم -->
         <div class="controls">
             <div class="search-filters">
-                <input type="text" class="search-input" id="searchInput" placeholder="البحث عن سائق...">
-                <input type="date" class="date-input" id="dateFrom" title="من تاريخ">
-                <input type="date" class="date-input" id="dateTo" title="إلى تاريخ">
-                <select class="select-input" id="paymentMethodFilter">
+                <input type="text" class="search-input" id="searchInput" placeholder="البحث عن سائق..." onkeyup="filterRevenues()">
+                <select class="select-input" id="sourceFilter" onchange="filterRevenues()">
                     <option value="">جميع طرق الدفع</option>
                     <option value="cash">كاش</option>
                     <option value="link">لينك</option>
+                    <option value="bank">بنك</option>
+                    <option value="driver_payment">دفعة سائق</option>
                 </select>
+                <input type="date" class="date-input" id="dateFilter" onchange="filterRevenues()">
             </div>
-            <button class="add-btn" onclick="openAddModal()">تسجيل إيراد جديد</button>
+            <button class="add-btn" onclick="openModal()">تسجيل إيراد جديد</button>
         </div>
 
-        <div class="summary-cards">
-            <div class="summary-card">
-                <div class="summary-amount" id="todayTotal">0.000</div>
-                <div class="summary-label">إيرادات اليوم (د.ك)</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-amount" id="weekTotal">0.000</div>
-                <div class="summary-label">إيرادات الأسبوع (د.ك)</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-amount" id="monthTotal">0.000</div>
-                <div class="summary-label">إيرادات الشهر (د.ك)</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-amount" id="totalRevenues">0</div>
-                <div class="summary-label">إجمالي الإيرادات</div>
-            </div>
-        </div>
-
+        <!-- حالة التحميل -->
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <p>جاري تحميل الإيرادات...</p>
         </div>
 
-        <div class="revenues-table" id="revenuesTable" style="display: none;">
-            <div class="table-header">
-                سجل الإيرادات
-            </div>
-            <div class="table-content" id="revenuesContent">
-                <!-- سيتم ملء الإيرادات هنا -->
-            </div>
+        <!-- قائمة الإيرادات -->
+        <div class="revenues-grid" id="revenuesGrid" style="display: none;">
+            <!-- سيتم ملء الإيرادات هنا -->
         </div>
     </div>
 
@@ -470,15 +474,26 @@
             
             <form id="revenueForm">
                 <div class="form-group">
-                    <label for="driverSelect">السائق</label>
-                    <select id="driverSelect" required>
-                        <option value="">اختر السائق</option>
+                    <label for="revenueAmount">المبلغ (د.ك)</label>
+                    <input type="number" id="revenueAmount" step="0.001" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="revenueSource">طريقة الدفع</label>
+                    <select id="revenueSource" required>
+                        <option value="">اختر طريقة الدفع</option>
+                        <option value="cash">كاش</option>
+                        <option value="link">لينك</option>
+                        <option value="bank">بنك</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="revenueAmount">المبلغ (د.ك)</label>
-                    <input type="number" id="revenueAmount" step="0.001" required>
+                    <label for="revenueDriver">السائق (اختياري)</label>
+                    <select id="revenueDriver">
+                        <option value="">اختر السائق</option>
+                        <!-- سيتم ملء السائقين هنا -->
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -487,17 +502,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="paymentMethod">طريقة الدفع</label>
-                    <select id="paymentMethod" required>
-                        <option value="">اختر طريقة الدفع</option>
-                        <option value="cash">كاش</option>
-                        <option value="link">لينك</option>
-                    </select>
+                    <label for="revenueDescription">الوصف</label>
+                    <textarea id="revenueDescription" rows="3" placeholder="وصف الإيراد..." required></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="revenueNotes">ملاحظات</label>
-                    <textarea id="revenueNotes" rows="3" placeholder="ملاحظات إضافية (اختياري)"></textarea>
+                    <label for="revenueNotes">ملاحظات (اختياري)</label>
+                    <textarea id="revenueNotes" rows="2" placeholder="ملاحظات إضافية..."></textarea>
                 </div>
 
                 <div class="form-actions">
@@ -511,8 +522,8 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, getDocs, addDoc, query, where, orderBy, deleteDoc, doc, getDoc, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, query, where, orderBy, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // Firebase configuration
         const firebaseConfig = {
@@ -531,8 +542,8 @@
 
         let revenues = [];
         let drivers = [];
-        let filteredRevenues = [];
         let currentUser = null;
+        let allRevenues = [];
 
         // Check authentication
         onAuthStateChanged(auth, async (user) => {
@@ -561,183 +572,259 @@
                 currentUser = { uid: user.uid, ...userData };
                 
                 // Load page data
-                loadData();
+                await loadRevenues();
+                await loadDrivers();
+                populateDriversDropdown();
+                updateStats();
+                displayRevenues(allRevenues);
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('revenuesGrid').style.display = 'block';
             } catch (error) {
                 console.error('Error checking user role:', error);
                 window.location.href = 'index.html';
             }
         });
 
-        // Load data
-        async function loadData() {
-            try {
-                await Promise.all([
-                    loadRevenues(),
-                    loadDrivers()
-                ]);
-
-                calculateSummary();
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('revenuesTable').style.display = 'block';
-            } catch (error) {
-                console.error('Error loading data:', error);
-                document.getElementById('loading').innerHTML = '<p>حدث خطأ في تحميل البيانات</p>';
-            }
-        }
-
         // Load revenues
         async function loadRevenues() {
-            const revenuesQuery = query(collection(db, 'revenues'), orderBy('date', 'desc'));
-            const revenuesSnapshot = await getDocs(revenuesQuery);
-            revenues = [];
-            revenuesSnapshot.forEach(doc => {
-                revenues.push({ id: doc.id, ...doc.data() });
-            });
-            filteredRevenues = [...revenues];
-            displayRevenues(filteredRevenues);
+            try {
+                const revenuesSnapshot = await getDocs(query(collection(db, 'revenues'), orderBy('createdAt', 'desc')));
+                allRevenues = [];
+                revenuesSnapshot.forEach(doc => {
+                    allRevenues.push({ id: doc.id, ...doc.data() });
+                });
+            } catch (error) {
+                console.error('Error loading revenues:', error);
+            }
         }
 
         // Load drivers
         async function loadDrivers() {
-            const driversSnapshot = await getDocs(collection(db, 'drivers'));
-            drivers = [];
-            driversSnapshot.forEach(doc => {
-                drivers.push({ id: doc.id, ...doc.data() });
+            try {
+                const driversSnapshot = await getDocs(collection(db, 'drivers'));
+                drivers = [];
+                driversSnapshot.forEach(doc => {
+                    drivers.push({ id: doc.id, ...doc.data() });
+                });
+            } catch (error) {
+                console.error('Error loading drivers:', error);
+            }
+        }
+
+        // Populate drivers dropdown
+        function populateDriversDropdown() {
+            const driverSelect = document.getElementById('revenueDriver');
+            driverSelect.innerHTML = '<option value="">اختر السائق</option>';
+            
+            drivers.forEach(driver => {
+                const option = document.createElement('option');
+                option.value = driver.id;
+                option.textContent = driver.name;
+                driverSelect.appendChild(option);
             });
-            populateDriverSelect();
+        }
+
+        // Update statistics
+        function updateStats() {
+            const today = new Date();
+            const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const weekStart = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+
+            const todayRevenue = allRevenues
+                .filter(revenue => {
+                    const revenueDate = revenue.date?.seconds ? 
+                        new Date(revenue.date.seconds * 1000) : 
+                        new Date(revenue.createdAt?.seconds * 1000);
+                    return revenueDate >= todayStart;
+                })
+                .reduce((sum, revenue) => sum + (revenue.amount || 0), 0);
+
+            const weeklyRevenue = allRevenues
+                .filter(revenue => {
+                    const revenueDate = revenue.date?.seconds ? 
+                        new Date(revenue.date.seconds * 1000) : 
+                        new Date(revenue.createdAt?.seconds * 1000);
+                    return revenueDate >= weekStart;
+                })
+                .reduce((sum, revenue) => sum + (revenue.amount || 0), 0);
+
+            const monthlyRevenue = allRevenues
+                .filter(revenue => {
+                    const revenueDate = revenue.date?.seconds ? 
+                        new Date(revenue.date.seconds * 1000) : 
+                        new Date(revenue.createdAt?.seconds * 1000);
+                    return revenueDate >= monthStart;
+                })
+                .reduce((sum, revenue) => sum + (revenue.amount || 0), 0);
+
+            document.getElementById('todayRevenue').textContent = todayRevenue.toFixed(3);
+            document.getElementById('weeklyRevenue').textContent = weeklyRevenue.toFixed(3);
+            document.getElementById('monthlyRevenue').textContent = monthlyRevenue.toFixed(3);
+            document.getElementById('totalRevenues').textContent = allRevenues.length;
         }
 
         // Display revenues
         function displayRevenues(revenuesToShow) {
-            const content = document.getElementById('revenuesContent');
+            const grid = document.getElementById('revenuesGrid');
             
             if (revenuesToShow.length === 0) {
-                content.innerHTML = '<div style="padding: 2rem; text-align: center; color: #6b7280;">لا توجد إيرادات</div>';
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💰</div>
+                        <h3>لا توجد إيرادات</h3>
+                        <p>لم يتم تسجيل أي إيرادات بعد</p>
+                    </div>
+                `;
                 return;
             }
 
-            content.innerHTML = revenuesToShow.map(revenue => {
-                const driver = drivers.find(d => d.id === revenue.driverId);
-                const date = revenue.date.toDate ? revenue.date.toDate() : new Date(revenue.date);
+            grid.innerHTML = revenuesToShow.map(revenue => {
+                const revenueDate = revenue.date?.seconds ? 
+                    new Date(revenue.date.seconds * 1000) : 
+                    new Date(revenue.createdAt?.seconds * 1000);
                 
+                // Get driver name - use saved driverName or find by driverId
+                let driverName = 'غير محدد';
+                if (revenue.driverName) {
+                    driverName = revenue.driverName;
+                } else if (revenue.driverId) {
+                    const driver = drivers.find(d => d.id === revenue.driverId);
+                    driverName = driver ? driver.name : 'سائق محذوف';
+                }
+
+                const sourceText = {
+                    'cash': 'كاش',
+                    'link': 'لينك',
+                    'bank': 'بنك',
+                    'driver_payment': 'دفعة سائق'
+                }[revenue.source] || revenue.source || 'غير محدد';
+
                 return `
-                    <div class="revenue-item">
-                        <div class="driver-info">
-                            <div class="driver-avatar">
-                                ${driver ? driver.name.charAt(0) : '؟'}
-                            </div>
-                            <div class="driver-details">
-                                <div class="driver-name">${driver ? driver.name : 'سائق محذوف'}</div>
-                                <div class="driver-phone">${driver ? driver.phone || 'غير محدد' : ''}</div>
-                            </div>
+                    <div class="revenue-card">
+                        <div class="revenue-header">
+                            <div class="revenue-amount">${revenue.amount?.toFixed(3) || '0.000'} د.ك</div>
+                            <div class="revenue-icon">💰</div>
                         </div>
-                        <div class="amount">${revenue.amount.toFixed(3)} د.ك</div>
-                        <div class="payment-method method-${revenue.paymentMethod}">
-                            ${revenue.paymentMethod === 'cash' ? 'كاش' : 'لينك'}
-                        </div>
-                        <div class="date-cell">${date.toLocaleDateString('ar')}</div>
-                        <div class="date-cell">${revenue.collectedBy || 'غير محدد'}</div>
-                        <div class="actions">
-                            <button class="action-btn view-btn" onclick="viewRevenue('${revenue.id}')">عرض</button>
-                            ${currentUser.role === 'admin' ? `<button class="action-btn delete-btn" onclick="deleteRevenue('${revenue.id}')">حذف</button>` : ''}
+                        <div class="revenue-body">
+                            <div class="revenue-info">
+                                <div class="info-item">
+                                    <div class="info-label">السائق</div>
+                                    <div class="info-value">${driverName}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">طريقة الدفع</div>
+                                    <div class="info-value">${sourceText}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">التاريخ</div>
+                                    <div class="info-value">${revenueDate.toLocaleDateString('ar')}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">المسجل بواسطة</div>
+                                    <div class="info-value">${revenue.createdBy || 'غير محدد'}</div>
+                                </div>
+                            </div>
+                            ${revenue.description ? `
+                                <div class="revenue-description">
+                                    ${revenue.description}
+                                </div>
+                            ` : ''}
+                            <div class="actions">
+                                <button class="action-btn view-btn" onclick="viewRevenue('${revenue.id}')">عرض</button>
+                                ${currentUser.role === 'admin' ? `
+                                    <button class="action-btn delete-btn" onclick="deleteRevenue('${revenue.id}')">حذف</button>
+                                ` : ''}
+                            </div>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Calculate summary
-        function calculateSummary() {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const weekStart = new Date();
-            weekStart.setDate(weekStart.getDate() - 7);
-            weekStart.setHours(0, 0, 0, 0);
-            
-            const monthStart = new Date();
-            monthStart.setDate(1);
-            monthStart.setHours(0, 0, 0, 0);
-
-            let todayTotal = 0;
-            let weekTotal = 0;
-            let monthTotal = 0;
-
-            revenues.forEach(revenue => {
-                const revenueDate = revenue.date.toDate ? revenue.date.toDate() : new Date(revenue.date);
-                const amount = revenue.amount || 0;
-
-                if (revenueDate >= today) {
-                    todayTotal += amount;
-                }
-                if (revenueDate >= weekStart) {
-                    weekTotal += amount;
-                }
-                if (revenueDate >= monthStart) {
-                    monthTotal += amount;
-                }
-            });
-
-            document.getElementById('todayTotal').textContent = todayTotal.toFixed(3);
-            document.getElementById('weekTotal').textContent = weekTotal.toFixed(3);
-            document.getElementById('monthTotal').textContent = monthTotal.toFixed(3);
-            document.getElementById('totalRevenues').textContent = revenues.length;
-        }
-
-        // Populate driver select
-        function populateDriverSelect() {
-            const select = document.getElementById('driverSelect');
-            const activeDrivers = drivers.filter(driver => driver.contractStatus === 'active');
-            
-            select.innerHTML = '<option value="">اختر السائق</option>' +
-                activeDrivers.map(driver => `
-                    <option value="${driver.id}">${driver.name} - ${driver.phone || 'غير محدد'}</option>
-                `).join('');
-        }
-
-        // Filter functions
-        document.getElementById('searchInput').addEventListener('input', filterRevenues);
-        document.getElementById('dateFrom').addEventListener('change', filterRevenues);
-        document.getElementById('dateTo').addEventListener('change', filterRevenues);
-        document.getElementById('paymentMethodFilter').addEventListener('change', filterRevenues);
-
-        function filterRevenues() {
+        // Filter revenues
+        window.filterRevenues = () => {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const dateFrom = document.getElementById('dateFrom').value;
-            const dateTo = document.getElementById('dateTo').value;
-            const paymentMethod = document.getElementById('paymentMethodFilter').value;
+            const sourceFilter = document.getElementById('sourceFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
 
-            filteredRevenues = revenues.filter(revenue => {
-                const driver = drivers.find(d => d.id === revenue.driverId);
-                const revenueDate = revenue.date.toDate ? revenue.date.toDate() : new Date(revenue.date);
-                
-                // Search filter
-                const matchesSearch = !searchTerm || 
-                    (driver && driver.name.toLowerCase().includes(searchTerm)) ||
-                    (driver && driver.phone && driver.phone.includes(searchTerm));
+            let filteredRevenues = allRevenues;
 
-                // Date filters
-                const matchesDateFrom = !dateFrom || revenueDate >= new Date(dateFrom);
-                const matchesDateTo = !dateTo || revenueDate <= new Date(dateTo + 'T23:59:59');
+            if (searchTerm) {
+                filteredRevenues = filteredRevenues.filter(revenue => {
+                    const driverName = revenue.driverName || 
+                        (revenue.driverId ? (drivers.find(d => d.id === revenue.driverId)?.name || '') : '');
+                    return driverName.toLowerCase().includes(searchTerm) ||
+                           (revenue.description && revenue.description.toLowerCase().includes(searchTerm));
+                });
+            }
 
-                // Payment method filter
-                const matchesPaymentMethod = !paymentMethod || revenue.paymentMethod === paymentMethod;
+            if (sourceFilter) {
+                filteredRevenues = filteredRevenues.filter(revenue => revenue.source === sourceFilter);
+            }
 
-                return matchesSearch && matchesDateFrom && matchesDateTo && matchesPaymentMethod;
-            });
+            if (dateFilter) {
+                const filterDate = new Date(dateFilter);
+                filteredRevenues = filteredRevenues.filter(revenue => {
+                    const revenueDate = revenue.date?.seconds ? 
+                        new Date(revenue.date.seconds * 1000) : 
+                        new Date(revenue.createdAt?.seconds * 1000);
+                    return revenueDate.toDateString() === filterDate.toDateString();
+                });
+            }
 
             displayRevenues(filteredRevenues);
-        }
+        };
 
-        // Modal functions
-        window.openAddModal = () => {
-            document.getElementById('revenueForm').reset();
+        // Open modal
+        window.openModal = () => {
             document.getElementById('revenueDate').value = new Date().toISOString().split('T')[0];
             document.getElementById('revenueModal').style.display = 'block';
         };
 
+        // Close modal
         window.closeModal = () => {
             document.getElementById('revenueModal').style.display = 'none';
+            document.getElementById('revenueForm').reset();
+        };
+
+        // View revenue details
+        window.viewRevenue = (revenueId) => {
+            const revenue = allRevenues.find(r => r.id === revenueId);
+            if (!revenue) return;
+            
+            const revenueDate = revenue.date?.seconds ? 
+                new Date(revenue.date.seconds * 1000) : 
+                new Date(revenue.createdAt?.seconds * 1000);
+            
+            let driverName = 'غير محدد';
+            if (revenue.driverName) {
+                driverName = revenue.driverName;
+            } else if (revenue.driverId) {
+                const driver = drivers.find(d => d.id === revenue.driverId);
+                driverName = driver ? driver.name : 'سائق محذوف';
+            }
+
+            const sourceText = {
+                'cash': 'كاش',
+                'link': 'لينك',
+                'bank': 'بنك',
+                'driver_payment': 'دفعة سائق'
+            }[revenue.source] || revenue.source || 'غير محدد';
+            
+            const details = `
+                المبلغ: ${revenue.amount?.toFixed(3) || '0.000'} د.ك
+                السائق: ${driverName}
+                طريقة الدفع: ${sourceText}
+                التاريخ: ${revenueDate.toLocaleDateString('ar')}
+                الوصف: ${revenue.description || 'غير محدد'}
+                الملاحظات: ${revenue.notes || 'لا توجد'}
+                المسجل بواسطة: ${revenue.createdBy || 'غير محدد'}
+                تاريخ التسجيل: ${new Date(revenue.createdAt?.seconds * 1000).toLocaleString('ar')}
+            `;
+            
+            alert(details);
         };
 
         // Delete revenue (admin only)
@@ -747,60 +834,60 @@
                 return;
             }
 
-            if (!confirm('هل أنت متأكد من حذف هذا الإيراد؟')) return;
+            if (!confirm('هل أنت متأكد من حذف هذا الإيراد؟')) {
+                return;
+            }
 
             try {
                 await deleteDoc(doc(db, 'revenues', revenueId));
-                await loadRevenues();
-                calculateSummary();
                 alert('تم حذف الإيراد بنجاح');
+                await loadRevenues();
+                updateStats();
+                displayRevenues(allRevenues);
             } catch (error) {
                 console.error('Error deleting revenue:', error);
                 alert('حدث خطأ في حذف الإيراد');
             }
         };
 
-        window.viewRevenue = (revenueId) => {
-            const revenue = revenues.find(r => r.id === revenueId);
-            const driver = drivers.find(d => d.id === revenue.driverId);
-            
-            alert(`تفاصيل الإيراد:
-السائق: ${driver ? driver.name : 'غير محدد'}
-المبلغ: ${revenue.amount.toFixed(3)} د.ك
-طريقة الدفع: ${revenue.paymentMethod === 'cash' ? 'كاش' : 'لينك'}
-التاريخ: ${(revenue.date.toDate ? revenue.date.toDate() : new Date(revenue.date)).toLocaleDateString('ar')}
-الملاحظات: ${revenue.notes || 'لا توجد ملاحظات'}`);
-        };
-
         // Form submission
         document.getElementById('revenueForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const formData = {
-                driverId: document.getElementById('driverSelect').value,
-                amount: parseFloat(document.getElementById('revenueAmount').value),
-                date: new Date(document.getElementById('revenueDate').value),
-                paymentMethod: document.getElementById('paymentMethod').value,
-                notes: document.getElementById('revenueNotes').value,
-                collectedBy: localStorage.getItem('userName') || 'غير محدد',
+            const amount = parseFloat(document.getElementById('revenueAmount').value);
+            const source = document.getElementById('revenueSource').value;
+            const driverId = document.getElementById('revenueDriver').value;
+            const revenueDate = new Date(document.getElementById('revenueDate').value);
+            const description = document.getElementById('revenueDescription').value;
+            const notes = document.getElementById('revenueNotes').value;
+
+            const driverName = driverId ? drivers.find(d => d.id === driverId)?.name : null;
+
+            const revenueData = {
+                amount: amount,
+                source: source,
+                driverId: driverId || null,
+                driverName: driverName || null,
+                date: revenueDate,
+                description: description,
+                notes: notes,
+                createdBy: currentUser.name || currentUser.email,
                 createdAt: new Date(),
-                createdBy: localStorage.getItem('userId')
+                createdByUid: currentUser.uid
             };
 
             try {
-                await addDoc(collection(db, 'revenues'), formData);
+                await addDoc(collection(db, 'revenues'), revenueData);
                 alert('تم تسجيل الإيراد بنجاح');
                 closeModal();
                 await loadRevenues();
-                calculateSummary();
+                updateStats();
+                displayRevenues(allRevenues);
             } catch (error) {
-                console.error('Error adding revenue:', error);
-                alert('حدث خطأ في تسجيل الإيراد');
+                console.error('Error saving revenue:', error);
+                alert('حدث خطأ في حفظ البيانات');
             }
         });
-
-        // Set today's date as default
-        document.getElementById('revenueDate').value = new Date().toISOString().split('T')[0];
 
         // Logout function
         window.logout = async () => {
