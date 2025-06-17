@@ -514,7 +514,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, query, orderBy, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, query, orderBy, where, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // Firebase configuration
         const firebaseConfig = {
@@ -623,6 +623,7 @@
                         <div class="expense-user">${expense.createdBy || 'غير محدد'}</div>
                         <div class="expense-actions">
                             <button class="action-btn view-btn" onclick="viewExpense('${expense.id}')">عرض</button>
+                            ${currentUser.role === 'admin' ? `<button class="action-btn delete-btn" onclick="deleteExpense('${expense.id}')">حذف</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -701,6 +702,25 @@
             document.getElementById('expenseForm').reset();
             document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
             document.getElementById('expenseModal').style.display = 'block';
+        };
+
+        // Delete expense (admin only)
+        window.deleteExpense = async (expenseId) => {
+            if (currentUser.role !== 'admin') {
+                alert('ليس لديك صلاحية لحذف المصروفات');
+                return;
+            }
+
+            if (!confirm('هل أنت متأكد من حذف هذا المصروف؟')) return;
+
+            try {
+                await deleteDoc(doc(db, 'expenses', expenseId));
+                await loadExpenses();
+                alert('تم حذف المصروف بنجاح');
+            } catch (error) {
+                console.error('Error deleting expense:', error);
+                alert('حدث خطأ في حذف المصروف');
+            }
         };
 
         window.viewExpense = (expenseId) => {

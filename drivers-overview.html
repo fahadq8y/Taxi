@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جدول السائقين الشامل - نظام إدارة التاكسي</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            direction: rtl;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .summary-title {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .summary-value.positive {
+            color: #059669;
+        }
+
+        .summary-value.negative {
+            color: #dc2626;
+        }
+
+        .summary-value.warning {
+            color: #d97706;
+        }
+
+        .controls {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .filter-group label {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .filter-input {
+            padding: 0.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            direction: rtl;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .drivers-table {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: #f8fafc;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .table-content {
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .driver-row {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 1.5fr 1fr 1.5fr 1fr 1.5fr 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .driver-row:hover {
+            background: #f8fafc;
+        }
+
+        .driver-row.overdue {
+            background: #fef2f2;
+            border-right: 4px solid #ef4444;
+        }
+
+        .driver-row.warning {
+            background: #fffbeb;
+            border-right: 4px solid #f59e0b;
+        }
+
+        .driver-row.good {
+            background: #f0fdf4;
+            border-right: 4px solid #10b981;
+        }
+
+        .driver-name {
+            font-weight: 600;
+            color: #2563eb;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .driver-name:hover {
+            color: #1d4ed8;
+        }
+
+        .driver-phone {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .driver-car {
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .daily-rent {
+            font-weight: bold;
+            color: #059669;
+        }
+
+        .last-payment {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .days-overdue {
+            font-weight: bold;
+        }
+
+        .days-overdue.overdue {
+            color: #dc2626;
+        }
+
+        .days-overdue.warning {
+            color: #d97706;
+        }
+
+        .days-overdue.good {
+            color: #059669;
+        }
+
+        .amount-due {
+            font-weight: bold;
+        }
+
+        .amount-due.overdue {
+            color: #dc2626;
+        }
+
+        .amount-due.warning {
+            color: #d97706;
+        }
+
+        .amount-due.good {
+            color: #059669;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .status-overdue {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-good {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            direction: rtl;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            direction: rtl;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .payment-info {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .payment-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-info-item:last-child {
+            margin-bottom: 0;
+            font-weight: bold;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 0.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .save-btn {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .cancel-btn {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #2563eb;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1200px) {
+            .driver-row {
+                grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filters {
+                justify-content: center;
+            }
+
+            .driver-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+                text-align: center;
+                padding: 1rem 0.5rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 1rem;
+            }
+
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 جدول السائقين الشامل</h1>
+        <div class="nav-buttons">
+            <a href="admin-dashboard.html" class="nav-btn">العودة للوحة التحكم</a>
+            <button class="nav-btn" onclick="logout()">تسجيل الخروج</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="summary-cards" id="summaryCards">
+            <!-- سيتم ملء الملخص هنا -->
+        </div>
+
+        <div class="controls">
+            <div class="filters">
+                <div class="filter-group">
+                    <label>تصفية حسب الحالة</label>
+                    <select class="filter-input" id="statusFilter" onchange="filterDrivers()">
+                        <option value="">جميع السائقين</option>
+                        <option value="overdue">متأخرين</option>
+                        <option value="warning">تحذير</option>
+                        <option value="good">طبيعي</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>البحث</label>
+                    <input type="text" class="filter-input" id="searchInput" placeholder="اسم السائق أو رقم الهاتف" onkeyup="filterDrivers()">
+                </div>
+            </div>
+            <button class="refresh-btn" onclick="loadDriversData()">تحديث البيانات</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>جاري تحميل بيانات السائقين...</p>
+        </div>
+
+        <div class="drivers-table" id="driversTable" style="display: none;">
+            <div class="table-header">
+                <div class="driver-row" style="font-weight: bold;">
+                    <div>اسم السائق</div>
+                    <div>رقم الهاتف</div>
+                    <div>السيارة</div>
+                    <div>الأجرة اليومية</div>
+                    <div>آخر دفعة</div>
+                    <div>أيام التأخير</div>
+                    <div>المبلغ المستحق</div>
+                    <div>الحالة</div>
+                </div>
+            </div>
+            <div class="table-content" id="driversContent">
+                <!-- سيتم ملء السائقين هنا -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal تسجيل دفعة -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">تسجيل دفعة جديدة</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <div class="payment-info" id="paymentInfo">
+                <!-- سيتم ملء معلومات السائق هنا -->
+            </div>
+
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label for="paymentAmount">المبلغ المدفوع (د.ك)</label>
+                    <input type="number" id="paymentAmount" step="0.001" required onkeyup="calculateDays()">
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentDate">تاريخ الدفعة</label>
+                    <input type="date" id="paymentDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentNotes">ملاحظات (اختياري)</label>
+                    <textarea id="paymentNotes" rows="3" placeholder="ملاحظات إضافية..."></textarea>
+                </div>
+
+                <div class="payment-info" id="calculatedInfo">
+                    <!-- سيتم ملء الحسابات هنا -->
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="closeModal()">إلغاء</button>
+                    <button type="submit" class="save-btn">حفظ الدفعة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, query, where, orderBy, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB8Q9CYIWXPmTdiz3vPiLlPYFxiJu0vE_g",
+            authDomain: "taxi-management-system-d8210.firebaseapp.com",
+            projectId: "taxi-management-system-d8210",
+            storageBucket: "taxi-management-system-d8210.firebasestorage.app",
+            messagingSenderId: "720874424166",
+            appId: "1:720874424166:web:25f9c6d126e792b2e5eaa7",
+            measurementId: "G-GY8820W410"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let drivers = [];
+        let revenues = [];
+        let currentUser = null;
+        let selectedDriver = null;
+        let allDriversData = [];
+
+        // Check authentication
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            try {
+                // Get user data from Firestore
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (!userDoc.exists()) {
+                    console.error('User document not found');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                const userData = userDoc.data();
+                if (!['admin', 'accountant'].includes(userData.role)) {
+                    console.error('User does not have required role');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                // Store user data
+                currentUser = { uid: user.uid, ...userData };
+                
+                // Load page data
+                loadDriversData();
+            } catch (error) {
+                console.error('Error checking user role:', error);
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Load drivers data
+        window.loadDriversData = async () => {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('driversTable').style.display = 'none';
+
+            try {
+                // Load drivers and revenues
+                await Promise.all([
+                    loadDrivers(),
+                    loadRevenues()
+                ]);
+
+                // Calculate payment status for each driver
+                calculateDriversStatus();
+                
+                // Display data
+                displayDrivers(allDriversData);
+                updateSummary();
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('driversTable').style.display = 'block';
+            } catch (error) {
+                console.error('Error loading drivers data:', error);
+                document.getElementById('loading').innerHTML = '<p>حدث خطأ في تحميل البيانات</p>';
+            }
+        };
+
+        // Load drivers
+        async function loadDrivers() {
+            const driversSnapshot = await getDocs(collection(db, 'drivers'));
+            drivers = [];
+            driversSnapshot.forEach(doc => {
+                drivers.push({ id: doc.id, ...doc.data() });
+            });
+        }
+
+        // Load revenues
+        async function loadRevenues() {
+            const revenuesSnapshot = await getDocs(collection(db, 'revenues'));
+            revenues = [];
+            revenuesSnapshot.forEach(doc => {
+                revenues.push({ id: doc.id, ...doc.data() });
+            });
+        }
+
+        // Calculate drivers status
+        function calculateDriversStatus() {
+            allDriversData = drivers.map(driver => {
+                // Get driver's payments
+                const driverPayments = revenues.filter(revenue => 
+                    revenue.driverId === driver.id && revenue.source === 'driver_payment'
+                ).sort((a, b) => {
+                    const dateA = new Date(a.date?.seconds * 1000 || a.createdAt?.seconds * 1000);
+                    const dateB = new Date(b.date?.seconds * 1000 || b.createdAt?.seconds * 1000);
+                    return dateB - dateA;
+                });
+
+                let lastPaymentDate = null;
+                let totalDaysCovered = 0;
+
+                if (driverPayments.length > 0) {
+                    // Calculate total days covered by all payments
+                    driverPayments.forEach(payment => {
+                        const daysCovered = Math.floor(payment.amount / (driver.dailyRent || 1));
+                        totalDaysCovered += daysCovered;
+                    });
+
+                    // Get the earliest payment date as starting point
+                    const earliestPayment = driverPayments[driverPayments.length - 1];
+                    const startDate = new Date(earliestPayment.date?.seconds * 1000 || earliestPayment.createdAt?.seconds * 1000);
+                    
+                    // Calculate last covered date
+                    lastPaymentDate = new Date(startDate);
+                    lastPaymentDate.setDate(lastPaymentDate.getDate() + totalDaysCovered - 1);
+                }
+
+                // Calculate days since last covered date
+                const today = new Date();
+                let daysOverdue = 0;
+                let amountDue = 0;
+
+                if (lastPaymentDate) {
+                    const timeDiff = today - lastPaymentDate;
+                    daysOverdue = Math.max(0, Math.floor(timeDiff / (1000 * 60 * 60 * 24)));
+                    amountDue = daysOverdue * (driver.dailyRent || 0);
+                } else {
+                    // No payments yet, calculate from contract start date
+                    const contractStartDate = driver.contractStartDate ? 
+                        new Date(driver.contractStartDate.seconds * 1000) : 
+                        new Date(); // Default to today if no start date
+                    
+                    const timeDiff = today - contractStartDate;
+                    daysOverdue = Math.max(0, Math.floor(timeDiff / (1000 * 60 * 60 * 24)));
+                    amountDue = daysOverdue * (driver.dailyRent || 0);
+                }
+
+                // Determine status
+                let status = 'good';
+                if (daysOverdue > 7) {
+                    status = 'overdue';
+                } else if (daysOverdue > 3) {
+                    status = 'warning';
+                }
+
+                return {
+                    ...driver,
+                    lastPaymentDate: lastPaymentDate,
+                    daysOverdue: daysOverdue,
+                    amountDue: amountDue,
+                    status: status,
+                    totalPayments: driverPayments.reduce((sum, p) => sum + p.amount, 0)
+                };
+            });
+        }
+
+        // Display drivers
+        function displayDrivers(driversToShow) {
+            const content = document.getElementById('driversContent');
+            
+            if (driversToShow.length === 0) {
+                content.innerHTML = '<div style="text-align: center; padding: 2rem; color: #6b7280; grid-column: 1/-1;">لا توجد بيانات للعرض</div>';
+                return;
+            }
+
+            content.innerHTML = driversToShow.map(driver => {
+                const statusText = {
+                    'good': 'طبيعي',
+                    'warning': 'تحذير',
+                    'overdue': 'متأخر'
+                };
+
+                return `
+                    <div class="driver-row ${driver.status}">
+                        <div class="driver-name" onclick="openPaymentModal('${driver.id}')">${driver.name}</div>
+                        <div class="driver-phone">${driver.phone || 'غير محدد'}</div>
+                        <div class="driver-car">${driver.carPlateNumber || 'غير محدد'}</div>
+                        <div class="daily-rent">${(driver.dailyRent || 0).toFixed(3)} د.ك</div>
+                        <div class="last-payment">${driver.lastPaymentDate ? driver.lastPaymentDate.toLocaleDateString('ar') : 'لا توجد'}</div>
+                        <div class="days-overdue ${driver.status}">${driver.daysOverdue} يوم</div>
+                        <div class="amount-due ${driver.status}">${driver.amountDue.toFixed(3)} د.ك</div>
+                        <div class="status-badge status-${driver.status}">${statusText[driver.status]}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update summary
+        function updateSummary() {
+            const totalDrivers = allDriversData.length;
+            const overdueDrivers = allDriversData.filter(d => d.status === 'overdue').length;
+            const warningDrivers = allDriversData.filter(d => d.status === 'warning').length;
+            const goodDrivers = allDriversData.filter(d => d.status === 'good').length;
+            const totalAmountDue = allDriversData.reduce((sum, d) => sum + d.amountDue, 0);
+
+            document.getElementById('summaryCards').innerHTML = `
+                <div class="summary-card">
+                    <div class="summary-title">إجمالي السائقين</div>
+                    <div class="summary-value">${totalDrivers}</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">متأخرين</div>
+                    <div class="summary-value negative">${overdueDrivers}</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">تحذير</div>
+                    <div class="summary-value warning">${warningDrivers}</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">طبيعي</div>
+                    <div class="summary-value positive">${goodDrivers}</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">إجمالي المستحق</div>
+                    <div class="summary-value negative">${totalAmountDue.toFixed(3)} د.ك</div>
+                </div>
+            `;
+        }
+
+        // Filter drivers
+        window.filterDrivers = () => {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+            let filteredDrivers = allDriversData;
+
+            if (statusFilter) {
+                filteredDrivers = filteredDrivers.filter(driver => driver.status === statusFilter);
+            }
+
+            if (searchInput) {
+                filteredDrivers = filteredDrivers.filter(driver => 
+                    driver.name.toLowerCase().includes(searchInput) ||
+                    (driver.phone && driver.phone.includes(searchInput))
+                );
+            }
+
+            displayDrivers(filteredDrivers);
+        };
+
+        // Open payment modal
+        window.openPaymentModal = (driverId) => {
+            selectedDriver = allDriversData.find(d => d.id === driverId);
+            if (!selectedDriver) return;
+
+            document.getElementById('modalTitle').textContent = `تسجيل دفعة - ${selectedDriver.name}`;
+            document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('paymentAmount').value = '';
+            document.getElementById('paymentNotes').value = '';
+
+            // Display driver info
+            document.getElementById('paymentInfo').innerHTML = `
+                <div class="payment-info-item">
+                    <span>اسم السائق:</span>
+                    <span>${selectedDriver.name}</span>
+                </div>
+                <div class="payment-info-item">
+                    <span>الأجرة اليومية:</span>
+                    <span>${selectedDriver.dailyRent.toFixed(3)} د.ك</span>
+                </div>
+                <div class="payment-info-item">
+                    <span>أيام التأخير:</span>
+                    <span>${selectedDriver.daysOverdue} يوم</span>
+                </div>
+                <div class="payment-info-item">
+                    <span>المبلغ المستحق:</span>
+                    <span>${selectedDriver.amountDue.toFixed(3)} د.ك</span>
+                </div>
+            `;
+
+            calculateDays();
+            document.getElementById('paymentModal').style.display = 'block';
+        };
+
+        // Calculate days covered
+        window.calculateDays = () => {
+            if (!selectedDriver) return;
+
+            const amount = parseFloat(document.getElementById('paymentAmount').value) || 0;
+            const daysCovered = Math.floor(amount / selectedDriver.dailyRent);
+            const remainingAmount = amount % selectedDriver.dailyRent;
+
+            document.getElementById('calculatedInfo').innerHTML = `
+                <div class="payment-info-item">
+                    <span>عدد الأيام المغطاة:</span>
+                    <span>${daysCovered} يوم</span>
+                </div>
+                <div class="payment-info-item">
+                    <span>المبلغ المتبقي:</span>
+                    <span>${remainingAmount.toFixed(3)} د.ك</span>
+                </div>
+            `;
+        };
+
+        // Close modal
+        window.closeModal = () => {
+            document.getElementById('paymentModal').style.display = 'none';
+            selectedDriver = null;
+        };
+
+        // Form submission
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!selectedDriver) return;
+
+            const amount = parseFloat(document.getElementById('paymentAmount').value);
+            const paymentDate = new Date(document.getElementById('paymentDate').value);
+            const notes = document.getElementById('paymentNotes').value;
+
+            const paymentData = {
+                driverId: selectedDriver.id,
+                driverName: selectedDriver.name,
+                amount: amount,
+                date: paymentDate,
+                source: 'driver_payment',
+                description: `دفعة من السائق ${selectedDriver.name}`,
+                notes: notes,
+                daysCovered: Math.floor(amount / selectedDriver.dailyRent),
+                dailyRent: selectedDriver.dailyRent,
+                createdBy: currentUser.name || currentUser.email,
+                createdAt: new Date(),
+                createdByUid: currentUser.uid
+            };
+
+            try {
+                await addDoc(collection(db, 'revenues'), paymentData);
+                
+                // Update driver's last payment date
+                await updateDoc(doc(db, 'drivers', selectedDriver.id), {
+                    lastPaymentDate: paymentDate,
+                    lastPaymentAmount: amount
+                });
+
+                alert('تم تسجيل الدفعة بنجاح');
+                closeModal();
+                await loadDriversData();
+            } catch (error) {
+                console.error('Error saving payment:', error);
+                alert('حدث خطأ في حفظ البيانات');
+            }
+        });
+
+        // Logout function
+        window.logout = async () => {
+            try {
+                await signOut(auth);
+                localStorage.clear();
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        };
+    </script>
+</body>
+</html>
+
