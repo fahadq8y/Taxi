@@ -681,9 +681,29 @@
             }
 
             grid.innerHTML = revenuesToShow.map(revenue => {
-                const revenueDate = revenue.date?.seconds ? 
-                    new Date(revenue.date.seconds * 1000) : 
-                    new Date(revenue.createdAt?.seconds * 1000);
+                // Fix date handling - check if it's a string date first
+                let revenueDate;
+                if (revenue.date) {
+                    if (typeof revenue.date === 'string') {
+                        // It's a string date (YYYY-MM-DD format)
+                        revenueDate = new Date(revenue.date);
+                    } else if (revenue.date.seconds) {
+                        // It's a Firestore timestamp
+                        revenueDate = new Date(revenue.date.seconds * 1000);
+                    } else {
+                        revenueDate = new Date(revenue.date);
+                    }
+                } else if (revenue.createdAt) {
+                    if (typeof revenue.createdAt === 'string') {
+                        revenueDate = new Date(revenue.createdAt);
+                    } else if (revenue.createdAt.seconds) {
+                        revenueDate = new Date(revenue.createdAt.seconds * 1000);
+                    } else {
+                        revenueDate = new Date(revenue.createdAt);
+                    }
+                } else {
+                    revenueDate = new Date();
+                }
                 
                 // Get driver name - use saved driverName or find by driverId
                 let driverName = 'غير محدد';
@@ -694,12 +714,16 @@
                     driverName = driver ? driver.name : 'سائق محذوف';
                 }
 
+                // Fix payment method display
                 const sourceText = {
                     'cash': 'كاش',
-                    'link': 'لينك',
+                    'link': 'لينك', 
                     'bank': 'بنك',
                     'driver_payment': 'دفعة سائق'
-                }[revenue.source] || revenue.source || 'غير محدد';
+                }[revenue.source || revenue.paymentMethod] || revenue.paymentMethod || revenue.source || 'غير محدد';
+
+                // Format date properly
+                const formattedDate = isNaN(revenueDate.getTime()) ? 'تاريخ غير صحيح' : revenueDate.toLocaleDateString('ar-SA');
 
                 return `
                     <div class="revenue-card">
@@ -719,16 +743,16 @@
                                 </div>
                                 <div class="info-item">
                                     <div class="info-label">التاريخ</div>
-                                    <div class="info-value">${revenueDate.toLocaleDateString('ar')}</div>
+                                    <div class="info-value">${formattedDate}</div>
                                 </div>
                                 <div class="info-item">
                                     <div class="info-label">المسجل بواسطة</div>
                                     <div class="info-value">${revenue.createdBy || 'غير محدد'}</div>
                                 </div>
                             </div>
-                            ${revenue.description ? `
+                            ${revenue.description || revenue.notes ? `
                                 <div class="revenue-description">
-                                    ${revenue.description}
+                                    ${revenue.description || revenue.notes}
                                 </div>
                             ` : ''}
                             <div class="actions">

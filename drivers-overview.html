@@ -1198,6 +1198,12 @@
                 const date = document.getElementById('paymentDate').value;
                 const notes = document.getElementById('paymentNotes').value;
 
+                // Validate required fields
+                if (!amount || !method || !date) {
+                    showAlert('يرجى ملء جميع الحقول المطلوبة', 'error');
+                    return;
+                }
+
                 await addDoc(collection(db, 'revenues'), {
                     type: 'daily_fee',
                     driverId: selectedDriverId,
@@ -1205,7 +1211,7 @@
                     amount: amount,
                     paymentMethod: method,
                     date: date,
-                    notes: notes,
+                    notes: notes || '',
                     createdAt: new Date().toISOString(),
                     createdBy: currentUser.uid
                 });
@@ -1214,6 +1220,7 @@
                 await loadData();
                 calculateAndDisplayTable();
                 resetForms();
+                closeModal(); // Close modal after successful save
             } catch (error) {
                 console.error('Error saving payment:', error);
                 showAlert('حدث خطأ أثناء حفظ الدفعة', 'error');
