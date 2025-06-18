@@ -372,24 +372,31 @@
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
+            border: 1px solid;
         }
 
         .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
+            background: #f0f9ff;
+            color: #0369a1;
+            border-color: #7dd3fc;
         }
 
         .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fca5a5;
+            background: #fef2f2;
+            color: #dc2626;
+            border-color: #fca5a5;
         }
 
         .alert-warning {
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fcd34d;
+            background: #fffbeb;
+            color: #d97706;
+            border-color: #fed7aa;
+        }
+
+        .alert-info {
+            background: #f0f9ff;
+            color: #0369a1;
+            border-color: #7dd3fc;
         }
 
         @media (max-width: 768px) {
@@ -501,6 +508,8 @@
                             <th>قيمة التأخير</th>
                             <th>فرق السداد</th>
                             <th>المخالفات</th>
+                            <th>رسوم الإقامة</th>
+                            <th>رسوم الرواتب</th>
                             <th>ديون قديمة</th>
                             <th>إجمالي الدين</th>
                         </tr>
@@ -528,6 +537,7 @@
                 <div class="tab" onclick="switchTab('violation')">🚫 المخالفات</div>
                 <div class="tab" onclick="switchTab('residence')">📄 رسوم الإقامة</div>
                 <div class="tab" onclick="switchTab('salary')">💼 رسوم الرواتب</div>
+                <div class="tab" onclick="switchTab('oldDebt')">💳 تحصيل دين قديم</div>
             </div>
 
             <!-- تحصيل الرسوم -->
@@ -721,6 +731,38 @@
                     </div>
                 </form>
             </div>
+
+            <!-- تحصيل دين قديم -->
+            <div id="oldDebtTab" class="tab-content">
+                <form id="oldDebtForm">
+                    <h3 style="margin-bottom: 1rem; color: #059669;">تحصيل دين قديم</h3>
+                    
+                    <div class="alert alert-info">
+                        <strong>ملاحظة:</strong> سيتم خصم المبلغ من عمود الديون القديمة
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="oldDebtAmount">المبلغ المحصل (د.ك)</label>
+                            <input type="number" id="oldDebtAmount" step="0.001" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="oldDebtDate">تاريخ التحصيل</label>
+                            <input type="date" id="oldDebtDate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="oldDebtNotes">ملاحظات (اختياري)</label>
+                        <textarea id="oldDebtNotes" rows="3" placeholder="ملاحظات تحصيل الدين القديم..."></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="closeModal()">إلغاء</button>
+                        <button type="submit" class="success-btn">تحصيل الدين</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -847,6 +889,8 @@
 
                 const driverRevenues = revenues.filter(r => r.driverId === driver.id && r.type === 'daily_fee');
                 const driverViolations = expenses.filter(e => e.driverId === driver.id && e.type === 'violation');
+                const driverResidenceFees = expenses.filter(e => e.driverId === driver.id && e.type === 'residence_fee');
+                const driverSalaryFees = expenses.filter(e => e.driverId === driver.id && e.type === 'salary_deposit_fee');
                 
                 // Get daily fee with fallback
                 const dailyFee = parseFloat(driver.dailyFee) || 0;
@@ -898,11 +942,27 @@
                     }
                 });
 
+                // Calculate residence fees
+                let residenceFeesAmount = 0;
+                driverResidenceFees.forEach(fee => {
+                    if (!fee.collected) {
+                        residenceFeesAmount += parseFloat(fee.amount) || 0;
+                    }
+                });
+
+                // Calculate salary fees
+                let salaryFeesAmount = 0;
+                driverSalaryFees.forEach(fee => {
+                    if (!fee.collected) {
+                        salaryFeesAmount += parseFloat(fee.amount) || 0;
+                    }
+                });
+
                 // Calculate old debts
                 const oldDebts = parseFloat(driver.oldDebts) || 0;
 
                 // Calculate total debt
-                const totalDebt = overdueAmount + violationsAmount + oldDebts;
+                const totalDebt = overdueAmount + violationsAmount + residenceFeesAmount + salaryFeesAmount + oldDebts;
 
                 // Determine status
                 let status = 'normal';
@@ -927,6 +987,8 @@
                     overdueAmount: overdueAmount,
                     remainingAmount: remainingAmount,
                     violationsAmount: violationsAmount,
+                    residenceFeesAmount: residenceFeesAmount,
+                    salaryFeesAmount: salaryFeesAmount,
                     oldDebts: oldDebts,
                     totalDebt: totalDebt,
                     status: status,
@@ -963,6 +1025,8 @@
                 const overdueAmount = isNaN(row.overdueAmount) ? 0 : row.overdueAmount;
                 const remainingAmount = isNaN(row.remainingAmount) ? 0 : row.remainingAmount;
                 const violationsAmount = isNaN(row.violationsAmount) ? 0 : row.violationsAmount;
+                const residenceFeesAmount = isNaN(row.residenceFeesAmount) ? 0 : row.residenceFeesAmount;
+                const salaryFeesAmount = isNaN(row.salaryFeesAmount) ? 0 : row.salaryFeesAmount;
                 const oldDebts = isNaN(row.oldDebts) ? 0 : row.oldDebts;
                 const totalDebt = isNaN(row.totalDebt) ? 0 : row.totalDebt;
                 
@@ -974,6 +1038,8 @@
                     <td class="amount ${overdueAmount > 0 ? 'negative' : ''}">${overdueAmount.toFixed(3)} د.ك</td>
                     <td class="amount ${remainingAmount > 0 ? 'positive' : ''}">${remainingAmount.toFixed(3)} د.ك</td>
                     <td class="amount ${violationsAmount > 0 ? 'negative' : ''}">${violationsAmount.toFixed(3)} د.ك</td>
+                    <td class="amount ${residenceFeesAmount > 0 ? 'negative' : ''}">${residenceFeesAmount.toFixed(3)} د.ك</td>
+                    <td class="amount ${salaryFeesAmount > 0 ? 'negative' : ''}">${salaryFeesAmount.toFixed(3)} د.ك</td>
                     <td class="amount ${oldDebts > 0 ? 'negative' : ''}">${oldDebts.toFixed(3)} د.ك</td>
                     <td class="amount ${totalDebt > 0 ? 'negative' : 'positive'}">${totalDebt.toFixed(3)} د.ك</td>
                 `;
@@ -1037,6 +1103,7 @@
             document.getElementById('residenceDate').value = today;
             document.getElementById('collectResidenceDate').value = today;
             document.getElementById('salaryDate').value = today;
+            document.getElementById('oldDebtDate').value = today;
             
             document.getElementById('accountingModal').style.display = 'block';
         }
@@ -1311,6 +1378,53 @@
             } catch (error) {
                 console.error('Error collecting salary fee:', error);
                 showAlert('حدث خطأ أثناء تحصيل رسوم الرواتب', 'error');
+            }
+        });
+
+        document.getElementById('oldDebtForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const amount = parseFloat(document.getElementById('oldDebtAmount').value);
+                const date = document.getElementById('oldDebtDate').value;
+                const notes = document.getElementById('oldDebtNotes').value;
+
+                // Get current driver data
+                const driverDoc = await getDoc(doc(db, 'drivers', selectedDriverId));
+                if (!driverDoc.exists()) {
+                    throw new Error('السائق غير موجود');
+                }
+
+                const driverData = driverDoc.data();
+                const currentOldDebts = parseFloat(driverData.oldDebts) || 0;
+                const newOldDebts = Math.max(0, currentOldDebts - amount);
+
+                // Update driver's old debts
+                await updateDoc(doc(db, 'drivers', selectedDriverId), {
+                    oldDebts: newOldDebts
+                });
+
+                // Add revenue record for old debt collection
+                await addDoc(collection(db, 'revenues'), {
+                    type: 'old_debt_collection',
+                    driverId: selectedDriverId,
+                    driverName: selectedDriverName,
+                    amount: amount,
+                    date: date,
+                    notes: notes,
+                    previousDebt: currentOldDebts,
+                    newDebt: newOldDebts,
+                    createdAt: new Date().toISOString(),
+                    createdBy: currentUser.uid
+                });
+
+                showAlert(`تم تحصيل ${amount.toFixed(3)} د.ك من الدين القديم بنجاح`);
+                await loadData();
+                calculateAndDisplayTable();
+                resetForms();
+            } catch (error) {
+                console.error('Error collecting old debt:', error);
+                showAlert('حدث خطأ أثناء تحصيل الدين القديم', 'error');
             }
         });
 
