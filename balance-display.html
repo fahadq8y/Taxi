@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عرض الأرصدة - نظام إدارة التاكسي</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; direction: rtl; padding: 2rem; }
+        .header { text-align: center; margin-bottom: 2rem; }
+        .header h1 { color: #1f2937; font-size: 2rem; margin-bottom: 0.5rem; }
+        .header p { color: #6b7280; }
+        .balance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 800px; margin: 0 auto; }
+        .balance-card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        .bank-balance { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; }
+        .salary-balance { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .balance-amount { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .balance-label { font-size: 1.1rem; opacity: 0.9; }
+        .last-updated { text-align: center; margin-top: 2rem; color: #6b7280; font-size: 0.9rem; }
+        .actions { text-align: center; margin-top: 2rem; }
+        .btn { background: #10b981; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; margin: 0 0.5rem; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #059669; }
+        .loading { text-align: center; color: #6b7280; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💰 عرض الأرصدة</h1>
+        <p>الأرصدة الحالية لنظام إدارة التاكسي</p>
+    </div>
+    
+    <div class="balance-grid">
+        <div class="balance-card bank-balance">
+            <div class="balance-amount" id="bankBalance">جاري التحميل...</div>
+            <div class="balance-label">🏦 الرصيد البنكي</div>
+        </div>
+        
+        <div class="balance-card salary-balance">
+            <div class="balance-amount" id="salaryBalance">جاري التحميل...</div>
+            <div class="balance-label">💼 رصيد الرواتب</div>
+        </div>
+    </div>
+    
+    <div class="last-updated">
+        آخر تحديث: <span id="lastUpdate">جاري التحميل...</span>
+    </div>
+    
+    <div class="actions">
+        <a href="revenues.html" class="btn">📈 إدارة الإيرادات</a>
+        <a href="expenses.html" class="btn">📉 إدارة المصروفات</a>
+        <button onclick="loadBalances()" class="btn">🔄 تحديث</button>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDGpAHia_wEmrhnmYjrPf1n1TrAzwEMiAI",
+            authDomain: "taxi-management-system-d8210.firebaseapp.com",
+            projectId: "taxi-management-system-d8210",
+            storageBucket: "taxi-management-system-d8210.appspot.com",
+            messagingSenderId: "1092588712674",
+            appId: "1:1092588712674:web:0b8f8b3b8b8b8b8b8b8b8b"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        async function loadBalances() {
+            try {
+                const balanceDoc = await db.collection('balances').doc('main').get();
+                if (balanceDoc.exists) {
+                    const balances = balanceDoc.data();
+                    document.getElementById('bankBalance').textContent = (balances.bankBalance?.toFixed(3) || '0.000') + ' د.ك';
+                    document.getElementById('salaryBalance').textContent = (balances.salaryBalance?.toFixed(3) || '0.000') + ' د.ك';
+                } else {
+                    // Create initial balance document
+                    await db.collection('balances').doc('main').set({
+                        bankBalance: 0,
+                        salaryBalance: 0,
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    document.getElementById('bankBalance').textContent = '0.000 د.ك';
+                    document.getElementById('salaryBalance').textContent = '0.000 د.ك';
+                }
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleString('ar-KW');
+            } catch (error) {
+                console.error('Error loading balances:', error);
+                document.getElementById('bankBalance').textContent = 'خطأ في التحميل';
+                document.getElementById('salaryBalance').textContent = 'خطأ في التحميل';
+            }
+        }
+        
+        // Load balances on page load
+        window.addEventListener('load', loadBalances);
+    </script>
+</body>
+</html>
+

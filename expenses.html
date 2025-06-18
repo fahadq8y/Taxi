@@ -4,794 +4,267 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إدارة المصروفات - نظام إدارة التاكسي</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2563eb">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8fafc;
-            direction: rtl;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .header h1 {
-            font-size: 1.5rem;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .nav-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background 0.3s;
-        }
-
-        .nav-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .controls {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .filters {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .filter-group label {
-            font-size: 0.8rem;
-            color: #6b7280;
-        }
-
-        .filter-input {
-            padding: 0.5rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            direction: rtl;
-        }
-
-        .filter-input:focus {
-            outline: none;
-            border-color: #2563eb;
-        }
-
-        .add-btn {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: transform 0.2s;
-        }
-
-        .add-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .expenses-table {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .table-header {
-            background: #f8fafc;
-            padding: 1rem;
-            border-bottom: 1px solid #e5e7eb;
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .table-content {
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .expense-row {
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr 1fr 1fr 0.5fr;
-            gap: 1rem;
-            padding: 1rem;
-            border-bottom: 1px solid #f3f4f6;
-            align-items: center;
-            transition: background 0.2s;
-        }
-
-        .expense-row:hover {
-            background: #f8fafc;
-        }
-
-        .expense-date {
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-
-        .expense-type {
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .expense-amount {
-            font-weight: bold;
-            color: #ef4444;
-        }
-
-        .expense-description {
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-
-        .expense-user {
-            font-size: 0.8rem;
-            color: #6b7280;
-        }
-
-        .expense-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .action-btn {
-            padding: 0.25rem 0.5rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .view-btn {
-            background: #6b7280;
-            color: white;
-        }
-
-        .view-btn:hover {
-            background: #4b5563;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 2rem;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            direction: rtl;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .close {
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover {
-            color: #000;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #374151;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 1rem;
-            direction: rtl;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #2563eb;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            margin-top: 2rem;
-        }
-
-        .save-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .cancel-btn {
-            background: #6b7280;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .spinner {
-            border: 3px solid #f3f4f6;
-            border-top: 3px solid #2563eb;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .summary-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .summary-title {
-            font-size: 0.9rem;
-            color: #6b7280;
-            margin-bottom: 0.5rem;
-        }
-
-        .summary-amount {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ef4444;
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                padding: 1rem;
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .container {
-                margin: 1rem auto;
-                padding: 0 0.5rem;
-            }
-
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .filters {
-                justify-content: center;
-            }
-
-            .expense-row {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-                text-align: center;
-            }
-
-            .modal-content {
-                width: 95%;
-                margin: 10% auto;
-                padding: 1rem;
-            }
-
-            .summary-cards {
-                grid-template-columns: 1fr;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; direction: rtl; }
+        .header { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 1.8rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-label { color: #6b7280; font-size: 0.9rem; }
+        .balance-card { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; }
+        .balance-card .stat-number { color: white; }
+        .balance-card .stat-label { color: rgba(255,255,255,0.8); }
+        .salary-balance-card { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .salary-balance-card .stat-number { color: white; }
+        .salary-balance-card .stat-label { color: rgba(255,255,255,0.8); }
+        .add-form { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .btn-primary { background: #ef4444; color: white; }
+        .expense-type-note { background: #fef3c7; border: 1px solid #f59e0b; padding: 1rem; border-radius: 8px; margin-top: 0.5rem; font-size: 0.9rem; color: #92400e; }
+        .expenses-table { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 1rem; text-align: right; border-bottom: 1px solid #e5e7eb; }
+        .table th { background: #f9fafb; font-weight: 600; }
+        .delete-btn { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>💰 إدارة المصروفات</h1>
-        <div class="nav-buttons">
-            <a href="admin-dashboard.html" class="nav-btn">العودة للوحة التحكم</a>
-            <button class="nav-btn" onclick="logout()">تسجيل الخروج</button>
+        <h1>💸 إدارة المصروفات</h1>
+        <div>
+            <a href="balance-display.html" style="background: rgba(255,255,255,0.2); color: white; padding: 0.5rem 1rem; border-radius: 5px; text-decoration: none; margin-left: 1rem;">💰 عرض الأرصدة</a>
+            <a href="index.html" style="background: rgba(255,255,255,0.2); color: white; padding: 0.5rem 1rem; border-radius: 5px; text-decoration: none;">🏠 الرئيسية</a>
         </div>
     </div>
-
+    
     <div class="container">
-        <div class="summary-cards" id="summaryCards">
-            <!-- سيتم ملء الملخص هنا -->
-        </div>
-
-        <div class="controls">
-            <div class="filters">
-                <div class="filter-group">
-                    <label>من تاريخ</label>
-                    <input type="date" class="filter-input" id="fromDate">
-                </div>
-                <div class="filter-group">
-                    <label>إلى تاريخ</label>
-                    <input type="date" class="filter-input" id="toDate">
-                </div>
-                <div class="filter-group">
-                    <label>نوع المصروف</label>
-                    <select class="filter-input" id="expenseTypeFilter">
-                        <option value="">جميع الأنواع</option>
-                        <option value="rent">الإيجارات</option>
-                        <option value="salaries">رواتب الموظفين</option>
-                        <option value="salary_deposits">مصاريف إيداعات الرواتب</option>
-                        <option value="buffet">بوفيه</option>
-                        <option value="cleaning">نظافة</option>
-                        <option value="car_purchase">شراء سيارات</option>
-                        <option value="meter_purchase">شراء عداد</option>
-                        <option value="meter_installation">تركيب عداد</option>
-                        <option value="car_painting">صبغ سيارة</option>
-                        <option value="car_maintenance">صيانة سيارة</option>
-                        <option value="administrative">مصاريف إدارية</option>
-                        <option value="other">أخرى</option>
-                    </select>
-                </div>
-                <button class="filter-input" onclick="filterExpenses()" style="background: #2563eb; color: white; border: none; cursor: pointer;">تصفية</button>
+        <div class="stats-grid">
+            <div class="stat-card balance-card">
+                <div class="stat-number" id="bankBalance">0.000 د.ك</div>
+                <div class="stat-label">🏦 الرصيد البنكي</div>
             </div>
-            <button class="add-btn" onclick="openAddModal()">إضافة مصروف جديد</button>
-        </div>
-
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>جاري تحميل المصروفات...</p>
-        </div>
-
-        <div class="expenses-table" id="expensesTable" style="display: none;">
-            <div class="table-header">
-                <div class="expense-row" style="font-weight: bold;">
-                    <div>التاريخ</div>
-                    <div>نوع المصروف</div>
-                    <div>المبلغ (د.ك)</div>
-                    <div>الوصف</div>
-                    <div>المستخدم</div>
-                    <div>إجراءات</div>
-                </div>
+            <div class="stat-card salary-balance-card">
+                <div class="stat-number" id="salaryBalance">0.000 د.ك</div>
+                <div class="stat-label">💼 رصيد الرواتب</div>
             </div>
-            <div class="table-content" id="expensesContent">
-                <!-- سيتم ملء المصروفات هنا -->
+            <div class="stat-card">
+                <div class="stat-number" id="totalExpenses">0.000 د.ك</div>
+                <div class="stat-label">إجمالي المصروفات</div>
             </div>
         </div>
-    </div>
-
-    <!-- Modal إضافة مصروف -->
-    <div id="expenseModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>إضافة مصروف جديد</h2>
-                <span class="close" onclick="closeModal()">&times;</span>
-            </div>
-            
+        
+        <div class="add-form">
+            <h2>إضافة مصروف جديد</h2>
             <form id="expenseForm">
                 <div class="form-group">
-                    <label for="expenseType">نوع المصروف</label>
-                    <select id="expenseType" required>
-                        <option value="">اختر نوع المصروف</option>
-                        <option value="rent">الإيجارات</option>
-                        <option value="salaries">رواتب الموظفين</option>
-                        <option value="salary_deposits">مصاريف إيداعات الرواتب</option>
-                        <option value="buffet">بوفيه</option>
-                        <option value="cleaning">نظافة</option>
-                        <option value="car_purchase">شراء سيارات</option>
-                        <option value="meter_purchase">شراء عداد</option>
-                        <option value="meter_installation">تركيب عداد</option>
-                        <option value="car_painting">صبغ سيارة</option>
-                        <option value="car_maintenance">صيانة سيارة</option>
-                        <option value="administrative">مصاريف إدارية</option>
-                        <option value="other">أخرى</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="amount">المبلغ (د.ك)</label>
+                    <label>المبلغ (د.ك)</label>
                     <input type="number" id="amount" step="0.001" required>
                 </div>
-
                 <div class="form-group">
-                    <label for="expenseDate">تاريخ المصروف</label>
-                    <input type="date" id="expenseDate" required>
+                    <label>نوع المصروف</label>
+                    <select id="expenseType" required onchange="showTypeNote()">
+                        <option value="">اختر نوع المصروف</option>
+                        <option value="وقود">وقود</option>
+                        <option value="صيانة">صيانة</option>
+                        <option value="رسوم إيداع الرواتب">رسوم إيداع الرواتب</option>
+                        <option value="مخالفات">مخالفات</option>
+                        <option value="رسوم إقامة">رسوم إقامة</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                    <div id="typeNote" class="expense-type-note" style="display: none;">
+                        💡 <strong>رسوم إيداع الرواتب:</strong> سيتم خصم هذا المبلغ من رصيد الرواتب وليس الرصيد البنكي
+                    </div>
                 </div>
-
                 <div class="form-group">
-                    <label for="description">الوصف</label>
-                    <textarea id="description" rows="3" placeholder="وصف تفصيلي للمصروف..."></textarea>
+                    <label>التاريخ</label>
+                    <input type="date" id="date" required>
                 </div>
-
-                <div class="form-group" id="noteGroup" style="display: none;">
-                    <label for="note">ملاحظة (للمصروفات الأخرى)</label>
-                    <textarea id="note" rows="2" placeholder="ملاحظة إضافية..."></textarea>
+                <div class="form-group">
+                    <label>الوصف</label>
+                    <input type="text" id="description" placeholder="وصف المصروف...">
                 </div>
-
-                <div class="form-actions">
-                    <button type="button" class="cancel-btn" onclick="closeModal()">إلغاء</button>
-                    <button type="submit" class="save-btn">حفظ المصروف</button>
-                </div>
+                <button type="submit" class="btn btn-primary">إضافة المصروف</button>
             </form>
         </div>
+        
+        <div class="expenses-table">
+            <h2 style="padding: 1rem;">المصروفات الحديثة</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>النوع</th>
+                        <th>المبلغ</th>
+                        <th>الوصف</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="expensesTableBody">
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #6b7280;">جاري تحميل المصروفات...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, query, orderBy, where, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
-        // Firebase configuration
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyB8Q9CYIWXPmTdiz3vPiLlPYFxiJu0vE_g",
+            apiKey: "AIzaSyDGpAHia_wEmrhnmYjrPf1n1TrAzwEMiAI",
             authDomain: "taxi-management-system-d8210.firebaseapp.com",
             projectId: "taxi-management-system-d8210",
-            storageBucket: "taxi-management-system-d8210.firebasestorage.app",
-            messagingSenderId: "720874424166",
-            appId: "1:720874424166:web:25f9c6d126e792b2e5eaa7",
-            measurementId: "G-GY8820W410"
+            storageBucket: "taxi-management-system-d8210.appspot.com",
+            messagingSenderId: "1092588712674",
+            appId: "1:1092588712674:web:0b8f8b3b8b8b8b8b8b8b8b"
         };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let expenses = [];
-        let currentUser = null;
-
-        const expenseTypes = {
-            'rent': 'الإيجارات',
-            'salaries': 'رواتب الموظفين',
-            'salary_deposits': 'مصاريف إيداعات الرواتب',
-            'buffet': 'بوفيه',
-            'cleaning': 'نظافة',
-            'car_purchase': 'شراء سيارات',
-            'meter_purchase': 'شراء عداد',
-            'meter_installation': 'تركيب عداد',
-            'car_painting': 'صبغ سيارة',
-            'car_maintenance': 'صيانة سيارة',
-            'administrative': 'مصاريف إدارية',
-            'other': 'أخرى'
-        };
-
-        // Check authentication
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = 'index.html';
-                return;
-            }
-            
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Set today's date
+        document.getElementById('date').value = new Date().toISOString().split('T')[0];
+        
+        // Load balances
+        async function loadBalances() {
             try {
-                // Get user data from Firestore
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                if (!userDoc.exists()) {
-                    console.error('User document not found');
-                    window.location.href = 'index.html';
-                    return;
+                const balanceDoc = await db.collection('balances').doc('main').get();
+                if (balanceDoc.exists) {
+                    const balances = balanceDoc.data();
+                    document.getElementById('bankBalance').textContent = (balances.bankBalance?.toFixed(3) || '0.000') + ' د.ك';
+                    document.getElementById('salaryBalance').textContent = (balances.salaryBalance?.toFixed(3) || '0.000') + ' د.ك';
                 }
-                
-                const userData = userDoc.data();
-                if (!['admin', 'accountant'].includes(userData.role)) {
-                    console.error('User does not have required role');
-                    window.location.href = 'index.html';
-                    return;
-                }
-                
-                // Store user data
-                currentUser = { uid: user.uid, ...userData };
-                
-                // Load page data
-                loadExpenses();
             } catch (error) {
-                console.error('Error checking user role:', error);
-                window.location.href = 'index.html';
+                console.error('Error loading balances:', error);
             }
-        });
-
+        }
+        
         // Load expenses
         async function loadExpenses() {
             try {
-                const expensesQuery = query(collection(db, 'expenses'), orderBy('expenseDate', 'desc'));
-                const expensesSnapshot = await getDocs(expensesQuery);
-                expenses = [];
+                const expensesSnapshot = await db.collection('expenses').orderBy('date', 'desc').limit(10).get();
+                const tbody = document.getElementById('expensesTableBody');
+                
+                if (expensesSnapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #6b7280;">لا توجد مصروفات</td></tr>';
+                    return;
+                }
+                
+                let total = 0;
+                tbody.innerHTML = '';
+                
                 expensesSnapshot.forEach(doc => {
-                    expenses.push({ id: doc.id, ...doc.data() });
+                    const expense = doc.data();
+                    total += expense.amount;
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${expense.date}</td>
+                        <td>${expense.type}</td>
+                        <td>${expense.amount.toFixed(3)} د.ك</td>
+                        <td>${expense.description || '-'}</td>
+                        <td><button class="delete-btn" onclick="deleteExpense('${doc.id}', ${expense.amount}, '${expense.type}')">حذف</button></td>
+                    `;
+                    tbody.appendChild(row);
                 });
                 
-                displayExpenses(expenses);
-                updateSummary(expenses);
-
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('expensesTable').style.display = 'block';
+                document.getElementById('totalExpenses').textContent = total.toFixed(3) + ' د.ك';
             } catch (error) {
                 console.error('Error loading expenses:', error);
-                document.getElementById('loading').innerHTML = '<p>حدث خطأ في تحميل البيانات</p>';
             }
         }
-
-        // Display expenses
-        function displayExpenses(expensesToShow) {
-            const content = document.getElementById('expensesContent');
-            
-            if (expensesToShow.length === 0) {
-                content.innerHTML = '<div style="text-align: center; padding: 2rem; color: #6b7280;">لا توجد مصروفات</div>';
-                return;
-            }
-
-            content.innerHTML = expensesToShow.map(expense => {
-                return `
-                    <div class="expense-row">
-                        <div class="expense-date">${new Date(expense.expenseDate.seconds * 1000).toLocaleDateString('ar')}</div>
-                        <div class="expense-type">${expenseTypes[expense.type] || expense.type}</div>
-                        <div class="expense-amount">${expense.amount.toFixed(3)} د.ك</div>
-                        <div class="expense-description">${expense.description || 'لا يوجد وصف'}</div>
-                        <div class="expense-user">${expense.createdBy || 'غير محدد'}</div>
-                        <div class="expense-actions">
-                            <button class="action-btn view-btn" onclick="viewExpense('${expense.id}')">عرض</button>
-                            ${currentUser.role === 'admin' ? `<button class="action-btn delete-btn" onclick="deleteExpense('${expense.id}')">حذف</button>` : ''}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Update summary
-        function updateSummary(expensesToShow) {
-            const today = new Date();
-            const thisMonth = expensesToShow.filter(expense => {
-                const expenseDate = new Date(expense.expenseDate.seconds * 1000);
-                return expenseDate.getMonth() === today.getMonth() && expenseDate.getFullYear() === today.getFullYear();
-            });
-
-            const thisYear = expensesToShow.filter(expense => {
-                const expenseDate = new Date(expense.expenseDate.seconds * 1000);
-                return expenseDate.getFullYear() === today.getFullYear();
-            });
-
-            const totalAll = expensesToShow.reduce((sum, expense) => sum + expense.amount, 0);
-            const totalMonth = thisMonth.reduce((sum, expense) => sum + expense.amount, 0);
-            const totalYear = thisYear.reduce((sum, expense) => sum + expense.amount, 0);
-
-            document.getElementById('summaryCards').innerHTML = `
-                <div class="summary-card">
-                    <div class="summary-title">إجمالي المصروفات</div>
-                    <div class="summary-amount">${totalAll.toFixed(3)} د.ك</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-title">مصروفات هذا الشهر</div>
-                    <div class="summary-amount">${totalMonth.toFixed(3)} د.ك</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-title">مصروفات هذا العام</div>
-                    <div class="summary-amount">${totalYear.toFixed(3)} د.ك</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-title">عدد المصروفات</div>
-                    <div class="summary-amount">${expensesToShow.length}</div>
-                </div>
-            `;
-        }
-
-        // Filter expenses
-        window.filterExpenses = () => {
-            const fromDate = document.getElementById('fromDate').value;
-            const toDate = document.getElementById('toDate').value;
-            const typeFilter = document.getElementById('expenseTypeFilter').value;
-
-            let filteredExpenses = expenses;
-
-            if (fromDate) {
-                filteredExpenses = filteredExpenses.filter(expense => {
-                    const expenseDate = new Date(expense.expenseDate.seconds * 1000);
-                    return expenseDate >= new Date(fromDate);
-                });
-            }
-
-            if (toDate) {
-                filteredExpenses = filteredExpenses.filter(expense => {
-                    const expenseDate = new Date(expense.expenseDate.seconds * 1000);
-                    return expenseDate <= new Date(toDate);
-                });
-            }
-
-            if (typeFilter) {
-                filteredExpenses = filteredExpenses.filter(expense => expense.type === typeFilter);
-            }
-
-            displayExpenses(filteredExpenses);
-            updateSummary(filteredExpenses);
-        };
-
-        // Modal functions
-        window.openAddModal = () => {
-            document.getElementById('expenseForm').reset();
-            document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('expenseModal').style.display = 'block';
-        };
-
-        // Delete expense (admin only)
-        window.deleteExpense = async (expenseId) => {
-            if (currentUser.role !== 'admin') {
-                alert('ليس لديك صلاحية لحذف المصروفات');
-                return;
-            }
-
-            if (!confirm('هل أنت متأكد من حذف هذا المصروف؟')) return;
-
-            try {
-                await deleteDoc(doc(db, 'expenses', expenseId));
-                await loadExpenses();
-                alert('تم حذف المصروف بنجاح');
-            } catch (error) {
-                console.error('Error deleting expense:', error);
-                alert('حدث خطأ في حذف المصروف');
-            }
-        };
-
-        window.viewExpense = (expenseId) => {
-            const expense = expenses.find(e => e.id === expenseId);
-            if (!expense) return;
-            
-            const details = `
-تفاصيل المصروف:
-النوع: ${expenseTypes[expense.type] || expense.type}
-المبلغ: ${expense.amount.toFixed(3)} د.ك
-التاريخ: ${new Date(expense.expenseDate.seconds * 1000).toLocaleDateString('ar')}
-الوصف: ${expense.description || 'لا يوجد وصف'}
-${expense.note ? `الملاحظة: ${expense.note}` : ''}
-تم الإنشاء بواسطة: ${expense.createdBy || 'غير محدد'}
-تاريخ الإنشاء: ${new Date(expense.createdAt.seconds * 1000).toLocaleDateString('ar')}
-            `;
-            alert(details);
-        };
-
-        window.closeModal = () => {
-            document.getElementById('expenseModal').style.display = 'none';
-        };
-
-        // Show/hide note field based on expense type
-        document.getElementById('expenseType').addEventListener('change', (e) => {
-            const noteGroup = document.getElementById('noteGroup');
-            if (e.target.value === 'other') {
-                noteGroup.style.display = 'block';
-                document.getElementById('note').required = true;
+        
+        // Show type note
+        function showTypeNote() {
+            const type = document.getElementById('expenseType').value;
+            const note = document.getElementById('typeNote');
+            if (type === 'رسوم إيداع الرواتب') {
+                note.style.display = 'block';
             } else {
-                noteGroup.style.display = 'none';
-                document.getElementById('note').required = false;
+                note.style.display = 'none';
             }
-        });
-
-        // Form submission
+        }
+        
+        // Handle form submission
         document.getElementById('expenseForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const formData = {
-                type: document.getElementById('expenseType').value,
-                amount: parseFloat(document.getElementById('amount').value),
-                expenseDate: new Date(document.getElementById('expenseDate').value),
-                description: document.getElementById('description').value,
-                note: document.getElementById('note').value,
-                createdBy: currentUser.name || currentUser.email,
-                createdAt: new Date(),
-                createdByUid: currentUser.uid
-            };
-
+            
+            const amount = parseFloat(document.getElementById('amount').value);
+            const type = document.getElementById('expenseType').value;
+            const date = document.getElementById('date').value;
+            const description = document.getElementById('description').value;
+            
             try {
-                await addDoc(collection(db, 'expenses'), formData);
-                alert('تم إضافة المصروف بنجاح');
-                closeModal();
+                // Add expense to Firebase
+                await db.collection('expenses').add({
+                    amount,
+                    type,
+                    date,
+                    description,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Update balance based on type
+                const updateData = {};
+                if (type === 'رسوم إيداع الرواتب') {
+                    updateData.salaryBalance = firebase.firestore.FieldValue.increment(-amount);
+                } else {
+                    updateData.bankBalance = firebase.firestore.FieldValue.increment(-amount);
+                }
+                
+                await db.collection('balances').doc('main').update(updateData);
+                
+                // Reload data and reset form
+                await loadBalances();
                 await loadExpenses();
+                document.getElementById('expenseForm').reset();
+                document.getElementById('date').value = new Date().toISOString().split('T')[0];
+                document.getElementById('typeNote').style.display = 'none';
+                
+                alert('تم إضافة المصروف بنجاح!');
             } catch (error) {
-                console.error('Error saving expense:', error);
-                alert('حدث خطأ في حفظ البيانات');
+                console.error('Error adding expense:', error);
+                alert('حدث خطأ أثناء إضافة المصروف');
             }
         });
-
-        // Logout function
-        window.logout = async () => {
+        
+        // Delete expense
+        async function deleteExpense(id, amount, type) {
+            if (!confirm('هل أنت متأكد من حذف هذا المصروف؟')) return;
+            
             try {
-                await signOut(auth);
-                localStorage.clear();
-                window.location.href = 'index.html';
+                await db.collection('expenses').doc(id).delete();
+                
+                // Restore balance
+                const updateData = {};
+                if (type === 'رسوم إيداع الرواتب') {
+                    updateData.salaryBalance = firebase.firestore.FieldValue.increment(amount);
+                } else {
+                    updateData.bankBalance = firebase.firestore.FieldValue.increment(amount);
+                }
+                
+                await db.collection('balances').doc('main').update(updateData);
+                
+                await loadBalances();
+                await loadExpenses();
+                alert('تم حذف المصروف بنجاح!');
             } catch (error) {
-                console.error('Logout error:', error);
+                console.error('Error deleting expense:', error);
+                alert('حدث خطأ أثناء حذف المصروف');
             }
-        };
+        }
+        
+        // Load on page load
+        window.addEventListener('load', () => {
+            loadBalances();
+            loadExpenses();
+        });
     </script>
 </body>
 </html>
