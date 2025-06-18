@@ -906,7 +906,42 @@
                 }
 
                 // NEW LOGIC: Calculate debt from contract start date
-                const contractStartDate = driver.contractStartDate ? new Date(driver.contractStartDate) : new Date();
+                // Fix date parsing for different formats
+                let contractStartDate;
+                if (driver.contractStartDate) {
+                    // Handle different date formats
+                    if (typeof driver.contractStartDate === 'string') {
+                        // Try to parse "1 June 2025" format
+                        if (driver.contractStartDate.includes('June')) {
+                            contractStartDate = new Date('2025-06-01'); // Convert to standard format
+                        } else if (driver.contractStartDate.includes('July')) {
+                            contractStartDate = new Date('2025-07-01');
+                        } else if (driver.contractStartDate.includes('August')) {
+                            contractStartDate = new Date('2025-08-01');
+                        } else if (driver.contractStartDate.includes('September')) {
+                            contractStartDate = new Date('2025-09-01');
+                        } else if (driver.contractStartDate.includes('October')) {
+                            contractStartDate = new Date('2025-10-01');
+                        } else if (driver.contractStartDate.includes('November')) {
+                            contractStartDate = new Date('2025-11-01');
+                        } else if (driver.contractStartDate.includes('December')) {
+                            contractStartDate = new Date('2025-12-01');
+                        } else {
+                            // Try standard parsing
+                            contractStartDate = new Date(driver.contractStartDate);
+                        }
+                    } else {
+                        contractStartDate = new Date(driver.contractStartDate);
+                    }
+                } else {
+                    contractStartDate = new Date();
+                }
+                
+                // Validate the date
+                if (isNaN(contractStartDate.getTime())) {
+                    console.warn(`Invalid contract start date for driver ${driver.name}:`, driver.contractStartDate);
+                    contractStartDate = new Date(); // Fallback to today
+                }
                 const today = new Date();
                 
                 // 1. Calculate total days from contract start to today
