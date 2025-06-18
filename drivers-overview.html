@@ -777,7 +777,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, query, orderBy, where, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, query, orderBy, where, updateDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // Firebase configuration
         const firebaseConfig = {
@@ -839,7 +839,7 @@
                 
                 await loadData();
                 calculateAndDisplayTable();
-                // setupRealtimeListeners(); // Temporarily disabled for debugging
+                setupRealtimeListeners(); // Re-enable real-time listeners
                 
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('tableWrapper').style.display = 'block';
