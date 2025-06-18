@@ -943,8 +943,7 @@
                 
                 // 5. Calculate how many days are covered by payments
                 const paidDays = dailyFee > 0 ? Math.floor(totalPaidAmount / dailyFee) : 0;
-                
-                // 6. Calculate last covered date (contract start + paid days)
+                                // 6. Calculate last covered date (contract start + paid days)
                 let lastCoveredDate;
                 if (paidDays > 0) {
                     lastCoveredDate = new Date(contractStartDate.getTime() + (paidDays * 24 * 60 * 60 * 1000));
@@ -954,7 +953,19 @@
                 }
                 
                 // 7. Calculate overdue days (today - last covered date)
-                const overdueDays = Math.max(0, Math.floor((today - lastCoveredDate) / (1000 * 60 * 60 * 24)));               
+                const overdueDays = Math.max(0, Math.floor((today - lastCoveredDate) / (1000 * 60 * 60 * 1000)));
+                
+                // Debug logging
+                console.log(`Driver ${driver.name}:`, {
+                    contractStartDate: contractStartDate,
+                    totalDaysFromStart: totalDaysFromStart,
+                    totalDebtRequired: totalDebtRequired,
+                    totalPaidAmount: totalPaidAmount,
+                    remainingDebt: remainingDebt,
+                    paidDays: paidDays,
+                    lastCoveredDate: lastCoveredDate,
+                    overdueDays: overdueDays
+                });              
                 // 8. Calculate overdue amount (overdue days × daily fee)
                 const overdueAmount = overdueDays * dailyFee;
 
