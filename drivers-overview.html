@@ -851,8 +851,8 @@
                     drivers.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Load revenues
-                const revenuesSnapshot = await getDocs(query(collection(db, 'revenues'), orderBy('date', 'desc')));
+                // Load revenues - fix ordering issue
+                const revenuesSnapshot = await getDocs(query(collection(db, 'revenues'), orderBy('createdAt', 'desc')));
                 revenues = [];
                 revenuesSnapshot.forEach(doc => {
                     revenues.push({ id: doc.id, ...doc.data() });

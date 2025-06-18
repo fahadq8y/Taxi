@@ -722,8 +722,8 @@
                     'driver_payment': 'دفعة سائق'
                 }[revenue.source || revenue.paymentMethod] || revenue.paymentMethod || revenue.source || 'غير محدد';
 
-                // Format date properly
-                const formattedDate = isNaN(revenueDate.getTime()) ? 'تاريخ غير صحيح' : revenueDate.toLocaleDateString('ar-SA');
+                // Format date properly - use Gregorian calendar
+                const formattedDate = isNaN(revenueDate.getTime()) ? 'تاريخ غير صحيح' : revenueDate.toLocaleDateString('en-GB');
 
                 return `
                     <div class="revenue-card">
