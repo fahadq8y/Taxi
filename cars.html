@@ -73,17 +73,12 @@
             gap: 1rem;
         }
 
-        .search-box {
-            flex: 1;
-            min-width: 250px;
-        }
-
         .search-input {
-            width: 100%;
             padding: 0.75rem;
             border: 2px solid #e5e7eb;
             border-radius: 10px;
             font-size: 1rem;
+            width: 300px;
             direction: rtl;
         }
 
@@ -116,10 +111,9 @@
         .car-card {
             background: white;
             border-radius: 15px;
-            padding: 1.5rem;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s;
         }
 
         .car-card:hover {
@@ -127,38 +121,25 @@
         }
 
         .car-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
         }
 
         .car-plate {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: bold;
-            color: #1f2937;
+            margin-bottom: 0.5rem;
         }
 
-        .car-status {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+        .car-model {
+            opacity: 0.9;
+            font-size: 1.1rem;
         }
 
-        .status-available {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-rented {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-maintenance {
-            background: #fee2e2;
-            color: #991b1b;
+        .car-body {
+            padding: 1.5rem;
         }
 
         .car-info {
@@ -181,29 +162,50 @@
             color: #1f2937;
         }
 
+        .alerts {
+            margin-bottom: 1rem;
+        }
+
+        .alert {
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-urgent {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
         .car-actions {
             display: flex;
             gap: 0.5rem;
-            justify-content: flex-end;
         }
 
         .action-btn {
-            padding: 0.5rem 1rem;
+            flex: 1;
+            padding: 0.5rem;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.9rem;
+            font-weight: 500;
             transition: all 0.2s;
         }
 
         .edit-btn {
-            background: #3b82f6;
+            background: #f59e0b;
             color: white;
         }
 
         .edit-btn:hover {
-            background: #2563eb;
+            background: #d97706;
         }
 
         .delete-btn {
@@ -213,15 +215,6 @@
 
         .delete-btn:hover {
             background: #dc2626;
-        }
-
-        .view-btn {
-            background: #6b7280;
-            color: white;
-        }
-
-        .view-btn:hover {
-            background: #4b5563;
         }
 
         .modal {
@@ -269,13 +262,17 @@
 
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 1rem;
             margin-bottom: 1rem;
         }
 
         .form-group {
             margin-bottom: 1rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
         }
 
         .form-group label {
@@ -337,7 +334,7 @@
 
         .spinner {
             border: 3px solid #f3f4f6;
-            border-top: 3px solid #2563eb;
+            border-top: 3px solid #10b981;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -348,6 +345,17 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
         }
 
         @media (max-width: 768px) {
@@ -367,7 +375,15 @@
                 align-items: stretch;
             }
 
+            .search-input {
+                width: 100%;
+            }
+
             .cars-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -376,10 +392,6 @@
                 margin: 5% auto;
                 padding: 1rem;
             }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
@@ -387,17 +399,15 @@
     <div class="header">
         <h1>🚗 إدارة السيارات</h1>
         <div class="nav-buttons">
-            <a href="admin-dashboard.html" class="nav-btn">العودة للوحة التحكم</a>
+            <a href="admin-dashboard.html" class="nav-btn">لوحة التحكم</a>
             <button class="nav-btn" onclick="logout()">تسجيل الخروج</button>
         </div>
     </div>
 
     <div class="container">
         <div class="controls">
-            <div class="search-box">
-                <input type="text" class="search-input" id="searchInput" placeholder="البحث عن سيارة...">
-            </div>
-            <button class="add-btn" onclick="openAddModal()">إضافة سيارة جديدة</button>
+            <input type="text" class="search-input" id="searchInput" placeholder="البحث عن سيارة..." onkeyup="filterCars()">
+            <button class="add-btn" onclick="openModal()">إضافة سيارة جديدة</button>
         </div>
 
         <div class="loading" id="loading">
@@ -425,51 +435,31 @@
                         <input type="text" id="plateNumber" required>
                     </div>
                     <div class="form-group">
-                        <label for="brand">الماركة</label>
-                        <input type="text" id="brand" required>
+                        <label for="carModel">موديل السيارة</label>
+                        <input type="text" id="carModel" required>
                     </div>
                     <div class="form-group">
-                        <label for="model">الموديل</label>
-                        <input type="text" id="model" required>
+                        <label for="carYear">سنة الصنع</label>
+                        <input type="number" id="carYear" min="1990" max="2030">
                     </div>
                     <div class="form-group">
-                        <label for="year">سنة الصنع</label>
-                        <input type="number" id="year" min="1990" max="2030" required>
+                        <label for="carColor">اللون</label>
+                        <input type="text" id="carColor">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="registrationExpiry">انتهاء دفتر السيارة</label>
+                        <input type="date" id="registrationExpiry" required>
                     </div>
                 </div>
-
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="color">اللون</label>
-                        <input type="text" id="color" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="purchasePrice">سعر الشراء (د.ك)</label>
-                        <input type="number" id="purchasePrice" step="0.001" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="purchaseDate">تاريخ الشراء</label>
-                        <input type="date" id="purchaseDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="status">الحالة</label>
-                        <select id="status" required>
-                            <option value="">اختر الحالة</option>
-                            <option value="available">متاحة</option>
-                            <option value="rented">مؤجرة</option>
-                            <option value="maintenance">صيانة</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="notes">ملاحظات</label>
-                    <textarea id="notes" rows="3"></textarea>
+                
+                <div class="form-group full-width">
+                    <label for="carNotes">ملاحظات</label>
+                    <textarea id="carNotes" rows="3" placeholder="ملاحظات إضافية..."></textarea>
                 </div>
 
                 <div class="form-actions">
                     <button type="button" class="cancel-btn" onclick="closeModal()">إلغاء</button>
-                    <button type="submit" class="save-btn">حفظ</button>
+                    <button type="submit" class="save-btn">حفظ السيارة</button>
                 </div>
             </form>
         </div>
@@ -479,7 +469,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // Firebase configuration
         const firebaseConfig = {
@@ -497,8 +487,10 @@
         const db = getFirestore(app);
 
         let cars = [];
-        let editingCarId = null;
+        let drivers = [];
         let currentUser = null;
+        let editingCarId = null;
+        let allCars = [];
 
         // Check authentication
         onAuthStateChanged(auth, async (user) => {
@@ -508,26 +500,26 @@
             }
             
             try {
-                // Get user data from Firestore
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 if (!userDoc.exists()) {
-                    console.error('User document not found');
                     window.location.href = 'index.html';
                     return;
                 }
                 
                 const userData = userDoc.data();
                 if (!['admin', 'accountant'].includes(userData.role)) {
-                    console.error('User does not have required role');
                     window.location.href = 'index.html';
                     return;
                 }
                 
-                // Store user data
                 currentUser = { uid: user.uid, ...userData };
                 
-                // Load page data
-                loadCars();
+                await loadCars();
+                await loadDrivers();
+                displayCars(allCars);
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('carsGrid').style.display = 'grid';
             } catch (error) {
                 console.error('Error checking user role:', error);
                 window.location.href = 'index.html';
@@ -538,17 +530,25 @@
         async function loadCars() {
             try {
                 const carsSnapshot = await getDocs(collection(db, 'cars'));
-                cars = [];
+                allCars = [];
                 carsSnapshot.forEach(doc => {
-                    cars.push({ id: doc.id, ...doc.data() });
+                    allCars.push({ id: doc.id, ...doc.data() });
                 });
-                displayCars(cars);
-
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('carsGrid').style.display = 'grid';
             } catch (error) {
                 console.error('Error loading cars:', error);
-                document.getElementById('loading').innerHTML = '<p>حدث خطأ في تحميل البيانات</p>';
+            }
+        }
+
+        // Load drivers
+        async function loadDrivers() {
+            try {
+                const driversSnapshot = await getDocs(collection(db, 'drivers'));
+                drivers = [];
+                driversSnapshot.forEach(doc => {
+                    drivers.push({ id: doc.id, ...doc.data() });
+                });
+            } catch (error) {
+                console.error('Error loading drivers:', error);
             }
         }
 
@@ -557,166 +557,200 @@
             const grid = document.getElementById('carsGrid');
             
             if (carsToShow.length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #6b7280;">لا توجد سيارات</div>';
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🚗</div>
+                        <h3>لا توجد سيارات</h3>
+                        <p>لم يتم إضافة أي سيارات بعد</p>
+                    </div>
+                `;
                 return;
             }
 
             grid.innerHTML = carsToShow.map(car => {
-                const statusText = {
-                    'available': 'متاحة',
-                    'rented': 'مؤجرة',
-                    'maintenance': 'صيانة'
-                };
-
-                const statusClass = {
-                    'available': 'status-available',
-                    'rented': 'status-rented',
-                    'maintenance': 'status-maintenance'
-                };
+                // Calculate alerts
+                const alerts = [];
+                const today = new Date();
                 
+                // Registration expiry alert
+                if (car.registrationExpiry) {
+                    const regDate = car.registrationExpiry.seconds ? 
+                        new Date(car.registrationExpiry.seconds * 1000) : 
+                        new Date(car.registrationExpiry);
+                    const daysToExpiry = Math.ceil((regDate - today) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysToExpiry <= 30 && daysToExpiry > 0) {
+                        alerts.push({ type: 'warning', text: `انتهاء الدفتر خلال ${daysToExpiry} يوم` });
+                    } else if (daysToExpiry <= 0) {
+                        alerts.push({ type: 'urgent', text: 'انتهت صلاحية دفتر السيارة' });
+                    }
+                }
+
+                // Check if car is assigned to a driver
+                const assignedDriver = drivers.find(driver => driver.assignedCar === car.id);
+                const driverInfo = assignedDriver ? `مؤجرة لـ ${assignedDriver.name}` : 'متاحة';
+
                 return `
                     <div class="car-card">
                         <div class="car-header">
                             <div class="car-plate">${car.plateNumber}</div>
-                            <div class="car-status ${statusClass[car.status] || 'status-available'}">
-                                ${statusText[car.status] || 'غير محدد'}
-                            </div>
+                            <div class="car-model">${car.model}</div>
                         </div>
-                        
-                        <div class="car-info">
-                            <div class="info-row">
-                                <span class="info-label">الماركة:</span>
-                                <span class="info-value">${car.brand || 'غير محدد'}</span>
+                        <div class="car-body">
+                            <div class="car-info">
+                                <div class="info-row">
+                                    <span class="info-label">الحالة:</span>
+                                    <span class="info-value">${driverInfo}</span>
+                                </div>
+                                ${car.year ? `
+                                    <div class="info-row">
+                                        <span class="info-label">سنة الصنع:</span>
+                                        <span class="info-value">${car.year}</span>
+                                    </div>
+                                ` : ''}
+                                ${car.color ? `
+                                    <div class="info-row">
+                                        <span class="info-label">اللون:</span>
+                                        <span class="info-value">${car.color}</span>
+                                    </div>
+                                ` : ''}
+                                ${car.registrationExpiry ? `
+                                    <div class="info-row">
+                                        <span class="info-label">انتهاء الدفتر:</span>
+                                        <span class="info-value">${
+                                            car.registrationExpiry.seconds ? 
+                                            new Date(car.registrationExpiry.seconds * 1000).toLocaleDateString('ar-SA') :
+                                            new Date(car.registrationExpiry).toLocaleDateString('ar-SA')
+                                        }</span>
+                                    </div>
+                                ` : ''}
                             </div>
-                            <div class="info-row">
-                                <span class="info-label">الموديل:</span>
-                                <span class="info-value">${car.model || 'غير محدد'}</span>
+                            
+                            ${alerts.length > 0 ? `
+                                <div class="alerts">
+                                    ${alerts.map(alert => `
+                                        <div class="alert alert-${alert.type}">${alert.text}</div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            
+                            <div class="car-actions">
+                                <button class="action-btn edit-btn" onclick="editCar('${car.id}')">تعديل</button>
+                                <button class="action-btn delete-btn" onclick="deleteCar('${car.id}')">حذف</button>
                             </div>
-                            <div class="info-row">
-                                <span class="info-label">سنة الصنع:</span>
-                                <span class="info-value">${car.year || 'غير محدد'}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">اللون:</span>
-                                <span class="info-value">${car.color || 'غير محدد'}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">سعر الشراء:</span>
-                                <span class="info-value">${car.purchasePrice || 0} د.ك</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">تاريخ الشراء:</span>
-                                <span class="info-value">${car.purchaseDate ? new Date(car.purchaseDate.seconds * 1000).toLocaleDateString('ar') : 'غير محدد'}</span>
-                            </div>
-                        </div>
-
-                        <div class="car-actions">
-                            <button class="action-btn view-btn" onclick="viewCar('${car.id}')">عرض</button>
-                            <button class="action-btn edit-btn" onclick="editCar('${car.id}')">تعديل</button>
-                            <button class="action-btn delete-btn" onclick="deleteCar('${car.id}')">حذف</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredCars = cars.filter(car => 
+        // Filter cars
+        window.filterCars = () => {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredCars = allCars.filter(car => 
                 car.plateNumber.toLowerCase().includes(searchTerm) ||
-                (car.brand && car.brand.toLowerCase().includes(searchTerm)) ||
-                (car.model && car.model.toLowerCase().includes(searchTerm))
+                car.model.toLowerCase().includes(searchTerm)
             );
             displayCars(filteredCars);
-        });
+        };
 
-        // Modal functions
-        window.openAddModal = () => {
+        // Open modal
+        window.openModal = () => {
             editingCarId = null;
             document.getElementById('modalTitle').textContent = 'إضافة سيارة جديدة';
             document.getElementById('carForm').reset();
             document.getElementById('carModal').style.display = 'block';
         };
 
+        // Edit car
         window.editCar = (carId) => {
-            const car = cars.find(c => c.id === carId);
+            const car = allCars.find(c => c.id === carId);
             if (!car) return;
 
             editingCarId = carId;
-            document.getElementById('modalTitle').textContent = 'تعديل بيانات السيارة';
+            document.getElementById('modalTitle').textContent = 'تعديل السيارة';
             
-            // Fill form with car data
             document.getElementById('plateNumber').value = car.plateNumber || '';
-            document.getElementById('brand').value = car.brand || '';
-            document.getElementById('model').value = car.model || '';
-            document.getElementById('year').value = car.year || '';
-            document.getElementById('color').value = car.color || '';
-            document.getElementById('purchasePrice').value = car.purchasePrice || '';
-            document.getElementById('status').value = car.status || '';
-            document.getElementById('notes').value = car.notes || '';
+            document.getElementById('carModel').value = car.model || '';
+            document.getElementById('carYear').value = car.year || '';
+            document.getElementById('carColor').value = car.color || '';
+            document.getElementById('carNotes').value = car.notes || '';
             
-            // Fill purchase date
-            if (car.purchaseDate) {
-                document.getElementById('purchaseDate').value = new Date(car.purchaseDate.seconds * 1000).toISOString().split('T')[0];
+            // Handle registration expiry date
+            if (car.registrationExpiry) {
+                const regDate = car.registrationExpiry.seconds ? 
+                    new Date(car.registrationExpiry.seconds * 1000) : 
+                    new Date(car.registrationExpiry);
+                document.getElementById('registrationExpiry').value = regDate.toISOString().split('T')[0];
             }
-
+            
             document.getElementById('carModal').style.display = 'block';
         };
 
-        window.viewCar = (carId) => {
-            const car = cars.find(c => c.id === carId);
-            if (!car) return;
-            
-            alert(`تفاصيل السيارة:\nرقم اللوحة: ${car.plateNumber}\nالماركة: ${car.brand}\nالموديل: ${car.model}\nسنة الصنع: ${car.year}\nالحالة: ${car.status}`);
+        // Close modal
+        window.closeModal = () => {
+            document.getElementById('carModal').style.display = 'none';
+            editingCarId = null;
         };
 
+        // Delete car
         window.deleteCar = async (carId) => {
-            if (!confirm('هل أنت متأكد من حذف هذه السيارة؟')) return;
+            // Check if car is assigned to a driver
+            const assignedDriver = drivers.find(driver => driver.assignedCar === carId);
+            if (assignedDriver) {
+                alert(`لا يمكن حذف هذه السيارة لأنها مؤجرة للسائق: ${assignedDriver.name}`);
+                return;
+            }
+
+            if (!confirm('هل أنت متأكد من حذف هذه السيارة؟')) {
+                return;
+            }
 
             try {
                 await deleteDoc(doc(db, 'cars', carId));
-                await loadCars();
                 alert('تم حذف السيارة بنجاح');
+                await loadCars();
+                displayCars(allCars);
             } catch (error) {
                 console.error('Error deleting car:', error);
                 alert('حدث خطأ في حذف السيارة');
             }
         };
 
-        window.closeModal = () => {
-            document.getElementById('carModal').style.display = 'none';
-        };
-
         // Form submission
         document.getElementById('carForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const formData = {
+            const carData = {
                 plateNumber: document.getElementById('plateNumber').value,
-                brand: document.getElementById('brand').value,
-                model: document.getElementById('model').value,
-                year: parseInt(document.getElementById('year').value),
-                color: document.getElementById('color').value,
-                purchasePrice: parseFloat(document.getElementById('purchasePrice').value),
-                purchaseDate: new Date(document.getElementById('purchaseDate').value),
-                status: document.getElementById('status').value,
-                notes: document.getElementById('notes').value,
-                updatedAt: new Date()
+                model: document.getElementById('carModel').value,
+                year: parseInt(document.getElementById('carYear').value) || null,
+                color: document.getElementById('carColor').value,
+                registrationExpiry: document.getElementById('registrationExpiry').value ? 
+                    new Date(document.getElementById('registrationExpiry').value) : null,
+                notes: document.getElementById('carNotes').value,
+                updatedAt: new Date(),
+                updatedBy: currentUser.name || currentUser.email
             };
+
+            if (!editingCarId) {
+                carData.createdAt = new Date();
+                carData.createdBy = currentUser.name || currentUser.email;
+            }
 
             try {
                 if (editingCarId) {
-                    await updateDoc(doc(db, 'cars', editingCarId), formData);
-                    alert('تم تحديث بيانات السيارة بنجاح');
+                    await updateDoc(doc(db, 'cars', editingCarId), carData);
+                    alert('تم تحديث السيارة بنجاح');
                 } else {
-                    formData.createdAt = new Date();
-                    await addDoc(collection(db, 'cars'), formData);
+                    await addDoc(collection(db, 'cars'), carData);
                     alert('تم إضافة السيارة بنجاح');
                 }
-
+                
                 closeModal();
                 await loadCars();
+                await loadDrivers();
+                displayCars(allCars);
             } catch (error) {
                 console.error('Error saving car:', error);
                 alert('حدث خطأ في حفظ البيانات');
