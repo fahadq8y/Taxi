@@ -839,6 +839,7 @@
                 
                 await loadData();
                 calculateAndDisplayTable();
+                setupRealtimeListeners(); // Add real-time listeners
                 
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('tableWrapper').style.display = 'block';
@@ -874,6 +875,38 @@
             } catch (error) {
                 console.error('Error loading data:', error);
             }
+        }
+
+        // Setup real-time listeners for automatic updates
+        function setupRealtimeListeners() {
+            // Import onSnapshot for real-time updates
+            import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js').then(({ onSnapshot }) => {
+                // Listen to revenues collection changes
+                onSnapshot(collection(db, 'revenues'), (snapshot) => {
+                    console.log('Revenues collection changed, updating table...');
+                    loadData().then(() => {
+                        calculateAndDisplayTable();
+                    });
+                });
+
+                // Listen to expenses collection changes
+                onSnapshot(collection(db, 'expenses'), (snapshot) => {
+                    console.log('Expenses collection changed, updating table...');
+                    loadData().then(() => {
+                        calculateAndDisplayTable();
+                    });
+                });
+
+                // Listen to drivers collection changes
+                onSnapshot(collection(db, 'drivers'), (snapshot) => {
+                    console.log('Drivers collection changed, updating table...');
+                    loadData().then(() => {
+                        calculateAndDisplayTable();
+                    });
+                });
+            }).catch(error => {
+                console.error('Error setting up real-time listeners:', error);
+            });
         }
 
         // Fix daily fee field name in drivers-overview.html
