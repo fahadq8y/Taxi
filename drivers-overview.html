@@ -543,9 +543,16 @@
             <!-- تحصيل الرسوم -->
             <div id="paymentTab" class="tab-content active">
                 <form id="paymentForm">
-                    <div class="form-group">
-                        <label for="driverNameDisplay">السائق</label>
+                                <div class="form-group">
+                        <label>السائق</label>
                         <input type="text" id="driverNameDisplay" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>الأجرة اليومية</label>
+                        <div style="padding: 8px; background-color: #f3f4f6; border: 1px solid #d1d5db; border-radius: 4px; font-weight: bold; color: #374151;">
+                            <span id="dailyFeeDisplay">غير محدد</span>
+                        </div>
                     </div>
                     
                     <div class="form-row">
@@ -892,10 +899,10 @@
                 const driverResidenceFees = expenses.filter(e => e.driverId === driver.id && e.type === 'residence_fee');
                 const driverSalaryFees = expenses.filter(e => e.driverId === driver.id && e.type === 'salary_deposit_fee');
                 
-                // Get daily fee with fallback
-                const dailyFee = parseFloat(driver.dailyFee) || 25; // Default to 25 KD if not set
-                if (!driver.dailyFee) {
-                    console.warn('Driver has no daily fee set, using default 25 KD:', driver.name);
+                // Get daily fee with fallback - remove default value to use actual data
+                const dailyFee = parseFloat(driver.dailyFee) || 0;
+                if (!driver.dailyFee || dailyFee === 0) {
+                    console.warn('Driver has no daily fee set:', driver.name);
                 }
 
                 // Calculate payment data
@@ -1092,8 +1099,18 @@
             selectedDriverId = driverId;
             selectedDriverName = driverName;
             
+            // Find driver data to get daily fee
+            const driver = drivers.find(d => d.id === driverId);
+            const dailyFee = driver ? (parseFloat(driver.dailyFee) || 0) : 0;
+            
             document.getElementById('driverNameDisplay').value = driverName;
             document.getElementById('modalTitle').textContent = `النظام المحاسبي - ${driverName}`;
+            
+            // Display daily fee in the modal
+            const dailyFeeDisplay = document.getElementById('dailyFeeDisplay');
+            if (dailyFeeDisplay) {
+                dailyFeeDisplay.textContent = dailyFee > 0 ? `${dailyFee} د.ك` : 'غير محدد';
+            }
             
             // Set today's date as default
             const today = new Date().toISOString().split('T')[0];
