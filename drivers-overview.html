@@ -876,7 +876,7 @@
             }
         }
 
-        // Calculate and display table
+        // Fix daily fee field name in drivers-overview.html
         function calculateAndDisplayTable() {
             const tableBody = document.getElementById('driversTableBody');
             tableBody.innerHTML = '';
@@ -899,46 +899,63 @@
                 const driverResidenceFees = expenses.filter(e => e.driverId === driver.id && e.type === 'residence_fee');
                 const driverSalaryFees = expenses.filter(e => e.driverId === driver.id && e.type === 'salary_deposit_fee');
                 
-                // Get daily fee with fallback - remove default value to use actual data
-                const dailyFee = parseFloat(driver.dailyFee) || 0;
-                if (!driver.dailyFee || dailyFee === 0) {
+                // Fix: Use dailyRent instead of dailyFee to match drivers.html
+                const dailyFee = parseFloat(driver.dailyRent) || parseFloat(driver.dailyFee) || 0;
+                if (!driver.dailyRent && !driver.dailyFee) {
                     console.warn('Driver has no daily fee set:', driver.name);
                 }
 
-                // Calculate payment data
+                // NEW LOGIC: Calculate debt from contract start date
+                const contractStartDate = driver.contractStartDate ? new Date(driver.contractStartDate) : new Date();
+                const today = new Date();
+                
+                // 1. Calculate total days from contract start to today
+                const totalDaysFromStart = Math.floor((today - contractStartDate) / (1000 * 60 * 60 * 24));
+                
+                // 2. Calculate total debt required (total days × daily fee)
+                const totalDebtRequired = totalDaysFromStart * dailyFee;
+                
+                // 3. Calculate total paid amount
+                let totalPaidAmount = 0;
                 let lastPaymentDate = null;
-                let lastCoveredDate = null;
-                let remainingAmount = 0;
-                let totalCoveredDays = 0;
-
+                
                 if (driverRevenues.length > 0) {
                     // Sort revenues by date (newest first)
-                    const sortedRevenues = driverRevenues.sort((a, b) => new Date(b.date) - new Date(a.date));
-                    lastPaymentDate = sortedRevenues[0].date;
+                    const sortedRevenues = driverRevenues.sort((a, b) => {
+                        const dateA = a.date?.seconds ? new Date(a.date.seconds * 1000) : new Date(a.date);
+                        const dateB = b.date?.seconds ? new Date(b.date.seconds * 1000) : new Date(b.date);
+                        return dateB - dateA;
+                    });
+                    
+                    const lastRevenue = sortedRevenues[0];
+                    lastPaymentDate = lastRevenue.date?.seconds ? 
+                        new Date(lastRevenue.date.seconds * 1000) : 
+                        new Date(lastRevenue.date);
 
-                    // Calculate total paid amount and covered days
-                    let totalPaidAmount = 0;
+                    // Calculate total paid amount
                     sortedRevenues.forEach(revenue => {
                         totalPaidAmount += parseFloat(revenue.amount) || 0;
                     });
-
-                    if (dailyFee > 0) {
-                        totalCoveredDays = Math.floor(totalPaidAmount / dailyFee);
-                        remainingAmount = totalPaidAmount % dailyFee;
-                    }
-
-                    // Calculate last covered date from contract start
-                    const contractStart = new Date(driver.contractStartDate || lastPaymentDate);
-                    lastCoveredDate = new Date(contractStart.getTime() + (totalCoveredDays * 24 * 60 * 60 * 1000));
-                } else {
-                    // No payments yet
-                    lastPaymentDate = driver.contractStartDate || new Date().toISOString().split('T')[0];
-                    lastCoveredDate = new Date(driver.contractStartDate || new Date());
                 }
-
-                // Calculate overdue days
-                const today = new Date();
-                const overdueDays = Math.max(0, Math.floor((today - lastCoveredDate) / (1000 * 60 * 60 * 24)));
+                
+                // 4. Calculate remaining debt (total required - total paid)
+                const remainingDebt = Math.max(0, totalDebtRequired - totalPaidAmount);
+                
+                // 5. Calculate how many days are covered by payments
+                const paidDays = dailyFee > 0 ? Math.floor(totalPaidAmount / dailyFee) : 0;
+                
+                // 6. Calculate last covered date (contract start + paid days)
+                let lastCoveredDate;
+                if (paidDays > 0) {
+                    lastCoveredDate = new Date(contractStartDate.getTime() + (paidDays * 24 * 60 * 60 * 1000));
+                } else {
+                    // If no payments made, covered until contract start date
+                    lastCoveredDate = new Date(contractStartDate);
+                }
+                
+                // 7. Calculate overdue days (today - last covered date)
+                const overdueDays = Math.max(0, Math.floor((today - lastCoveredDate) / (1000 * 60 * 60 * 24)));               
+                // 8. Calculate overdue amount (overdue days × daily fee)
                 const overdueAmount = overdueDays * dailyFee;
 
                 // Calculate violations
@@ -968,8 +985,8 @@
                 // Calculate old debts
                 const oldDebts = parseFloat(driver.oldDebts) || 0;
 
-                // Calculate total debt
-                const totalDebt = overdueAmount + violationsAmount + residenceFeesAmount + salaryFeesAmount + oldDebts;
+                // Calculate total debt - fix to use remaining debt
+                const totalDebt = remainingDebt + violationsAmount + residenceFeesAmount + salaryFeesAmount + oldDebts;
 
                 // Determine status
                 let status = 'normal';
@@ -991,13 +1008,13 @@
                     lastPaymentDate: lastPaymentDate,
                     coveredUntilDate: lastCoveredDate,
                     overdueDays: overdueDays,
-                    overdueAmount: overdueAmount,
-                    remainingAmount: remainingAmount,
+                    overdueAmount: remainingDebt, // Use remaining debt instead of overdue amount
+                    remainingAmount: totalPaidAmount % dailyFee, // Remaining fraction of daily fee
                     violationsAmount: violationsAmount,
                     residenceFeesAmount: residenceFeesAmount,
                     salaryFeesAmount: salaryFeesAmount,
                     oldDebts: oldDebts,
-                    totalDebt: totalDebt,
+                    totalDebt: remainingDebt + violationsAmount + residenceFeesAmount + salaryFeesAmount + oldDebts,
                     status: status,
                     dailyFee: dailyFee
                 };
@@ -1099,9 +1116,9 @@
             selectedDriverId = driverId;
             selectedDriverName = driverName;
             
-            // Find driver data to get daily fee
+            // Find driver data to get daily fee - fix field name
             const driver = drivers.find(d => d.id === driverId);
-            const dailyFee = driver ? (parseFloat(driver.dailyFee) || 0) : 0;
+            const dailyFee = driver ? (parseFloat(driver.dailyRent) || parseFloat(driver.dailyFee) || 0) : 0;
             
             document.getElementById('driverNameDisplay').value = driverName;
             document.getElementById('modalTitle').textContent = `النظام المحاسبي - ${driverName}`;
