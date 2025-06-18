@@ -880,6 +880,9 @@
             let totalOverdue = 0;
             let totalDebts = 0;
 
+            console.log('Total drivers:', drivers.length);
+            console.log('Total revenues:', revenues.length);
+
             drivers.forEach(driver => {
                 // Validate driver data
                 if (!driver.name || !driver.id) {
@@ -887,7 +890,14 @@
                     return;
                 }
 
-                const driverRevenues = revenues.filter(r => r.driverId === driver.id && r.type === 'daily_fee');
+                console.log(`Processing driver: ${driver.name} (ID: ${driver.id})`);
+                
+                const driverRevenues = revenues.filter(r => {
+                    console.log(`Checking revenue: driverId=${r.driverId}, type=${r.type}, amount=${r.amount}`);
+                    return r.driverId === driver.id && r.type === 'daily_fee';
+                });
+                
+                console.log(`Found ${driverRevenues.length} revenues for driver ${driver.name}`);
                 const driverViolations = expenses.filter(e => e.driverId === driver.id && e.type === 'violation');
                 const driverResidenceFees = expenses.filter(e => e.driverId === driver.id && e.type === 'residence_fee');
                 const driverSalaryFees = expenses.filter(e => e.driverId === driver.id && e.type === 'salary_deposit_fee');
@@ -1089,6 +1099,7 @@
 
         // Open driver modal
         function openDriverModal(driverId, driverName) {
+            console.log('Opening modal for driver:', driverName, 'ID:', driverId);
             selectedDriverId = driverId;
             selectedDriverName = driverName;
             
@@ -1198,9 +1209,22 @@
                 const date = document.getElementById('paymentDate').value;
                 const notes = document.getElementById('paymentNotes').value;
 
+                console.log('Saving payment:', {
+                    amount,
+                    method,
+                    date,
+                    driverId: selectedDriverId,
+                    driverName: selectedDriverName
+                });
+
                 // Validate required fields
                 if (!amount || !method || !date) {
                     showAlert('يرجى ملء جميع الحقول المطلوبة', 'error');
+                    return;
+                }
+
+                if (!selectedDriverId) {
+                    showAlert('خطأ: لم يتم تحديد السائق', 'error');
                     return;
                 }
 
@@ -1216,6 +1240,7 @@
                     createdBy: currentUser.uid
                 });
 
+                console.log('Payment saved successfully');
                 showAlert('تم حفظ الدفعة بنجاح');
                 await loadData();
                 calculateAndDisplayTable();
