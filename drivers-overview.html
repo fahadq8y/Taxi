@@ -879,8 +879,7 @@
 
         // Setup real-time listeners for automatic updates
         function setupRealtimeListeners() {
-            // Import onSnapshot for real-time updates
-            import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js').then(({ onSnapshot }) => {
+            try {
                 // Listen to revenues collection changes
                 onSnapshot(collection(db, 'revenues'), (snapshot) => {
                     console.log('Revenues collection changed, updating table...');
@@ -904,9 +903,11 @@
                         calculateAndDisplayTable();
                     });
                 });
-            }).catch(error => {
+                
+                console.log('Real-time listeners setup successfully');
+            } catch (error) {
                 console.error('Error setting up real-time listeners:', error);
-            });
+            }
         }
 
         // Fix daily fee field name in drivers-overview.html
