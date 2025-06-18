@@ -839,45 +839,67 @@
             let totalDebts = 0;
 
             drivers.forEach(driver => {
-                const driverRevenues = revenues.filter(r => r.driverId === driver.id);
+                // Validate driver data
+                if (!driver.name || !driver.id) {
+                    console.warn('Invalid driver data:', driver);
+                    return;
+                }
+
+                const driverRevenues = revenues.filter(r => r.driverId === driver.id && r.type === 'daily_fee');
                 const driverViolations = expenses.filter(e => e.driverId === driver.id && e.type === 'violation');
                 
-                // Calculate payment data
-                const lastPayment = driverRevenues.length > 0 ? driverRevenues[0] : null;
-                const lastPaymentDate = lastPayment ? lastPayment.date : driver.contractStartDate || new Date().toISOString().split('T')[0];
-                
-                // Calculate covered days and remaining amount
-                let totalPaidAmount = 0;
-                let lastCoveredDate = new Date(driver.contractStartDate || new Date());
-                let remainingAmount = 0;
+                // Get daily fee with fallback
+                const dailyFee = parseFloat(driver.dailyFee) || 0;
+                if (dailyFee === 0) {
+                    console.warn('Driver has no daily fee:', driver.name);
+                }
 
-                driverRevenues.forEach(revenue => {
-                    if (revenue.type === 'daily_fee') {
-                        totalPaidAmount += parseFloat(revenue.amount || 0);
-                        const days = Math.floor(parseFloat(revenue.amount || 0) / parseFloat(driver.dailyFee || 1));
-                        const paymentDate = new Date(revenue.date);
-                        if (paymentDate > lastCoveredDate) {
-                            lastCoveredDate = new Date(paymentDate.getTime() + (days * 24 * 60 * 60 * 1000));
-                            remainingAmount = parseFloat(revenue.amount || 0) % parseFloat(driver.dailyFee || 1);
-                        }
+                // Calculate payment data
+                let lastPaymentDate = null;
+                let lastCoveredDate = null;
+                let remainingAmount = 0;
+                let totalCoveredDays = 0;
+
+                if (driverRevenues.length > 0) {
+                    // Sort revenues by date (newest first)
+                    const sortedRevenues = driverRevenues.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    lastPaymentDate = sortedRevenues[0].date;
+
+                    // Calculate total paid amount and covered days
+                    let totalPaidAmount = 0;
+                    sortedRevenues.forEach(revenue => {
+                        totalPaidAmount += parseFloat(revenue.amount) || 0;
+                    });
+
+                    if (dailyFee > 0) {
+                        totalCoveredDays = Math.floor(totalPaidAmount / dailyFee);
+                        remainingAmount = totalPaidAmount % dailyFee;
                     }
-                });
+
+                    // Calculate last covered date from contract start
+                    const contractStart = new Date(driver.contractStartDate || lastPaymentDate);
+                    lastCoveredDate = new Date(contractStart.getTime() + (totalCoveredDays * 24 * 60 * 60 * 1000));
+                } else {
+                    // No payments yet
+                    lastPaymentDate = driver.contractStartDate || new Date().toISOString().split('T')[0];
+                    lastCoveredDate = new Date(driver.contractStartDate || new Date());
+                }
 
                 // Calculate overdue days
                 const today = new Date();
                 const overdueDays = Math.max(0, Math.floor((today - lastCoveredDate) / (1000 * 60 * 60 * 24)));
-                const overdueAmount = overdueDays * parseFloat(driver.dailyFee || 0);
+                const overdueAmount = overdueDays * dailyFee;
 
                 // Calculate violations
                 let violationsAmount = 0;
                 driverViolations.forEach(violation => {
                     if (!violation.collected) {
-                        violationsAmount += parseFloat(violation.amount || 0);
+                        violationsAmount += parseFloat(violation.amount) || 0;
                     }
                 });
 
                 // Calculate old debts
-                const oldDebts = parseFloat(driver.oldDebts || 0);
+                const oldDebts = parseFloat(driver.oldDebts) || 0;
 
                 // Calculate total debt
                 const totalDebt = overdueAmount + violationsAmount + oldDebts;
@@ -898,9 +920,9 @@
 
                 const rowData = {
                     id: driver.id,
-                    name: driver.name,
+                    name: driver.name || 'غير محدد',
                     lastPaymentDate: lastPaymentDate,
-                    coveredUntilDate: formatDate(lastCoveredDate),
+                    coveredUntilDate: lastCoveredDate,
                     overdueDays: overdueDays,
                     overdueAmount: overdueAmount,
                     remainingAmount: remainingAmount,
@@ -908,7 +930,7 @@
                     oldDebts: oldDebts,
                     totalDebt: totalDebt,
                     status: status,
-                    dailyFee: parseFloat(driver.dailyFee || 0)
+                    dailyFee: dailyFee
                 };
 
                 allTableData.push(rowData);
@@ -918,7 +940,7 @@
             document.getElementById('normalDrivers').textContent = totalNormal;
             document.getElementById('warningDrivers').textContent = totalWarning;
             document.getElementById('overdueDrivers').textContent = totalOverdue;
-            document.getElementById('totalDebts').textContent = totalDebts.toFixed(3) + ' د.ك';
+            document.getElementById('totalDebts').textContent = (isNaN(totalDebts) ? 0 : totalDebts).toFixed(3) + ' د.ك';
 
             // Display table
             displayTable(allTableData);
@@ -933,31 +955,55 @@
                 const tr = document.createElement('tr');
                 tr.className = `status-${row.status}`;
                 
+                // Safe formatting for all values
+                const driverName = row.name || 'غير محدد';
+                const lastPaymentDate = formatDate(row.lastPaymentDate);
+                const coveredUntilDate = formatDate(row.coveredUntilDate);
+                const overdueDays = isNaN(row.overdueDays) ? 0 : row.overdueDays;
+                const overdueAmount = isNaN(row.overdueAmount) ? 0 : row.overdueAmount;
+                const remainingAmount = isNaN(row.remainingAmount) ? 0 : row.remainingAmount;
+                const violationsAmount = isNaN(row.violationsAmount) ? 0 : row.violationsAmount;
+                const oldDebts = isNaN(row.oldDebts) ? 0 : row.oldDebts;
+                const totalDebt = isNaN(row.totalDebt) ? 0 : row.totalDebt;
+                
                 tr.innerHTML = `
-                    <td><span class="driver-name" onclick="openDriverModal('${row.id}', '${row.name}')">${row.name}</span></td>
-                    <td>${formatDate(row.lastPaymentDate)}</td>
-                    <td>${row.coveredUntilDate}</td>
-                    <td>${row.overdueDays}</td>
-                    <td class="amount ${row.overdueAmount > 0 ? 'negative' : ''}">${row.overdueAmount.toFixed(3)} د.ك</td>
-                    <td class="amount ${row.remainingAmount > 0 ? 'positive' : ''}">${row.remainingAmount.toFixed(3)} د.ك</td>
-                    <td class="amount ${row.violationsAmount > 0 ? 'negative' : ''}">${row.violationsAmount.toFixed(3)} د.ك</td>
-                    <td class="amount ${row.oldDebts > 0 ? 'negative' : ''}">${row.oldDebts.toFixed(3)} د.ك</td>
-                    <td class="amount ${row.totalDebt > 0 ? 'negative' : 'positive'}">${row.totalDebt.toFixed(3)} د.ك</td>
+                    <td><span class="driver-name" onclick="openDriverModal('${row.id}', '${driverName}')">${driverName}</span></td>
+                    <td>${lastPaymentDate}</td>
+                    <td>${coveredUntilDate}</td>
+                    <td>${overdueDays}</td>
+                    <td class="amount ${overdueAmount > 0 ? 'negative' : ''}">${overdueAmount.toFixed(3)} د.ك</td>
+                    <td class="amount ${remainingAmount > 0 ? 'positive' : ''}">${remainingAmount.toFixed(3)} د.ك</td>
+                    <td class="amount ${violationsAmount > 0 ? 'negative' : ''}">${violationsAmount.toFixed(3)} د.ك</td>
+                    <td class="amount ${oldDebts > 0 ? 'negative' : ''}">${oldDebts.toFixed(3)} د.ك</td>
+                    <td class="amount ${totalDebt > 0 ? 'negative' : 'positive'}">${totalDebt.toFixed(3)} د.ك</td>
                 `;
                 
                 tableBody.appendChild(tr);
             });
         }
 
-        // Format date (Gregorian)
-        function formatDate(dateString) {
-            if (!dateString) return '-';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('ar-SA', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-            });
+        // Format date (Gregorian) - Fixed version
+        function formatDate(dateInput) {
+            if (!dateInput) return '-';
+            
+            let date;
+            if (dateInput instanceof Date) {
+                date = dateInput;
+            } else {
+                date = new Date(dateInput);
+            }
+            
+            // Check if date is valid
+            if (isNaN(date.getTime())) {
+                return '-';
+            }
+            
+            // Format as DD/MM/YYYY
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            
+            return `${day}/${month}/${year}`;
         }
 
         // Filter table
@@ -966,7 +1012,8 @@
             const statusFilter = document.getElementById('statusFilter').value;
 
             let filteredData = allTableData.filter(row => {
-                const matchesSearch = row.name.toLowerCase().includes(searchTerm);
+                const driverName = (row.name || '').toLowerCase();
+                const matchesSearch = driverName.includes(searchTerm);
                 const matchesStatus = !statusFilter || row.status === statusFilter;
                 return matchesSearch && matchesStatus;
             });
