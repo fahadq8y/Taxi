@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الإيرادات - نظام إدارة التاكسي</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            direction: rtl;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #10b981;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .controls {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-input, .date-input, .select-input {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            direction: rtl;
+        }
+
+        .search-input:focus, .date-input:focus, .select-input:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .revenues-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .revenue-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .revenue-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .revenue-header {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .revenue-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .revenue-icon {
+            font-size: 2rem;
+        }
+
+        .revenue-body {
+            padding: 1.5rem;
+        }
+
+        .revenue-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .revenue-description {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .view-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: #2563eb;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            direction: rtl;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            direction: rtl;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .save-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .cancel-btn {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #10b981;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-filters {
+                justify-content: center;
+            }
+
+            .revenue-info {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💰 إدارة الإيرادات</h1>
+        <div class="nav-buttons">
+            <a href="admin-dashboard.html" class="nav-btn">لوحة التحكم</a>
+            <button class="nav-btn" onclick="logout()">تسجيل الخروج</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- إحصائيات سريعة -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="todayRevenue">0.000</div>
+                <div class="stat-label">إيرادات اليوم (د.ك)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="weeklyRevenue">0.000</div>
+                <div class="stat-label">إيرادات الأسبوع (د.ك)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="monthlyRevenue">0.000</div>
+                <div class="stat-label">إيرادات الشهر (د.ك)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalRevenues">0</div>
+                <div class="stat-label">إجمالي الإيرادات</div>
+            </div>
+        </div>
+
+        <!-- أدوات التحكم -->
+        <div class="controls">
+            <div class="search-filters">
+                <input type="text" class="search-input" id="searchInput" placeholder="البحث عن سائق..." onkeyup="filterRevenues()">
+                <select class="select-input" id="sourceFilter" onchange="filterRevenues()">
+                    <option value="">جميع طرق الدفع</option>
+                    <option value="cash">كاش</option>
+                    <option value="link">لينك</option>
+                    <option value="bank">بنك</option>
+                    <option value="driver_payment">دفعة سائق</option>
+                </select>
+                <input type="date" class="date-input" id="dateFilter" onchange="filterRevenues()">
+            </div>
+            <button class="add-btn" onclick="openModal()">تسجيل إيراد جديد</button>
+        </div>
+
+        <!-- حالة التحميل -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>جاري تحميل الإيرادات...</p>
+        </div>
+
+        <!-- قائمة الإيرادات -->
+        <div class="revenues-grid" id="revenuesGrid" style="display: none;">
+            <!-- سيتم ملء الإيرادات هنا -->
+        </div>
+    </div>
+
+    <!-- Modal إضافة إيراد -->
+    <div id="revenueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>تسجيل إيراد جديد</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <form id="revenueForm">
+                <div class="form-group">
+                    <label for="revenueAmount">المبلغ (د.ك)</label>
+                    <input type="number" id="revenueAmount" step="0.001" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="revenueSource">طريقة الدفع</label>
+                    <select id="revenueSource" required>
+                        <option value="">اختر طريقة الدفع</option>
+                        <option value="cash">كاش</option>
+                        <option value="link">لينك</option>
+                        <option value="bank">بنك</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="revenueDriver">السائق (اختياري)</label>
+                    <select id="revenueDriver">
+                        <option value="">اختر السائق</option>
+                        <!-- سيتم ملء السائقين هنا -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="revenueDate">التاريخ</label>
+                    <input type="date" id="revenueDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="revenueDescription">الوصف</label>
+                    <textarea id="revenueDescription" rows="3" placeholder="وصف الإيراد..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="revenueNotes">ملاحظات (اختياري)</label>
+                    <textarea id="revenueNotes" rows="2" placeholder="ملاحظات إضافية..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="closeModal()">إلغاء</button>
+                    <button type="submit" class="save-btn">حفظ الإيراد</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, query, where, orderBy, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB8Q9CYIWXPmTdiz3vPiLlPYFxiJu0vE_g",
+            authDomain: "taxi-management-system-d8210.firebaseapp.com",
+            projectId: "taxi-management-system-d8210",
+            storageBucket: "taxi-management-system-d8210.firebasestorage.app",
+            messagingSenderId: "720874424166",
+            appId: "1:720874424166:web:25f9c6d126e792b2e5eaa7",
+            measurementId: "G-GY8820W410"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let revenues = [];
+        let drivers = [];
+        let currentUser = null;
+        let allRevenues = [];
+
+        // Check authentication
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            try {
+                // Get user data from Firestore
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (!userDoc.exists()) {
+                    console.error('User document not found');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                const userData = userDoc.data();
+                if (!['admin', 'accountant'].includes(userData.role)) {
+                    console.error('User does not have required role');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                // Store user data
+                currentUser = { uid: user.uid, ...userData };
+                
+                // Load page data
+                await loadRevenues();
+                await loadDrivers();
+                populateDriversDropdown();
+                updateStats();
+                displayRevenues(allRevenues);
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('revenuesGrid').style.display = 'block';
+            } catch (error) {
+                console.error('Error checking user role:', error);
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Load revenues
+        async function loadRevenues() {
+            try {
+                const revenuesSnapshot = await getDocs(query(collection(db, 'revenues'), orderBy('createdAt', 'desc')));
+                allRevenues = [];
+                revenuesSnapshot.forEach(doc => {
+                    allRevenues.push({ id: doc.id, ...doc.data() });
+                });
+            } catch (error) {
+                console.error('Error loading revenues:', error);
+            }
+        }
+
+        // Load drivers
+        async function loadDrivers() {
+            try {
+                const driversSnapshot = await getDocs(collection(db, 'drivers'));
+                drivers = [];
+                driversSnapshot.forEach(doc => {
+                    drivers.push({ id: doc.id, ...doc.data() });
+                });
+            } catch (error) {
+                console.error('Error loading drivers:', error);
+            }
+        }
+
+        // Populate drivers dropdown
+        function populateDriversDropdown() {
+            const driverSelect = document.getElementById('revenueDriver');
+            driverSelect.innerHTML = '<option value="">اختر السائق</option>';
+            
+            drivers.forEach(driver => {
+                const option = document.createElement('option');
+                option.value = driver.id;
+                option.textContent = driver.name;
+                driverSelect.appendChild(option);
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            const today = new Date();
+            const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const weekStart = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+
+            const todayRevenue = allRevenues
+                .filter(revenue => {
+                    const revenueDate = revenue.date?.seconds ? 
+                        new Date(revenue.date.seconds * 1000) : 
+                        new Date(revenue.createdAt?.seconds * 1000);
+                    return revenueDate >= todayStart;
+                })
+                .reduce((sum, revenue) => sum + (revenue.amount || 0), 0);
+
+            const weeklyRevenue = allRevenues
+                .filter(revenue => {
+                    const revenueDate = revenue.date?.seconds ? 
+                        new Date(revenue.date.seconds * 1000) : 
+                        new Date(revenue.createdAt?.seconds * 1000);
+                    return revenueDate >= weekStart;
+                })
+                .reduce((sum, revenue) => sum + (revenue.amount || 0), 0);
+
+            const monthlyRevenue = allRevenues
+                .filter(revenue => {
+                    const revenueDate = revenue.date?.seconds ? 
+                        new Date(revenue.date.seconds * 1000) : 
+                        new Date(revenue.createdAt?.seconds * 1000);
+                    return revenueDate >= monthStart;
+                })
+                .reduce((sum, revenue) => sum + (revenue.amount || 0), 0);
+
+            document.getElementById('todayRevenue').textContent = todayRevenue.toFixed(3);
+            document.getElementById('weeklyRevenue').textContent = weeklyRevenue.toFixed(3);
+            document.getElementById('monthlyRevenue').textContent = monthlyRevenue.toFixed(3);
+            document.getElementById('totalRevenues').textContent = allRevenues.length;
+        }
+
+        // Display revenues
+        function displayRevenues(revenuesToShow) {
+            const grid = document.getElementById('revenuesGrid');
+            
+            if (revenuesToShow.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💰</div>
+                        <h3>لا توجد إيرادات</h3>
+                        <p>لم يتم تسجيل أي إيرادات بعد</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = revenuesToShow.map(revenue => {
+                // Fix date handling - check if it's a string date first
+                let revenueDate;
+                if (revenue.date) {
+                    if (typeof revenue.date === 'string') {
+                        // It's a string date (YYYY-MM-DD format)
+                        revenueDate = new Date(revenue.date);
+                    } else if (revenue.date.seconds) {
+                        // It's a Firestore timestamp
+                        revenueDate = new Date(revenue.date.seconds * 1000);
+                    } else {
+                        revenueDate = new Date(revenue.date);
+                    }
+                } else if (revenue.createdAt) {
+                    if (typeof revenue.createdAt === 'string') {
+                        revenueDate = new Date(revenue.createdAt);
+                    } else if (revenue.createdAt.seconds) {
+                        revenueDate = new Date(revenue.createdAt.seconds * 1000);
+                    } else {
+                        revenueDate = new Date(revenue.createdAt);
+                    }
+                } else {
+                    revenueDate = new Date();
+                }
+                
+                // Get driver name - use saved driverName or find by driverId
+                let driverName = 'غير محدد';
+                if (revenue.driverName) {
+                    driverName = revenue.driverName;
+                } else if (revenue.driverId) {
+                    const driver = drivers.find(d => d.id === revenue.driverId);
+                    driverName = driver ? driver.name : 'سائق محذوف';
+                }
+
+                // Fix payment method display
+                const sourceText = {
+                    'cash': 'كاش',
+                    'link': 'لينك', 
+                    'bank': 'بنك',
+                    'driver_payment': 'دفعة سائق'
+                }[revenue.source || revenue.paymentMethod] || revenue.paymentMethod || revenue.source || 'غير محدد';
+
+                // Format date properly - use Gregorian calendar
+                const formattedDate = isNaN(revenueDate.getTime()) ? 'تاريخ غير صحيح' : revenueDate.toLocaleDateString('en-GB');
+
+                return `
+                    <div class="revenue-card">
+                        <div class="revenue-header">
+                            <div class="revenue-amount">${revenue.amount?.toFixed(3) || '0.000'} د.ك</div>
+                            <div class="revenue-icon">💰</div>
+                        </div>
+                        <div class="revenue-body">
+                            <div class="revenue-info">
+                                <div class="info-item">
+                                    <div class="info-label">السائق</div>
+                                    <div class="info-value">${driverName}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">طريقة الدفع</div>
+                                    <div class="info-value">${sourceText}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">التاريخ</div>
+                                    <div class="info-value">${formattedDate}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">المسجل بواسطة</div>
+                                    <div class="info-value">${revenue.createdBy || 'غير محدد'}</div>
+                                </div>
+                            </div>
+                            ${revenue.description || revenue.notes ? `
+                                <div class="revenue-description">
+                                    ${revenue.description || revenue.notes}
+                                </div>
+                            ` : ''}
+                            <div class="actions">
+                                <button class="action-btn view-btn" onclick="viewRevenue('${revenue.id}')">عرض</button>
+                                ${currentUser.role === 'admin' ? `
+                                    <button class="action-btn delete-btn" onclick="deleteRevenue('${revenue.id}')">حذف</button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Filter revenues
+        window.filterRevenues = () => {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const sourceFilter = document.getElementById('sourceFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+
+            let filteredRevenues = allRevenues;
+
+            if (searchTerm) {
+                filteredRevenues = filteredRevenues.filter(revenue => {
+                    const driverName = revenue.driverName || 
+                        (revenue.driverId ? (drivers.find(d => d.id === revenue.driverId)?.name || '') : '');
+                    return driverName.toLowerCase().includes(searchTerm) ||
+                           (revenue.description && revenue.description.toLowerCase().includes(searchTerm));
+                });
+            }
+
+            if (sourceFilter) {
+                filteredRevenues = filteredRevenues.filter(revenue => revenue.source === sourceFilter);
+            }
+
+            if (dateFilter) {
+                const filterDate = new Date(dateFilter);
+                filteredRevenues = filteredRevenues.filter(revenue => {
+                    const revenueDate = revenue.date?.seconds ? 
+                        new Date(revenue.date.seconds * 1000) : 
+                        new Date(revenue.createdAt?.seconds * 1000);
+                    return revenueDate.toDateString() === filterDate.toDateString();
+                });
+            }
+
+            displayRevenues(filteredRevenues);
+        };
+
+        // Open modal
+        window.openModal = () => {
+            document.getElementById('revenueDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('revenueModal').style.display = 'block';
+        };
+
+        // Close modal
+        window.closeModal = () => {
+            document.getElementById('revenueModal').style.display = 'none';
+            document.getElementById('revenueForm').reset();
+        };
+
+        // View revenue details
+        window.viewRevenue = (revenueId) => {
+            const revenue = allRevenues.find(r => r.id === revenueId);
+            if (!revenue) return;
+            
+            const revenueDate = revenue.date?.seconds ? 
+                new Date(revenue.date.seconds * 1000) : 
+                new Date(revenue.createdAt?.seconds * 1000);
+            
+            let driverName = 'غير محدد';
+            if (revenue.driverName) {
+                driverName = revenue.driverName;
+            } else if (revenue.driverId) {
+                const driver = drivers.find(d => d.id === revenue.driverId);
+                driverName = driver ? driver.name : 'سائق محذوف';
+            }
+
+            const sourceText = {
+                'cash': 'كاش',
+                'link': 'لينك',
+                'bank': 'بنك',
+                'driver_payment': 'دفعة سائق'
+            }[revenue.source] || revenue.source || 'غير محدد';
+            
+            const details = `
+                المبلغ: ${revenue.amount?.toFixed(3) || '0.000'} د.ك
+                السائق: ${driverName}
+                طريقة الدفع: ${sourceText}
+                التاريخ: ${revenueDate.toLocaleDateString('ar')}
+                الوصف: ${revenue.description || 'غير محدد'}
+                الملاحظات: ${revenue.notes || 'لا توجد'}
+                المسجل بواسطة: ${revenue.createdBy || 'غير محدد'}
+                تاريخ التسجيل: ${new Date(revenue.createdAt?.seconds * 1000).toLocaleString('ar')}
+            `;
+            
+            alert(details);
+        };
+
+        // Delete revenue (admin only)
+        window.deleteRevenue = async (revenueId) => {
+            if (currentUser.role !== 'admin') {
+                alert('ليس لديك صلاحية لحذف الإيرادات');
+                return;
+            }
+
+            if (!confirm('هل أنت متأكد من حذف هذا الإيراد؟')) {
+                return;
+            }
+
+            try {
+                await deleteDoc(doc(db, 'revenues', revenueId));
+                alert('تم حذف الإيراد بنجاح');
+                await loadRevenues();
+                updateStats();
+                displayRevenues(allRevenues);
+            } catch (error) {
+                console.error('Error deleting revenue:', error);
+                alert('حدث خطأ في حذف الإيراد');
+            }
+        };
+
+        // Form submission
+        document.getElementById('revenueForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const amount = parseFloat(document.getElementById('revenueAmount').value);
+            const source = document.getElementById('revenueSource').value;
+            const driverId = document.getElementById('revenueDriver').value;
+            const revenueDate = new Date(document.getElementById('revenueDate').value);
+            const description = document.getElementById('revenueDescription').value;
+            const notes = document.getElementById('revenueNotes').value;
+
+            const driverName = driverId ? drivers.find(d => d.id === driverId)?.name : null;
+
+            const revenueData = {
+                amount: amount,
+                source: source,
+                driverId: driverId || null,
+                driverName: driverName || null,
+                date: revenueDate,
+                description: description,
+                notes: notes,
+                createdBy: currentUser.name || currentUser.email,
+                createdAt: new Date(),
+                createdByUid: currentUser.uid
+            };
+
+            try {
+                await addDoc(collection(db, 'revenues'), revenueData);
+                alert('تم تسجيل الإيراد بنجاح');
+                closeModal();
+                await loadRevenues();
+                updateStats();
+                displayRevenues(allRevenues);
+            } catch (error) {
+                console.error('Error saving revenue:', error);
+                alert('حدث خطأ في حفظ البيانات');
+            }
+        });
+
+        // Logout function
+        window.logout = async () => {
+            try {
+                await signOut(auth);
+                localStorage.clear();
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        };
+    </script>
+</body>
+</html>
+
