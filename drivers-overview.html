@@ -198,12 +198,14 @@
 
         .modal-content {
             background-color: white;
-            margin: 5% auto;
+            margin: 3% auto;
             padding: 2rem;
             border-radius: 15px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             direction: rtl;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .modal-header {
@@ -226,6 +228,34 @@
             color: #000;
         }
 
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+            background: #f0f9ff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         .form-group {
             margin-bottom: 1rem;
         }
@@ -238,7 +268,8 @@
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 0.75rem;
             border: 2px solid #e5e7eb;
@@ -248,9 +279,16 @@
         }
 
         .form-group input:focus,
-        .form-group textarea:focus {
+        .form-group textarea:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #2563eb;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
         }
 
         .form-actions {
@@ -280,6 +318,36 @@
             font-weight: 600;
         }
 
+        .danger-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .success-btn {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .warning-btn {
+            background: #d97706;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
         .loading {
             text-align: center;
             padding: 2rem;
@@ -298,6 +366,30 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fcd34d;
         }
 
         @media (max-width: 768px) {
@@ -331,6 +423,21 @@
 
             th, td {
                 padding: 0.5rem 0.25rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab {
+                flex: 1;
+                text-align: center;
+                padding: 0.5rem;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -406,40 +513,214 @@
         </div>
     </div>
 
-    <!-- Modal تسجيل دفعة -->
-    <div id="paymentModal" class="modal">
+    <!-- Modal النظام المحاسبي -->
+    <div id="accountingModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">تسجيل دفعة جديدة</h2>
+                <h2 id="modalTitle">النظام المحاسبي</h2>
                 <span class="close" onclick="closeModal()">&times;</span>
             </div>
             
-            <form id="paymentForm">
-                <div class="form-group">
-                    <label for="driverNameDisplay">السائق</label>
-                    <input type="text" id="driverNameDisplay" readonly>
+            <div id="alertContainer"></div>
+            
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('payment')">💰 تحصيل الرسوم</div>
+                <div class="tab" onclick="switchTab('violation')">🚫 المخالفات</div>
+                <div class="tab" onclick="switchTab('residence')">📄 رسوم الإقامة</div>
+                <div class="tab" onclick="switchTab('salary')">💼 رسوم الرواتب</div>
+            </div>
+
+            <!-- تحصيل الرسوم -->
+            <div id="paymentTab" class="tab-content active">
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label for="driverNameDisplay">السائق</label>
+                        <input type="text" id="driverNameDisplay" readonly>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="paymentMethod">طريقة الدفع</label>
+                            <select id="paymentMethod" required>
+                                <option value="">اختر طريقة الدفع</option>
+                                <option value="link">لينك</option>
+                                <option value="cash">كاش</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="paymentAmount">المبلغ المدفوع (د.ك)</label>
+                            <input type="number" id="paymentAmount" step="0.001" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="paymentDate">تاريخ الدفعة</label>
+                        <input type="date" id="paymentDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="paymentNotes">ملاحظات (اختياري)</label>
+                        <textarea id="paymentNotes" rows="3" placeholder="ملاحظات إضافية..."></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="closeModal()">إلغاء</button>
+                        <button type="submit" class="save-btn">حفظ الدفعة</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- المخالفات -->
+            <div id="violationTab" class="tab-content">
+                <div class="form-row" style="margin-bottom: 1rem;">
+                    <button type="button" class="danger-btn" onclick="showAddViolation()">إضافة مخالفة</button>
+                    <button type="button" class="success-btn" onclick="showCollectViolation()">تحصيل مخالفة</button>
                 </div>
-                
-                <div class="form-group">
-                    <label for="paymentAmount">المبلغ المدفوع (د.ك)</label>
-                    <input type="number" id="paymentAmount" step="0.001" required>
+
+                <!-- إضافة مخالفة -->
+                <form id="addViolationForm" style="display: none;">
+                    <h3 style="margin-bottom: 1rem; color: #dc2626;">إضافة مخالفة جديدة</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="violationAmount">قيمة المخالفة (د.ك)</label>
+                            <input type="number" id="violationAmount" step="0.001" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="violationDate">تاريخ المخالفة</label>
+                            <input type="date" id="violationDate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="violationDescription">وصف المخالفة</label>
+                        <textarea id="violationDescription" rows="3" placeholder="تفاصيل المخالفة..." required></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="hideViolationForms()">إلغاء</button>
+                        <button type="submit" class="danger-btn">إضافة المخالفة</button>
+                    </div>
+                </form>
+
+                <!-- تحصيل مخالفة -->
+                <form id="collectViolationForm" style="display: none;">
+                    <h3 style="margin-bottom: 1rem; color: #059669;">تحصيل مخالفة</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="collectViolationAmount">المبلغ المحصل (د.ك)</label>
+                            <input type="number" id="collectViolationAmount" step="0.001" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="collectViolationDate">تاريخ التحصيل</label>
+                            <input type="date" id="collectViolationDate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="collectViolationNotes">ملاحظات (اختياري)</label>
+                        <textarea id="collectViolationNotes" rows="3" placeholder="ملاحظات التحصيل..."></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="hideViolationForms()">إلغاء</button>
+                        <button type="submit" class="success-btn">تحصيل المخالفة</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- رسوم الإقامة -->
+            <div id="residenceTab" class="tab-content">
+                <div class="form-row" style="margin-bottom: 1rem;">
+                    <button type="button" class="warning-btn" onclick="showAddResidence()">إضافة رسوم إقامة</button>
+                    <button type="button" class="success-btn" onclick="showCollectResidence()">تحصيل رسوم إقامة</button>
                 </div>
-                
-                <div class="form-group">
-                    <label for="paymentDate">تاريخ الدفعة</label>
-                    <input type="date" id="paymentDate" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="paymentNotes">ملاحظات (اختياري)</label>
-                    <textarea id="paymentNotes" rows="3" placeholder="ملاحظات إضافية..."></textarea>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="button" class="cancel-btn" onclick="closeModal()">إلغاء</button>
-                    <button type="submit" class="save-btn">حفظ الدفعة</button>
-                </div>
-            </form>
+
+                <!-- إضافة رسوم إقامة -->
+                <form id="addResidenceForm" style="display: none;">
+                    <h3 style="margin-bottom: 1rem; color: #d97706;">إضافة رسوم إقامة جديدة</h3>
+                    
+                    <div class="alert alert-warning">
+                        <strong>تنبيه:</strong> سيتم إضافة 30 دينار تلقائياً لرسوم إيداع الرواتب
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="residenceAmount">رسوم الإقامة (د.ك)</label>
+                            <input type="number" id="residenceAmount" step="0.001" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="residenceDate">تاريخ الرسوم</label>
+                            <input type="date" id="residenceDate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="residenceNotes">ملاحظات (اختياري)</label>
+                        <textarea id="residenceNotes" rows="3" placeholder="ملاحظات الرسوم..."></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="hideResidenceForms()">إلغاء</button>
+                        <button type="submit" class="warning-btn">إضافة الرسوم</button>
+                    </div>
+                </form>
+
+                <!-- تحصيل رسوم إقامة -->
+                <form id="collectResidenceForm" style="display: none;">
+                    <h3 style="margin-bottom: 1rem; color: #059669;">تحصيل رسوم إقامة</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="collectResidenceAmount">المبلغ المحصل (د.ك)</label>
+                            <input type="number" id="collectResidenceAmount" step="0.001" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="collectResidenceDate">تاريخ التحصيل</label>
+                            <input type="date" id="collectResidenceDate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="collectResidenceNotes">ملاحظات (اختياري)</label>
+                        <textarea id="collectResidenceNotes" rows="3" placeholder="ملاحظات التحصيل..."></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="hideResidenceForms()">إلغاء</button>
+                        <button type="submit" class="success-btn">تحصيل الرسوم</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- رسوم الرواتب -->
+            <div id="salaryTab" class="tab-content">
+                <form id="salaryForm">
+                    <h3 style="margin-bottom: 1rem; color: #2563eb;">تحصيل رسوم إيداع الرواتب</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="salaryAmount">المبلغ المحصل (د.ك)</label>
+                            <input type="number" id="salaryAmount" step="0.001" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="salaryDate">تاريخ التحصيل</label>
+                            <input type="date" id="salaryDate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="salaryNotes">ملاحظات (اختياري)</label>
+                        <textarea id="salaryNotes" rows="3" placeholder="ملاحظات رسوم الرواتب..."></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="closeModal()">إلغاء</button>
+                        <button type="submit" class="save-btn">حفظ التحصيل</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -447,7 +728,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, query, orderBy, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, query, orderBy, where, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // Firebase configuration
         const firebaseConfig = {
@@ -469,7 +750,21 @@
         let expenses = [];
         let currentUser = null;
         let selectedDriverId = null;
+        let selectedDriverName = null;
         let allTableData = [];
+
+        // Global functions
+        window.logout = logout;
+        window.filterTable = filterTable;
+        window.openDriverModal = openDriverModal;
+        window.closeModal = closeModal;
+        window.switchTab = switchTab;
+        window.showAddViolation = showAddViolation;
+        window.showCollectViolation = showCollectViolation;
+        window.hideViolationForms = hideViolationForms;
+        window.showAddResidence = showAddResidence;
+        window.showCollectResidence = showCollectResidence;
+        window.hideResidenceForms = hideResidenceForms;
 
         // Check authentication
         onAuthStateChanged(auth, async (user) => {
@@ -522,7 +817,7 @@
                 });
 
                 // Load expenses (violations)
-                const expensesSnapshot = await getDocs(query(collection(db, 'expenses'), where('type', '==', 'violation')));
+                const expensesSnapshot = await getDocs(query(collection(db, 'expenses')));
                 expenses = [];
                 expensesSnapshot.forEach(doc => {
                     expenses.push({ id: doc.id, ...doc.data() });
@@ -534,228 +829,458 @@
 
         // Calculate and display table
         function calculateAndDisplayTable() {
-            const today = new Date();
+            const tableBody = document.getElementById('driversTableBody');
+            tableBody.innerHTML = '';
             allTableData = [];
 
-            drivers.forEach(driver => {
-                if (driver.status !== 'active') return;
+            let totalNormal = 0;
+            let totalWarning = 0;
+            let totalOverdue = 0;
+            let totalDebts = 0;
 
-                // Get driver revenues
+            drivers.forEach(driver => {
                 const driverRevenues = revenues.filter(r => r.driverId === driver.id);
+                const driverViolations = expenses.filter(e => e.driverId === driver.id && e.type === 'violation');
                 
                 // Calculate payment data
-                let lastPaymentDate = null;
-                let totalPaid = 0;
-                let lastPaymentRemainder = 0;
+                const lastPayment = driverRevenues.length > 0 ? driverRevenues[0] : null;
+                const lastPaymentDate = lastPayment ? lastPayment.date : driver.contractStartDate || new Date().toISOString().split('T')[0];
+                
+                // Calculate covered days and remaining amount
+                let totalPaidAmount = 0;
+                let lastCoveredDate = new Date(driver.contractStartDate || new Date());
+                let remainingAmount = 0;
 
-                if (driverRevenues.length > 0) {
-                    // Sort by date
-                    driverRevenues.sort((a, b) => {
-                        const dateA = a.date?.seconds ? new Date(a.date.seconds * 1000) : new Date(a.date);
-                        const dateB = b.date?.seconds ? new Date(b.date.seconds * 1000) : new Date(b.date);
-                        return dateB - dateA;
-                    });
-
-                    const lastPayment = driverRevenues[0];
-                    lastPaymentDate = lastPayment.date?.seconds ? 
-                        new Date(lastPayment.date.seconds * 1000) : 
-                        new Date(lastPayment.date);
-
-                    // Calculate total paid and remainder
-                    driverRevenues.forEach(payment => {
-                        totalPaid += payment.amount || 0;
-                    });
-
-                    // Calculate remainder from last payment
-                    const dailyRent = driver.dailyRent || 0;
-                    if (dailyRent > 0) {
-                        const lastAmount = lastPayment.amount || 0;
-                        lastPaymentRemainder = lastAmount % dailyRent;
+                driverRevenues.forEach(revenue => {
+                    if (revenue.type === 'daily_fee') {
+                        totalPaidAmount += parseFloat(revenue.amount || 0);
+                        const days = Math.floor(parseFloat(revenue.amount || 0) / parseFloat(driver.dailyFee || 1));
+                        const paymentDate = new Date(revenue.date);
+                        if (paymentDate > lastCoveredDate) {
+                            lastCoveredDate = new Date(paymentDate.getTime() + (days * 24 * 60 * 60 * 1000));
+                            remainingAmount = parseFloat(revenue.amount || 0) % parseFloat(driver.dailyFee || 1);
+                        }
                     }
-                }
+                });
 
-                // Calculate days covered and paid until date
-                const dailyRent = driver.dailyRent || 0;
-                let daysCovered = 0;
-                let paidUntilDate = null;
-
-                if (dailyRent > 0 && totalPaid > 0) {
-                    daysCovered = Math.floor(totalPaid / dailyRent);
-                    
-                    // Calculate paid until date from contract start
-                    const contractStart = driver.contractStartDate?.seconds ? 
-                        new Date(driver.contractStartDate.seconds * 1000) : 
-                        new Date(driver.contractStartDate);
-                    
-                    if (contractStart) {
-                        paidUntilDate = new Date(contractStart);
-                        paidUntilDate.setDate(paidUntilDate.getDate() + daysCovered);
-                    }
-                }
-
-                // Calculate overdue days and amount
-                let overdueDays = 0;
-                let overdueAmount = 0;
-
-                if (paidUntilDate) {
-                    const diffTime = today - paidUntilDate;
-                    overdueDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-                    overdueAmount = overdueDays * dailyRent;
-                }
+                // Calculate overdue days
+                const today = new Date();
+                const overdueDays = Math.max(0, Math.floor((today - lastCoveredDate) / (1000 * 60 * 60 * 24)));
+                const overdueAmount = overdueDays * parseFloat(driver.dailyFee || 0);
 
                 // Calculate violations
-                const driverViolations = expenses.filter(e => e.driverId === driver.id);
-                const totalViolations = driverViolations.reduce((sum, v) => sum + (v.amount || 0), 0);
+                let violationsAmount = 0;
+                driverViolations.forEach(violation => {
+                    if (!violation.collected) {
+                        violationsAmount += parseFloat(violation.amount || 0);
+                    }
+                });
 
                 // Calculate old debts
-                const oldDebts = driver.oldDebts || 0;
+                const oldDebts = parseFloat(driver.oldDebts || 0);
 
                 // Calculate total debt
-                const totalDebt = overdueAmount + totalViolations + oldDebts;
+                const totalDebt = overdueAmount + violationsAmount + oldDebts;
 
                 // Determine status
                 let status = 'normal';
                 if (overdueDays > 7) {
                     status = 'overdue';
+                    totalOverdue++;
                 } else if (overdueDays > 0) {
                     status = 'warning';
+                    totalWarning++;
+                } else {
+                    totalNormal++;
                 }
 
-                allTableData.push({
+                totalDebts += totalDebt;
+
+                const rowData = {
                     id: driver.id,
                     name: driver.name,
                     lastPaymentDate: lastPaymentDate,
-                    paidUntilDate: paidUntilDate,
+                    coveredUntilDate: formatDate(lastCoveredDate),
                     overdueDays: overdueDays,
                     overdueAmount: overdueAmount,
-                    paymentRemainder: lastPaymentRemainder,
-                    totalViolations: totalViolations,
+                    remainingAmount: remainingAmount,
+                    violationsAmount: violationsAmount,
                     oldDebts: oldDebts,
                     totalDebt: totalDebt,
                     status: status,
-                    dailyRent: dailyRent
-                });
+                    dailyFee: parseFloat(driver.dailyFee || 0)
+                };
+
+                allTableData.push(rowData);
             });
 
+            // Update summary cards
+            document.getElementById('normalDrivers').textContent = totalNormal;
+            document.getElementById('warningDrivers').textContent = totalWarning;
+            document.getElementById('overdueDrivers').textContent = totalOverdue;
+            document.getElementById('totalDebts').textContent = totalDebts.toFixed(3) + ' د.ك';
+
+            // Display table
             displayTable(allTableData);
-            updateSummary(allTableData);
         }
 
         // Display table
         function displayTable(data) {
-            const tbody = document.getElementById('driversTableBody');
-            
-            tbody.innerHTML = data.map(row => `
-                <tr class="status-${row.status}">
-                    <td>
-                        <span class="driver-name" onclick="openPaymentModal('${row.id}', '${row.name}')">
-                            ${row.name}
-                        </span>
-                    </td>
-                    <td>${row.lastPaymentDate ? row.lastPaymentDate.toLocaleDateString('ar-SA') : 'لا يوجد'}</td>
-                    <td>${row.paidUntilDate ? row.paidUntilDate.toLocaleDateString('ar-SA') : 'لا يوجد'}</td>
-                    <td>${row.overdueDays} يوم</td>
+            const tableBody = document.getElementById('driversTableBody');
+            tableBody.innerHTML = '';
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = `status-${row.status}`;
+                
+                tr.innerHTML = `
+                    <td><span class="driver-name" onclick="openDriverModal('${row.id}', '${row.name}')">${row.name}</span></td>
+                    <td>${formatDate(row.lastPaymentDate)}</td>
+                    <td>${row.coveredUntilDate}</td>
+                    <td>${row.overdueDays}</td>
                     <td class="amount ${row.overdueAmount > 0 ? 'negative' : ''}">${row.overdueAmount.toFixed(3)} د.ك</td>
-                    <td class="amount ${row.paymentRemainder > 0 ? 'positive' : ''}">${row.paymentRemainder.toFixed(3)} د.ك</td>
-                    <td class="amount ${row.totalViolations > 0 ? 'negative' : ''}">${row.totalViolations.toFixed(3)} د.ك</td>
+                    <td class="amount ${row.remainingAmount > 0 ? 'positive' : ''}">${row.remainingAmount.toFixed(3)} د.ك</td>
+                    <td class="amount ${row.violationsAmount > 0 ? 'negative' : ''}">${row.violationsAmount.toFixed(3)} د.ك</td>
                     <td class="amount ${row.oldDebts > 0 ? 'negative' : ''}">${row.oldDebts.toFixed(3)} د.ك</td>
                     <td class="amount ${row.totalDebt > 0 ? 'negative' : 'positive'}">${row.totalDebt.toFixed(3)} د.ك</td>
-                </tr>
-            `).join('');
+                `;
+                
+                tableBody.appendChild(tr);
+            });
         }
 
-        // Update summary
-        function updateSummary(data) {
-            const normal = data.filter(d => d.status === 'normal').length;
-            const warning = data.filter(d => d.status === 'warning').length;
-            const overdue = data.filter(d => d.status === 'overdue').length;
-            const totalDebts = data.reduce((sum, d) => sum + d.totalDebt, 0);
-
-            document.getElementById('normalDrivers').textContent = normal;
-            document.getElementById('warningDrivers').textContent = warning;
-            document.getElementById('overdueDrivers').textContent = overdue;
-            document.getElementById('totalDebts').textContent = totalDebts.toFixed(3) + ' د.ك';
+        // Format date (Gregorian)
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ar-SA', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
         }
 
         // Filter table
-        window.filterTable = () => {
+        function filterTable() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value;
-            
+
             let filteredData = allTableData.filter(row => {
                 const matchesSearch = row.name.toLowerCase().includes(searchTerm);
                 const matchesStatus = !statusFilter || row.status === statusFilter;
                 return matchesSearch && matchesStatus;
             });
-            
-            displayTable(filteredData);
-        };
 
-        // Open payment modal
-        window.openPaymentModal = (driverId, driverName) => {
+            displayTable(filteredData);
+        }
+
+        // Open driver modal
+        function openDriverModal(driverId, driverName) {
             selectedDriverId = driverId;
+            selectedDriverName = driverName;
+            
             document.getElementById('driverNameDisplay').value = driverName;
-            document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('paymentModal').style.display = 'block';
-        };
+            document.getElementById('modalTitle').textContent = `النظام المحاسبي - ${driverName}`;
+            
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('paymentDate').value = today;
+            document.getElementById('violationDate').value = today;
+            document.getElementById('collectViolationDate').value = today;
+            document.getElementById('residenceDate').value = today;
+            document.getElementById('collectResidenceDate').value = today;
+            document.getElementById('salaryDate').value = today;
+            
+            document.getElementById('accountingModal').style.display = 'block';
+        }
 
         // Close modal
-        window.closeModal = () => {
-            document.getElementById('paymentModal').style.display = 'none';
-            document.getElementById('paymentForm').reset();
-            selectedDriverId = null;
-        };
+        function closeModal() {
+            document.getElementById('accountingModal').style.display = 'none';
+            resetForms();
+        }
 
-        // Payment form submission
+        // Switch tabs
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Show selected tab
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+            
+            // Reset forms
+            resetForms();
+        }
+
+        // Show/hide violation forms
+        function showAddViolation() {
+            hideViolationForms();
+            document.getElementById('addViolationForm').style.display = 'block';
+        }
+
+        function showCollectViolation() {
+            hideViolationForms();
+            document.getElementById('collectViolationForm').style.display = 'block';
+        }
+
+        function hideViolationForms() {
+            document.getElementById('addViolationForm').style.display = 'none';
+            document.getElementById('collectViolationForm').style.display = 'none';
+        }
+
+        // Show/hide residence forms
+        function showAddResidence() {
+            hideResidenceForms();
+            document.getElementById('addResidenceForm').style.display = 'block';
+        }
+
+        function showCollectResidence() {
+            hideResidenceForms();
+            document.getElementById('collectResidenceForm').style.display = 'block';
+        }
+
+        function hideResidenceForms() {
+            document.getElementById('addResidenceForm').style.display = 'none';
+            document.getElementById('collectResidenceForm').style.display = 'none';
+        }
+
+        // Reset all forms
+        function resetForms() {
+            document.querySelectorAll('form').forEach(form => form.reset());
+            hideViolationForms();
+            hideResidenceForms();
+            clearAlerts();
+        }
+
+        // Show alert
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Clear alerts
+        function clearAlerts() {
+            document.getElementById('alertContainer').innerHTML = '';
+        }
+
+        // Form submissions
         document.getElementById('paymentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            if (!selectedDriverId) return;
-
-            const driver = drivers.find(d => d.id === selectedDriverId);
-            if (!driver) return;
-
-            const amount = parseFloat(document.getElementById('paymentAmount').value);
-            const date = new Date(document.getElementById('paymentDate').value);
-            const notes = document.getElementById('paymentNotes').value;
-
-            const revenueData = {
-                driverId: selectedDriverId,
-                driverName: driver.name,
-                amount: amount,
-                date: date,
-                type: 'rent',
-                paymentMethod: 'cash',
-                notes: notes,
-                createdAt: new Date(),
-                createdBy: currentUser.name || currentUser.email
-            };
-
+            
             try {
-                await addDoc(collection(db, 'revenues'), revenueData);
-                alert('تم تسجيل الدفعة بنجاح');
-                closeModal();
+                const amount = parseFloat(document.getElementById('paymentAmount').value);
+                const method = document.getElementById('paymentMethod').value;
+                const date = document.getElementById('paymentDate').value;
+                const notes = document.getElementById('paymentNotes').value;
+
+                await addDoc(collection(db, 'revenues'), {
+                    type: 'daily_fee',
+                    driverId: selectedDriverId,
+                    driverName: selectedDriverName,
+                    amount: amount,
+                    paymentMethod: method,
+                    date: date,
+                    notes: notes,
+                    createdAt: new Date().toISOString(),
+                    createdBy: currentUser.uid
+                });
+
+                showAlert('تم حفظ الدفعة بنجاح');
                 await loadData();
                 calculateAndDisplayTable();
+                resetForms();
             } catch (error) {
                 console.error('Error saving payment:', error);
-                alert('حدث خطأ في حفظ الدفعة');
+                showAlert('حدث خطأ أثناء حفظ الدفعة', 'error');
+            }
+        });
+
+        document.getElementById('addViolationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const amount = parseFloat(document.getElementById('violationAmount').value);
+                const date = document.getElementById('violationDate').value;
+                const description = document.getElementById('violationDescription').value;
+
+                await addDoc(collection(db, 'expenses'), {
+                    type: 'violation',
+                    driverId: selectedDriverId,
+                    driverName: selectedDriverName,
+                    amount: amount,
+                    date: date,
+                    description: description,
+                    collected: false,
+                    createdAt: new Date().toISOString(),
+                    createdBy: currentUser.uid
+                });
+
+                showAlert('تم إضافة المخالفة بنجاح');
+                await loadData();
+                calculateAndDisplayTable();
+                resetForms();
+            } catch (error) {
+                console.error('Error adding violation:', error);
+                showAlert('حدث خطأ أثناء إضافة المخالفة', 'error');
+            }
+        });
+
+        document.getElementById('collectViolationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const amount = parseFloat(document.getElementById('collectViolationAmount').value);
+                const date = document.getElementById('collectViolationDate').value;
+                const notes = document.getElementById('collectViolationNotes').value;
+
+                await addDoc(collection(db, 'revenues'), {
+                    type: 'violation_collection',
+                    driverId: selectedDriverId,
+                    driverName: selectedDriverName,
+                    amount: amount,
+                    date: date,
+                    notes: notes,
+                    createdAt: new Date().toISOString(),
+                    createdBy: currentUser.uid
+                });
+
+                showAlert('تم تحصيل المخالفة بنجاح');
+                await loadData();
+                calculateAndDisplayTable();
+                resetForms();
+            } catch (error) {
+                console.error('Error collecting violation:', error);
+                showAlert('حدث خطأ أثناء تحصيل المخالفة', 'error');
+            }
+        });
+
+        document.getElementById('addResidenceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const amount = parseFloat(document.getElementById('residenceAmount').value);
+                const date = document.getElementById('residenceDate').value;
+                const notes = document.getElementById('residenceNotes').value;
+
+                // Add residence fee as debt
+                await addDoc(collection(db, 'expenses'), {
+                    type: 'residence_fee',
+                    driverId: selectedDriverId,
+                    driverName: selectedDriverName,
+                    amount: amount,
+                    date: date,
+                    notes: notes,
+                    collected: false,
+                    createdAt: new Date().toISOString(),
+                    createdBy: currentUser.uid
+                });
+
+                // Add 30 KD salary deposit fee automatically
+                await addDoc(collection(db, 'expenses'), {
+                    type: 'salary_deposit_fee',
+                    driverId: selectedDriverId,
+                    driverName: selectedDriverName,
+                    amount: 30,
+                    date: date,
+                    notes: 'رسوم إيداع رواتب (تلقائي مع رسوم الإقامة)',
+                    collected: false,
+                    createdAt: new Date().toISOString(),
+                    createdBy: currentUser.uid
+                });
+
+                showAlert('تم إضافة رسوم الإقامة و 30 دينار رسوم رواتب بنجاح');
+                await loadData();
+                calculateAndDisplayTable();
+                resetForms();
+            } catch (error) {
+                console.error('Error adding residence fee:', error);
+                showAlert('حدث خطأ أثناء إضافة رسوم الإقامة', 'error');
+            }
+        });
+
+        document.getElementById('collectResidenceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const amount = parseFloat(document.getElementById('collectResidenceAmount').value);
+                const date = document.getElementById('collectResidenceDate').value;
+                const notes = document.getElementById('collectResidenceNotes').value;
+
+                await addDoc(collection(db, 'revenues'), {
+                    type: 'residence_collection',
+                    driverId: selectedDriverId,
+                    driverName: selectedDriverName,
+                    amount: amount,
+                    date: date,
+                    notes: notes,
+                    createdAt: new Date().toISOString(),
+                    createdBy: currentUser.uid
+                });
+
+                showAlert('تم تحصيل رسوم الإقامة بنجاح');
+                await loadData();
+                calculateAndDisplayTable();
+                resetForms();
+            } catch (error) {
+                console.error('Error collecting residence fee:', error);
+                showAlert('حدث خطأ أثناء تحصيل رسوم الإقامة', 'error');
+            }
+        });
+
+        document.getElementById('salaryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const amount = parseFloat(document.getElementById('salaryAmount').value);
+                const date = document.getElementById('salaryDate').value;
+                const notes = document.getElementById('salaryNotes').value;
+
+                await addDoc(collection(db, 'revenues'), {
+                    type: 'salary_deposit_collection',
+                    driverId: selectedDriverId,
+                    driverName: selectedDriverName,
+                    amount: amount,
+                    date: date,
+                    notes: notes,
+                    createdAt: new Date().toISOString(),
+                    createdBy: currentUser.uid
+                });
+
+                showAlert('تم تحصيل رسوم الرواتب بنجاح');
+                await loadData();
+                calculateAndDisplayTable();
+                resetForms();
+            } catch (error) {
+                console.error('Error collecting salary fee:', error);
+                showAlert('حدث خطأ أثناء تحصيل رسوم الرواتب', 'error');
             }
         });
 
         // Logout function
-        window.logout = async () => {
-            try {
-                await auth.signOut();
-                localStorage.clear();
+        function logout() {
+            auth.signOut().then(() => {
                 window.location.href = 'index.html';
-            } catch (error) {
-                console.error('Logout error:', error);
-            }
-        };
+            });
+        }
 
-        // Set today's date as default
-        document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0];
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('accountingModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
     </script>
 </body>
 </html>
