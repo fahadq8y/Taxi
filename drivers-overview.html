@@ -612,27 +612,35 @@
         // Check authentication
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
+                console.log('No user found, redirecting to login');
                 window.location.href = 'index.html';
                 return;
             }
             
             try {
+                console.log('User found:', user.uid);
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 if (!userDoc.exists()) {
+                    console.log('User document not found, redirecting to login');
                     window.location.href = 'index.html';
                     return;
                 }
                 
                 const userData = userDoc.data();
-                if (!['admin', 'accountant'].includes(userData.role)) {
-                    window.location.href = 'index.html';
+                console.log('User data:', userData);
+                
+                // Allow admin and accountant roles to access this page
+                if (!userData.role || !['admin', 'accountant'].includes(userData.role)) {
+                    console.log('User role not authorized:', userData.role);
+                    alert('ليس لديك صلاحية للوصول لهذه الصفحة');
+                    window.location.href = 'admin-dashboard.html';
                     return;
                 }
                 
                 currentUser = { uid: user.uid, ...userData };
                 window.currentUser = currentUser;
                 
-                console.log('User authenticated, loading data...');
+                console.log('User authenticated successfully, loading data...');
                 await loadData();
                 calculateAndDisplayTable();
                 
@@ -644,6 +652,7 @@
                 
             } catch (error) {
                 console.error('Error checking user role:', error);
+                alert('حدث خطأ في التحقق من الصلاحيات');
                 window.location.href = 'index.html';
             }
         });
