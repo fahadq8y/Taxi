@@ -5,94 +5,303 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عرض الأرصدة - نظام إدارة التاكسي</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; direction: rtl; padding: 2rem; }
-        .header { text-align: center; margin-bottom: 2rem; }
-        .header h1 { color: #1f2937; font-size: 2rem; margin-bottom: 0.5rem; }
-        .header p { color: #6b7280; }
-        .balance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 800px; margin: 0 auto; }
-        .balance-card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        .bank-balance { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; }
-        .salary-balance { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
-        .balance-amount { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; }
-        .balance-label { font-size: 1.1rem; opacity: 0.9; }
-        .last-updated { text-align: center; margin-top: 2rem; color: #6b7280; font-size: 0.9rem; }
-        .actions { text-align: center; margin-top: 2rem; }
-        .btn { background: #10b981; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; margin: 0 0.5rem; text-decoration: none; display: inline-block; }
-        .btn:hover { background: #059669; }
-        .loading { text-align: center; color: #6b7280; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .balance-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .balance-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+        }
+
+        .bank-balance::before {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .salary-balance::before {
+            background: linear-gradient(90deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .balance-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .bank-balance .balance-icon {
+            color: #4facfe;
+        }
+
+        .salary-balance .balance-icon {
+            color: #fa709a;
+        }
+
+        .balance-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .balance-amount {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .bank-balance .balance-amount {
+            color: #4facfe;
+        }
+
+        .salary-balance .balance-amount {
+            color: #fa709a;
+        }
+
+        .balance-currency {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .loading {
+            color: #999;
+            font-style: italic;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .balance-card {
+                padding: 20px;
+            }
+            
+            .balance-amount {
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>💰 عرض الأرصدة</h1>
-        <p>الأرصدة الحالية لنظام إدارة التاكسي</p>
-    </div>
-    
-    <div class="balance-grid">
-        <div class="balance-card bank-balance">
-            <div class="balance-amount" id="bankBalance">جاري التحميل...</div>
-            <div class="balance-label">🏦 الرصيد البنكي</div>
+    <div class="container">
+        <div class="header">
+            <h1>💰 عرض الأرصدة</h1>
+            <p>الأرصدة الحالية لنظام إدارة التاكسي</p>
         </div>
-        
-        <div class="balance-card salary-balance">
-            <div class="balance-amount" id="salaryBalance">جاري التحميل...</div>
-            <div class="balance-label">💼 رصيد الرواتب</div>
+
+        <div class="balance-cards">
+            <div class="balance-card bank-balance">
+                <div class="balance-icon">🏦</div>
+                <div class="balance-title">الرصيد البنكي</div>
+                <div class="balance-amount" id="bankBalance">جاري التحميل...</div>
+                <div class="balance-currency">دينار كويتي</div>
+            </div>
+
+            <div class="balance-card salary-balance">
+                <div class="balance-icon">💼</div>
+                <div class="balance-title">رصيد الرواتب</div>
+                <div class="balance-amount" id="salaryBalance">جاري التحميل...</div>
+                <div class="balance-currency">دينار كويتي</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="action-btn refresh-btn" onclick="loadBalances()">
+                🔄 تحديث الأرصدة
+            </button>
+            
+            <a href="revenues.html" class="action-btn">
+                📈 إدارة الإيرادات
+            </a>
+            
+            <a href="expenses.html" class="action-btn">
+                📉 إدارة المصروفات
+            </a>
+            
+            <a href="index.html" class="action-btn">
+                🏠 العودة للرئيسية
+            </a>
         </div>
     </div>
-    
-    <div class="last-updated">
-        آخر تحديث: <span id="lastUpdate">جاري التحميل...</span>
-    </div>
-    
-    <div class="actions">
-        <a href="revenues.html" class="btn">📈 إدارة الإيرادات</a>
-        <a href="expenses.html" class="btn">📉 إدارة المصروفات</a>
-        <button onclick="loadBalances()" class="btn">🔄 تحديث</button>
-    </div>
-    
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
         const firebaseConfig = {
             apiKey: "AIzaSyDGpAHia_wEmrhnmYjrPf1n1TrAzwEMiAI",
             authDomain: "taxi-management-system-d8210.firebaseapp.com",
             projectId: "taxi-management-system-d8210",
             storageBucket: "taxi-management-system-d8210.appspot.com",
-            messagingSenderId: "1092588712674",
-            appId: "1:1092588712674:web:0b8f8b3b8b8b8b8b8b8b8b"
+            messagingSenderId: "1062394141461",
+            appId: "1:1062394141461:web:d3c44f9bdaa89b6d5c6d5c"
         };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // تحميل الأرصدة
         async function loadBalances() {
+            console.log('🔄 بدء تحميل الأرصدة...');
+            
+            const bankBalanceEl = document.getElementById('bankBalance');
+            const salaryBalanceEl = document.getElementById('salaryBalance');
+            
+            // عرض حالة التحميل
+            bankBalanceEl.textContent = 'جاري التحميل...';
+            bankBalanceEl.className = 'balance-amount loading';
+            salaryBalanceEl.textContent = 'جاري التحميل...';
+            salaryBalanceEl.className = 'balance-amount loading';
+
             try {
-                const balanceDoc = await db.collection('balances').doc('main').get();
-                if (balanceDoc.exists) {
-                    const balances = balanceDoc.data();
-                    document.getElementById('bankBalance').textContent = (balances.bankBalance?.toFixed(3) || '0.000') + ' د.ك';
-                    document.getElementById('salaryBalance').textContent = (balances.salaryBalance?.toFixed(3) || '0.000') + ' د.ك';
+                const balanceDoc = await getDoc(doc(db, 'balances', 'main'));
+                
+                if (balanceDoc.exists()) {
+                    const data = balanceDoc.data();
+                    console.log('📊 بيانات الأرصدة:', data);
+                    
+                    // تحويل القيم إلى أرقام وتنسيقها
+                    const bankBalance = parseFloat(data.bankBalance || 0);
+                    const salaryBalance = parseFloat(data.salaryBalance || 0);
+                    
+                    console.log('💰 الرصيد البنكي:', bankBalance);
+                    console.log('💼 رصيد الرواتب:', salaryBalance);
+                    
+                    // عرض الأرصدة مع التنسيق
+                    bankBalanceEl.textContent = bankBalance.toFixed(3);
+                    bankBalanceEl.className = 'balance-amount';
+                    
+                    salaryBalanceEl.textContent = salaryBalance.toFixed(3);
+                    salaryBalanceEl.className = 'balance-amount';
+                    
                 } else {
-                    // Create initial balance document
-                    await db.collection('balances').doc('main').set({
+                    console.log('⚠️ مستند الأرصدة غير موجود، سيتم إنشاؤه...');
+                    
+                    // إنشاء مستند جديد بقيم افتراضية
+                    await setDoc(doc(db, 'balances', 'main'), {
                         bankBalance: 0,
-                        salaryBalance: 0,
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                        salaryBalance: 0
                     });
-                    document.getElementById('bankBalance').textContent = '0.000 د.ك';
-                    document.getElementById('salaryBalance').textContent = '0.000 د.ك';
+                    
+                    bankBalanceEl.textContent = '0.000';
+                    bankBalanceEl.className = 'balance-amount';
+                    
+                    salaryBalanceEl.textContent = '0.000';
+                    salaryBalanceEl.className = 'balance-amount';
+                    
+                    console.log('✅ تم إنشاء مستند الأرصدة بنجاح');
                 }
-                document.getElementById('lastUpdate').textContent = new Date().toLocaleString('ar-KW');
+                
             } catch (error) {
-                console.error('Error loading balances:', error);
-                document.getElementById('bankBalance').textContent = 'خطأ في التحميل';
-                document.getElementById('salaryBalance').textContent = 'خطأ في التحميل';
+                console.error('❌ خطأ في تحميل الأرصدة:', error);
+                
+                bankBalanceEl.textContent = 'خطأ في التحميل';
+                bankBalanceEl.className = 'balance-amount error';
+                
+                salaryBalanceEl.textContent = 'خطأ في التحميل';
+                salaryBalanceEl.className = 'balance-amount error';
             }
         }
-        
-        // Load balances on page load
+
+        // تحميل الأرصدة عند تحميل الصفحة
         window.addEventListener('load', loadBalances);
+        
+        // جعل دالة loadBalances متاحة عالمياً
+        window.loadBalances = loadBalances;
     </script>
 </body>
 </html>
