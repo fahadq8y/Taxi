@@ -6,200 +6,75 @@
     <title>إدارة المصروفات - نظام إدارة التاكسي</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: #f8fafc; 
-            direction: rtl; 
-            min-height: 100vh;
-        }
-        .header { 
-            background: linear-gradient(135deg, #ef4444, #dc2626); 
-            color: white; 
-            padding: 1rem; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .header h1 {
-            font-size: 1.5rem;
-        }
-        .header-links {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        .header-links a {
-            background: rgba(255,255,255,0.2); 
-            color: white; 
-            padding: 0.5rem 1rem; 
-            border-radius: 5px; 
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-        .container { 
-            max-width: 1200px; 
-            margin: 1rem auto; 
-            padding: 0 1rem; 
-        }
-        .stats-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 1rem; 
-            margin-bottom: 2rem; 
-        }
-        .stat-card { 
-            background: white; 
-            padding: 1.5rem; 
-            border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            text-align: center; 
-        }
-        .stat-number { 
-            font-size: 1.5rem; 
-            font-weight: bold; 
-            margin-bottom: 0.5rem;
-            word-break: break-all;
-        }
-        .stat-label { 
-            color: #6b7280; 
-            font-size: 0.9rem; 
-        }
-        .balance-card { 
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8); 
-            color: white; 
-        }
-        .balance-card .stat-number { color: white; }
-        .balance-card .stat-label { color: rgba(255,255,255,0.8); }
-        .salary-balance-card { 
-            background: linear-gradient(135deg, #f59e0b, #d97706); 
-            color: white; 
-        }
-        .salary-balance-card .stat-number { color: white; }
-        .salary-balance-card .stat-label { color: rgba(255,255,255,0.8); }
-        .add-form { 
-            background: white; 
-            padding: 2rem; 
-            border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            margin-bottom: 2rem; 
-        }
-        .form-group { 
-            margin-bottom: 1rem; 
-        }
-        .form-group label { 
-            display: block; 
-            margin-bottom: 0.5rem; 
-            font-weight: 500; 
-        }
-        .form-group input, .form-group select { 
-            width: 100%; 
-            padding: 0.75rem; 
-            border: 2px solid #e5e7eb; 
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-        .btn { 
-            padding: 0.75rem 1.5rem; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: 600;
-            font-size: 1rem;
-            width: 100%;
-        }
-        .btn-primary { 
-            background: #ef4444; 
-            color: white; 
-        }
-        .btn-primary:hover {
-            background: #dc2626;
-        }
-        .expense-type-note { 
-            background: #fef3c7; 
-            border: 1px solid #f59e0b; 
-            padding: 1rem; 
-            border-radius: 8px; 
-            margin-top: 0.5rem; 
-            font-size: 0.9rem; 
-            color: #92400e; 
-        }
-        .expenses-table { 
-            background: white; 
-            border-radius: 15px; 
-            overflow: hidden; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-        }
-        .table { 
-            width: 100%; 
-            border-collapse: collapse; 
-        }
-        .table th, .table td { 
-            padding: 0.75rem; 
-            text-align: right; 
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 0.9rem;
-        }
-        .table th { 
-            background: #f9fafb; 
-            font-weight: 600; 
-        }
-        .delete-btn { 
-            background: #ef4444; 
-            color: white; 
-            border: none; 
-            padding: 0.5rem 1rem; 
-            border-radius: 5px; 
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        .error { 
-            color: #ef4444; 
-        }
-        .success { 
-            color: #10b981; 
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; direction: rtl; }
+        .header { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
         
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                text-align: center;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .table {
-                font-size: 0.8rem;
-            }
-            .table th, .table td {
-                padding: 0.5rem;
-            }
-        }
+        /* Balance Cards */
+        .balance-section { margin-bottom: 2rem; }
+        .balance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .balance-card { background: white; padding: 1.5rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; position: relative; overflow: hidden; }
+        .balance-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+        .bank-balance::before { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+        .salary-balance::before { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .balance-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .balance-amount { font-size: 1.8rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .bank-balance .balance-amount { color: #1d4ed8; }
+        .salary-balance .balance-amount { color: #d97706; }
+        .balance-label { color: #6b7280; font-size: 0.9rem; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 1.8rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-label { color: #6b7280; font-size: 0.9rem; }
+        
+        .add-form { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .btn-primary { background: #ef4444; color: white; }
+        .expense-type-note { background: #fef3c7; border: 1px solid #f59e0b; padding: 1rem; border-radius: 8px; margin-top: 0.5rem; font-size: 0.9rem; color: #92400e; }
+        .other-note { background: #e0f2fe; border: 1px solid #0288d1; padding: 1rem; border-radius: 8px; margin-top: 0.5rem; font-size: 0.9rem; color: #01579b; }
+        .expenses-table { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 1rem; text-align: right; border-bottom: 1px solid #e5e7eb; }
+        .table th { background: #f9fafb; font-weight: 600; }
+        .delete-btn { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>💸 إدارة المصروفات</h1>
-        <div class="header-links">
-            <a href="balance-display.html">💰 عرض الأرصدة</a>
-            <a href="index.html">🏠 الرئيسية</a>
+        <div>
+            <a href="balance-display.html" style="background: rgba(255,255,255,0.2); color: white; padding: 0.5rem 1rem; border-radius: 5px; text-decoration: none; margin-left: 1rem;">💰 عرض الأرصدة</a>
+            <a href="index.html" style="background: rgba(255,255,255,0.2); color: white; padding: 0.5rem 1rem; border-radius: 5px; text-decoration: none;">🏠 الرئيسية</a>
         </div>
     </div>
     
     <div class="container">
+        <!-- Balance Section -->
+        <div class="balance-section">
+            <div class="balance-grid">
+                <div class="balance-card bank-balance">
+                    <div class="balance-icon">🏦</div>
+                    <div class="balance-amount" id="bankBalance">0.000</div>
+                    <div class="balance-label">الرصيد البنكي (د.ك)</div>
+                </div>
+                <div class="balance-card salary-balance">
+                    <div class="balance-icon">💼</div>
+                    <div class="balance-amount" id="salaryBalance">0.000</div>
+                    <div class="balance-label">رصيد الرواتب (د.ك)</div>
+                </div>
+            </div>
+        </div>
+        
         <div class="stats-grid">
-            <div class="stat-card balance-card">
-                <div class="stat-number" id="bankBalance">0.000 د.ك</div>
-                <div class="stat-label">🏦 الرصيد البنكي</div>
-            </div>
-            <div class="stat-card salary-balance-card">
-                <div class="stat-number" id="salaryBalance">0.000 د.ك</div>
-                <div class="stat-label">💼 رصيد الرواتب</div>
-            </div>
             <div class="stat-card">
-                <div class="stat-number" id="totalExpenses">0.000 د.ك</div>
-                <div class="stat-label">إجمالي المصروفات</div>
+                <div class="stat-number" id="totalExpenses">0.000</div>
+                <div class="stat-label">إجمالي المصروفات (د.ك)</div>
             </div>
         </div>
         
@@ -212,17 +87,26 @@
                 </div>
                 <div class="form-group">
                     <label>نوع المصروف</label>
-                    <select id="expenseType" required onchange="showTypeNote()">
+                    <select id="expenseType" required onchange="handleTypeChange()">
                         <option value="">اختر نوع المصروف</option>
-                        <option value="وقود">وقود</option>
-                        <option value="صيانة">صيانة</option>
-                        <option value="رسوم إيداع الرواتب">رسوم إيداع الرواتب</option>
-                        <option value="مخالفات">مخالفات</option>
-                        <option value="رسوم إقامة">رسوم إقامة</option>
+                        <option value="الإيجارات">الإيجارات</option>
+                        <option value="رواتب الموظفين">رواتب الموظفين</option>
+                        <option value="مصاريف إيداعات الرواتب">مصاريف إيداعات الرواتب</option>
+                        <option value="بوفيه">بوفيه</option>
+                        <option value="نظافة">نظافة</option>
+                        <option value="شراء سيارات">شراء سيارات</option>
+                        <option value="شراء عداد">شراء عداد</option>
+                        <option value="تركيب عداد">تركيب عداد</option>
+                        <option value="صبغ سيارة">صبغ سيارة</option>
+                        <option value="صيانة سيارة">صيانة سيارة</option>
+                        <option value="مصاريف إدارية">مصاريف إدارية</option>
                         <option value="أخرى">أخرى</option>
                     </select>
-                    <div id="typeNote" class="expense-type-note" style="display: none;">
-                        💡 <strong>رسوم إيداع الرواتب:</strong> سيتم خصم هذا المبلغ من رصيد الرواتب وليس الرصيد البنكي
+                    <div id="salaryTypeNote" class="expense-type-note hidden">
+                        💡 <strong>مصاريف إيداعات الرواتب:</strong> سيتم خصم هذا المبلغ من رصيد الرواتب وليس الرصيد البنكي
+                    </div>
+                    <div id="otherTypeNote" class="other-note hidden">
+                        📝 <strong>نوع آخر:</strong> يرجى تحديد نوع المصروف في حقل الملاحظة أدناه
                     </div>
                 </div>
                 <div class="form-group">
@@ -232,6 +116,10 @@
                 <div class="form-group">
                     <label>الوصف</label>
                     <input type="text" id="description" placeholder="وصف المصروف...">
+                </div>
+                <div class="form-group hidden" id="otherNoteGroup">
+                    <label>ملاحظة (نوع المصروف) *</label>
+                    <textarea id="otherNote" placeholder="يرجى تحديد نوع المصروف..." rows="3"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">إضافة المصروف</button>
             </form>
@@ -246,12 +134,13 @@
                         <th>النوع</th>
                         <th>المبلغ</th>
                         <th>الوصف</th>
+                        <th>الملاحظة</th>
                         <th>الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody id="expensesTableBody">
                     <tr>
-                        <td colspan="5" style="text-align: center; color: #6b7280;">جاري تحميل المصروفات...</td>
+                        <td colspan="6" style="text-align: center; color: #6b7280;">جاري تحميل المصروفات...</td>
                     </tr>
                 </tbody>
             </table>
@@ -270,56 +159,63 @@
             messagingSenderId: "1092588712674",
             appId: "1:1092588712674:web:0b8f8b3b8b8b8b8b8b8b8b"
         };
-        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
         // Set today's date
         document.getElementById('date').value = new Date().toISOString().split('T')[0];
         
+        // Handle type change
+        function handleTypeChange() {
+            const type = document.getElementById('expenseType').value;
+            const salaryNote = document.getElementById('salaryTypeNote');
+            const otherNote = document.getElementById('otherTypeNote');
+            const otherGroup = document.getElementById('otherNoteGroup');
+            const otherNoteField = document.getElementById('otherNote');
+            
+            // Hide all notes first
+            salaryNote.classList.add('hidden');
+            otherNote.classList.add('hidden');
+            otherGroup.classList.add('hidden');
+            otherNoteField.removeAttribute('required');
+            
+            if (type === 'مصاريف إيداعات الرواتب') {
+                salaryNote.classList.remove('hidden');
+            } else if (type === 'أخرى') {
+                otherNote.classList.remove('hidden');
+                otherGroup.classList.remove('hidden');
+                otherNoteField.setAttribute('required', 'required');
+            }
+        }
+        
         // Load balances
         async function loadBalances() {
             try {
-                console.log('Loading balances...');
+                console.log('🔄 بدء تحميل الأرصدة...');
                 const balanceDoc = await db.collection('balances').doc('main').get();
-                
                 if (balanceDoc.exists) {
                     const balances = balanceDoc.data();
-                    console.log('Balances:', balances);
-                    
-                    const bankBalance = balances.bankBalance || 0;
-                    const salaryBalance = balances.salaryBalance || 0;
-                    
-                    document.getElementById('bankBalance').textContent = bankBalance.toFixed(3) + ' د.ك';
-                    document.getElementById('salaryBalance').textContent = salaryBalance.toFixed(3) + ' د.ك';
+                    console.log('📊 بيانات الأرصدة:', balances);
+                    document.getElementById('bankBalance').textContent = (parseFloat(balances.bankBalance) || 0).toFixed(3);
+                    document.getElementById('salaryBalance').textContent = (parseFloat(balances.salaryBalance) || 0).toFixed(3);
+                    console.log('💰 الرصيد البنكي:', balances.bankBalance);
+                    console.log('💼 رصيد الرواتب:', balances.salaryBalance);
                 } else {
-                    console.log('Creating initial balance document...');
-                    await db.collection('balances').doc('main').set({
-                        bankBalance: 0,
-                        salaryBalance: 0,
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    
-                    document.getElementById('bankBalance').textContent = '0.000 د.ك';
-                    document.getElementById('salaryBalance').textContent = '0.000 د.ك';
+                    console.log('⚠️ مستند الأرصدة غير موجود');
                 }
             } catch (error) {
-                console.error('Error loading balances:', error);
-                document.getElementById('bankBalance').innerHTML = '<span class="error">خطأ في التحميل</span>';
-                document.getElementById('salaryBalance').innerHTML = '<span class="error">خطأ في التحميل</span>';
+                console.error('❌ خطأ في تحميل الأرصدة:', error);
             }
         }
         
         // Load expenses
         async function loadExpenses() {
             try {
-                console.log('Loading expenses...');
                 const expensesSnapshot = await db.collection('expenses').orderBy('date', 'desc').limit(10).get();
                 const tbody = document.getElementById('expensesTableBody');
                 
                 if (expensesSnapshot.empty) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #6b7280;">لا توجد مصروفات</td></tr>';
-                    document.getElementById('totalExpenses').textContent = '0.000 د.ك';
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #6b7280;">لا توجد مصروفات</td></tr>';
                     return;
                 }
                 
@@ -328,34 +224,23 @@
                 
                 expensesSnapshot.forEach(doc => {
                     const expense = doc.data();
-                    total += expense.amount || 0;
+                    total += expense.amount;
                     
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${expense.date || '-'}</td>
-                        <td>${expense.type || '-'}</td>
-                        <td>${(expense.amount || 0).toFixed(3)} د.ك</td>
+                        <td>${expense.date}</td>
+                        <td>${expense.type}</td>
+                        <td>${expense.amount.toFixed(3)} د.ك</td>
                         <td>${expense.description || '-'}</td>
-                        <td><button class="delete-btn" onclick="deleteExpense('${doc.id}', ${expense.amount || 0}, '${expense.type || ''}')">حذف</button></td>
+                        <td>${expense.otherNote || '-'}</td>
+                        <td><button class="delete-btn" onclick="deleteExpense('${doc.id}', ${expense.amount}, '${expense.type}')">حذف</button></td>
                     `;
                     tbody.appendChild(row);
                 });
                 
-                document.getElementById('totalExpenses').textContent = total.toFixed(3) + ' د.ك';
+                document.getElementById('totalExpenses').textContent = total.toFixed(3);
             } catch (error) {
                 console.error('Error loading expenses:', error);
-                document.getElementById('expensesTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; color: #ef4444;">خطأ في تحميل المصروفات</td></tr>';
-            }
-        }
-        
-        // Show type note
-        function showTypeNote() {
-            const type = document.getElementById('expenseType').value;
-            const note = document.getElementById('typeNote');
-            if (type === 'رسوم إيداع الرواتب') {
-                note.style.display = 'block';
-            } else {
-                note.style.display = 'none';
             }
         }
         
@@ -367,66 +252,47 @@
             const type = document.getElementById('expenseType').value;
             const date = document.getElementById('date').value;
             const description = document.getElementById('description').value;
-            
-            if (!amount || amount <= 0) {
-                alert('يرجى إدخال مبلغ صحيح');
-                return;
-            }
-            
-            if (!type) {
-                alert('يرجى اختيار نوع المصروف');
-                return;
-            }
-            
-            if (!date) {
-                alert('يرجى اختيار التاريخ');
-                return;
-            }
+            const otherNote = document.getElementById('otherNote').value;
             
             try {
-                console.log('Adding expense:', { amount, type, date, description });
-                
-                // Add expense to Firebase
-                const expenseRef = await db.collection('expenses').add({
-                    amount: amount,
-                    type: type,
-                    date: date,
-                    description: description || '',
+                // Prepare expense data
+                const expenseData = {
+                    amount,
+                    type,
+                    date,
+                    description,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                };
                 
-                console.log('Expense added with ID:', expenseRef.id);
-                
-                // Update balance based on type
-                const balanceRef = db.collection('balances').doc('main');
-                
-                if (type === 'رسوم إيداع الرواتب') {
-                    await balanceRef.update({
-                        salaryBalance: firebase.firestore.FieldValue.increment(-amount),
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                } else {
-                    await balanceRef.update({
-                        bankBalance: firebase.firestore.FieldValue.increment(-amount),
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                // Add other note if type is "أخرى"
+                if (type === 'أخرى') {
+                    expenseData.otherNote = otherNote;
                 }
                 
-                console.log('Balance updated successfully');
+                // Add expense to Firebase
+                await db.collection('expenses').add(expenseData);
+                
+                // Update balance based on type
+                const updateData = {};
+                if (type === 'مصاريف إيداعات الرواتب') {
+                    updateData.salaryBalance = firebase.firestore.FieldValue.increment(-amount);
+                } else {
+                    updateData.bankBalance = firebase.firestore.FieldValue.increment(-amount);
+                }
+                
+                await db.collection('balances').doc('main').update(updateData);
                 
                 // Reload data and reset form
                 await loadBalances();
                 await loadExpenses();
-                
                 document.getElementById('expenseForm').reset();
                 document.getElementById('date').value = new Date().toISOString().split('T')[0];
-                document.getElementById('typeNote').style.display = 'none';
+                handleTypeChange(); // Reset type-specific fields
                 
                 alert('تم إضافة المصروف بنجاح!');
-                
             } catch (error) {
                 console.error('Error adding expense:', error);
-                alert('حدث خطأ أثناء إضافة المصروف: ' + error.message);
+                alert('حدث خطأ أثناء إضافة المصروف');
             }
         });
         
@@ -435,38 +301,29 @@
             if (!confirm('هل أنت متأكد من حذف هذا المصروف؟')) return;
             
             try {
-                console.log('Deleting expense:', id, amount, type);
-                
                 await db.collection('expenses').doc(id).delete();
                 
                 // Restore balance
-                const balanceRef = db.collection('balances').doc('main');
-                
-                if (type === 'رسوم إيداع الرواتب') {
-                    await balanceRef.update({
-                        salaryBalance: firebase.firestore.FieldValue.increment(amount),
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                const updateData = {};
+                if (type === 'مصاريف إيداعات الرواتب') {
+                    updateData.salaryBalance = firebase.firestore.FieldValue.increment(amount);
                 } else {
-                    await balanceRef.update({
-                        bankBalance: firebase.firestore.FieldValue.increment(amount),
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    updateData.bankBalance = firebase.firestore.FieldValue.increment(amount);
                 }
+                
+                await db.collection('balances').doc('main').update(updateData);
                 
                 await loadBalances();
                 await loadExpenses();
                 alert('تم حذف المصروف بنجاح!');
-                
             } catch (error) {
                 console.error('Error deleting expense:', error);
-                alert('حدث خطأ أثناء حذف المصروف: ' + error.message);
+                alert('حدث خطأ أثناء حذف المصروف');
             }
         }
         
         // Load on page load
         window.addEventListener('load', () => {
-            console.log('Page loaded, initializing...');
             loadBalances();
             loadExpenses();
         });

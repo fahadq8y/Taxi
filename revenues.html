@@ -6,200 +6,72 @@
     <title>إدارة الإيرادات - نظام إدارة التاكسي</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: #f8fafc; 
-            direction: rtl; 
-            min-height: 100vh;
-        }
-        .header { 
-            background: linear-gradient(135deg, #10b981, #059669); 
-            color: white; 
-            padding: 1rem; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .header h1 {
-            font-size: 1.5rem;
-        }
-        .header-links {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        .header-links a {
-            background: rgba(255,255,255,0.2); 
-            color: white; 
-            padding: 0.5rem 1rem; 
-            border-radius: 5px; 
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-        .container { 
-            max-width: 1200px; 
-            margin: 1rem auto; 
-            padding: 0 1rem; 
-        }
-        .stats-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 1rem; 
-            margin-bottom: 2rem; 
-        }
-        .stat-card { 
-            background: white; 
-            padding: 1.5rem; 
-            border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            text-align: center; 
-        }
-        .stat-number { 
-            font-size: 1.5rem; 
-            font-weight: bold; 
-            margin-bottom: 0.5rem;
-            word-break: break-all;
-        }
-        .stat-label { 
-            color: #6b7280; 
-            font-size: 0.9rem; 
-        }
-        .balance-card { 
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8); 
-            color: white; 
-        }
-        .balance-card .stat-number { color: white; }
-        .balance-card .stat-label { color: rgba(255,255,255,0.8); }
-        .salary-balance-card { 
-            background: linear-gradient(135deg, #f59e0b, #d97706); 
-            color: white; 
-        }
-        .salary-balance-card .stat-number { color: white; }
-        .salary-balance-card .stat-label { color: rgba(255,255,255,0.8); }
-        .add-form { 
-            background: white; 
-            padding: 2rem; 
-            border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            margin-bottom: 2rem; 
-        }
-        .form-group { 
-            margin-bottom: 1rem; 
-        }
-        .form-group label { 
-            display: block; 
-            margin-bottom: 0.5rem; 
-            font-weight: 500; 
-        }
-        .form-group input, .form-group select { 
-            width: 100%; 
-            padding: 0.75rem; 
-            border: 2px solid #e5e7eb; 
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-        .btn { 
-            padding: 0.75rem 1.5rem; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: 600;
-            font-size: 1rem;
-            width: 100%;
-        }
-        .btn-primary { 
-            background: #10b981; 
-            color: white; 
-        }
-        .btn-primary:hover {
-            background: #059669;
-        }
-        .revenue-type-note { 
-            background: #fef3c7; 
-            border: 1px solid #f59e0b; 
-            padding: 1rem; 
-            border-radius: 8px; 
-            margin-top: 0.5rem; 
-            font-size: 0.9rem; 
-            color: #92400e; 
-        }
-        .revenues-table { 
-            background: white; 
-            border-radius: 15px; 
-            overflow: hidden; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-        }
-        .table { 
-            width: 100%; 
-            border-collapse: collapse; 
-        }
-        .table th, .table td { 
-            padding: 0.75rem; 
-            text-align: right; 
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 0.9rem;
-        }
-        .table th { 
-            background: #f9fafb; 
-            font-weight: 600; 
-        }
-        .delete-btn { 
-            background: #ef4444; 
-            color: white; 
-            border: none; 
-            padding: 0.5rem 1rem; 
-            border-radius: 5px; 
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        .error { 
-            color: #ef4444; 
-        }
-        .success { 
-            color: #10b981; 
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; direction: rtl; }
+        .header { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
         
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                text-align: center;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .table {
-                font-size: 0.8rem;
-            }
-            .table th, .table td {
-                padding: 0.5rem;
-            }
-        }
+        /* Balance Cards */
+        .balance-section { margin-bottom: 2rem; }
+        .balance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .balance-card { background: white; padding: 1.5rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; position: relative; overflow: hidden; }
+        .balance-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+        .bank-balance::before { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+        .salary-balance::before { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .balance-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .balance-amount { font-size: 1.8rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .bank-balance .balance-amount { color: #1d4ed8; }
+        .salary-balance .balance-amount { color: #d97706; }
+        .balance-label { color: #6b7280; font-size: 0.9rem; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 1.8rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .stat-label { color: #6b7280; font-size: 0.9rem; }
+        
+        .add-form { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .btn-primary { background: #10b981; color: white; }
+        .revenue-type-note { background: #fef3c7; border: 1px solid #f59e0b; padding: 1rem; border-radius: 8px; margin-top: 0.5rem; font-size: 0.9rem; color: #92400e; }
+        .revenues-table { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 1rem; text-align: right; border-bottom: 1px solid #e5e7eb; }
+        .table th { background: #f9fafb; font-weight: 600; }
+        .delete-btn { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>💰 إدارة الإيرادات</h1>
-        <div class="header-links">
-            <a href="balance-display.html">💰 عرض الأرصدة</a>
-            <a href="index.html">🏠 الرئيسية</a>
+        <div>
+            <a href="balance-display.html" style="background: rgba(255,255,255,0.2); color: white; padding: 0.5rem 1rem; border-radius: 5px; text-decoration: none; margin-left: 1rem;">💰 عرض الأرصدة</a>
+            <a href="index.html" style="background: rgba(255,255,255,0.2); color: white; padding: 0.5rem 1rem; border-radius: 5px; text-decoration: none;">🏠 الرئيسية</a>
         </div>
     </div>
     
     <div class="container">
+        <!-- Balance Section -->
+        <div class="balance-section">
+            <div class="balance-grid">
+                <div class="balance-card bank-balance">
+                    <div class="balance-icon">🏦</div>
+                    <div class="balance-amount" id="bankBalance">0.000</div>
+                    <div class="balance-label">الرصيد البنكي (د.ك)</div>
+                </div>
+                <div class="balance-card salary-balance">
+                    <div class="balance-icon">💼</div>
+                    <div class="balance-amount" id="salaryBalance">0.000</div>
+                    <div class="balance-label">رصيد الرواتب (د.ك)</div>
+                </div>
+            </div>
+        </div>
+        
         <div class="stats-grid">
-            <div class="stat-card balance-card">
-                <div class="stat-number" id="bankBalance">0.000 د.ك</div>
-                <div class="stat-label">🏦 الرصيد البنكي</div>
-            </div>
-            <div class="stat-card salary-balance-card">
-                <div class="stat-number" id="salaryBalance">0.000 د.ك</div>
-                <div class="stat-label">💼 رصيد الرواتب</div>
-            </div>
             <div class="stat-card">
-                <div class="stat-number" id="totalRevenues">0.000 د.ك</div>
-                <div class="stat-label">إجمالي الإيرادات</div>
+                <div class="stat-number" id="totalRevenues">0.000</div>
+                <div class="stat-label">إجمالي الإيرادات (د.ك)</div>
             </div>
         </div>
         
@@ -267,7 +139,6 @@
             messagingSenderId: "1092588712674",
             appId: "1:1092588712674:web:0b8f8b3b8b8b8b8b8b8b8b"
         };
-        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
@@ -277,46 +148,31 @@
         // Load balances
         async function loadBalances() {
             try {
-                console.log('Loading balances...');
+                console.log('🔄 بدء تحميل الأرصدة...');
                 const balanceDoc = await db.collection('balances').doc('main').get();
-                
                 if (balanceDoc.exists) {
                     const balances = balanceDoc.data();
-                    console.log('Balances:', balances);
-                    
-                    const bankBalance = balances.bankBalance || 0;
-                    const salaryBalance = balances.salaryBalance || 0;
-                    
-                    document.getElementById('bankBalance').textContent = bankBalance.toFixed(3) + ' د.ك';
-                    document.getElementById('salaryBalance').textContent = salaryBalance.toFixed(3) + ' د.ك';
+                    console.log('📊 بيانات الأرصدة:', balances);
+                    document.getElementById('bankBalance').textContent = (parseFloat(balances.bankBalance) || 0).toFixed(3);
+                    document.getElementById('salaryBalance').textContent = (parseFloat(balances.salaryBalance) || 0).toFixed(3);
+                    console.log('💰 الرصيد البنكي:', balances.bankBalance);
+                    console.log('💼 رصيد الرواتب:', balances.salaryBalance);
                 } else {
-                    console.log('Creating initial balance document...');
-                    await db.collection('balances').doc('main').set({
-                        bankBalance: 0,
-                        salaryBalance: 0,
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    
-                    document.getElementById('bankBalance').textContent = '0.000 د.ك';
-                    document.getElementById('salaryBalance').textContent = '0.000 د.ك';
+                    console.log('⚠️ مستند الأرصدة غير موجود');
                 }
             } catch (error) {
-                console.error('Error loading balances:', error);
-                document.getElementById('bankBalance').innerHTML = '<span class="error">خطأ في التحميل</span>';
-                document.getElementById('salaryBalance').innerHTML = '<span class="error">خطأ في التحميل</span>';
+                console.error('❌ خطأ في تحميل الأرصدة:', error);
             }
         }
         
         // Load revenues
         async function loadRevenues() {
             try {
-                console.log('Loading revenues...');
                 const revenuesSnapshot = await db.collection('revenues').orderBy('date', 'desc').limit(10).get();
                 const tbody = document.getElementById('revenuesTableBody');
                 
                 if (revenuesSnapshot.empty) {
                     tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #6b7280;">لا توجد إيرادات</td></tr>';
-                    document.getElementById('totalRevenues').textContent = '0.000 د.ك';
                     return;
                 }
                 
@@ -325,23 +181,22 @@
                 
                 revenuesSnapshot.forEach(doc => {
                     const revenue = doc.data();
-                    total += revenue.amount || 0;
+                    total += revenue.amount;
                     
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${revenue.date || '-'}</td>
-                        <td>${revenue.type || '-'}</td>
-                        <td>${(revenue.amount || 0).toFixed(3)} د.ك</td>
+                        <td>${revenue.date}</td>
+                        <td>${revenue.type}</td>
+                        <td>${revenue.amount.toFixed(3)} د.ك</td>
                         <td>${revenue.description || '-'}</td>
-                        <td><button class="delete-btn" onclick="deleteRevenue('${doc.id}', ${revenue.amount || 0}, '${revenue.type || ''}')">حذف</button></td>
+                        <td><button class="delete-btn" onclick="deleteRevenue('${doc.id}', ${revenue.amount}, '${revenue.type}')">حذف</button></td>
                     `;
                     tbody.appendChild(row);
                 });
                 
-                document.getElementById('totalRevenues').textContent = total.toFixed(3) + ' د.ك';
+                document.getElementById('totalRevenues').textContent = total.toFixed(3);
             } catch (error) {
                 console.error('Error loading revenues:', error);
-                document.getElementById('revenuesTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; color: #ef4444;">خطأ في تحميل الإيرادات</td></tr>';
             }
         }
         
@@ -365,65 +220,37 @@
             const date = document.getElementById('date').value;
             const description = document.getElementById('description').value;
             
-            if (!amount || amount <= 0) {
-                alert('يرجى إدخال مبلغ صحيح');
-                return;
-            }
-            
-            if (!type) {
-                alert('يرجى اختيار نوع الإيراد');
-                return;
-            }
-            
-            if (!date) {
-                alert('يرجى اختيار التاريخ');
-                return;
-            }
-            
             try {
-                console.log('Adding revenue:', { amount, type, date, description });
-                
                 // Add revenue to Firebase
-                const revenueRef = await db.collection('revenues').add({
-                    amount: amount,
-                    type: type,
-                    date: date,
-                    description: description || '',
+                await db.collection('revenues').add({
+                    amount,
+                    type,
+                    date,
+                    description,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                console.log('Revenue added with ID:', revenueRef.id);
-                
                 // Update balance based on type
-                const balanceRef = db.collection('balances').doc('main');
-                
+                const updateData = {};
                 if (type === 'رسوم إيداع رواتب') {
-                    await balanceRef.update({
-                        salaryBalance: firebase.firestore.FieldValue.increment(amount),
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    updateData.salaryBalance = firebase.firestore.FieldValue.increment(amount);
                 } else {
-                    await balanceRef.update({
-                        bankBalance: firebase.firestore.FieldValue.increment(amount),
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    updateData.bankBalance = firebase.firestore.FieldValue.increment(amount);
                 }
                 
-                console.log('Balance updated successfully');
+                await db.collection('balances').doc('main').update(updateData);
                 
                 // Reload data and reset form
                 await loadBalances();
                 await loadRevenues();
-                
                 document.getElementById('revenueForm').reset();
                 document.getElementById('date').value = new Date().toISOString().split('T')[0];
                 document.getElementById('typeNote').style.display = 'none';
                 
                 alert('تم إضافة الإيراد بنجاح!');
-                
             } catch (error) {
                 console.error('Error adding revenue:', error);
-                alert('حدث خطأ أثناء إضافة الإيراد: ' + error.message);
+                alert('حدث خطأ أثناء إضافة الإيراد');
             }
         });
         
@@ -432,38 +259,29 @@
             if (!confirm('هل أنت متأكد من حذف هذا الإيراد؟')) return;
             
             try {
-                console.log('Deleting revenue:', id, amount, type);
-                
                 await db.collection('revenues').doc(id).delete();
                 
                 // Restore balance
-                const balanceRef = db.collection('balances').doc('main');
-                
+                const updateData = {};
                 if (type === 'رسوم إيداع رواتب') {
-                    await balanceRef.update({
-                        salaryBalance: firebase.firestore.FieldValue.increment(-amount),
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    updateData.salaryBalance = firebase.firestore.FieldValue.increment(-amount);
                 } else {
-                    await balanceRef.update({
-                        bankBalance: firebase.firestore.FieldValue.increment(-amount),
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    updateData.bankBalance = firebase.firestore.FieldValue.increment(-amount);
                 }
+                
+                await db.collection('balances').doc('main').update(updateData);
                 
                 await loadBalances();
                 await loadRevenues();
                 alert('تم حذف الإيراد بنجاح!');
-                
             } catch (error) {
                 console.error('Error deleting revenue:', error);
-                alert('حدث خطأ أثناء حذف الإيراد: ' + error.message);
+                alert('حدث خطأ أثناء حذف الإيراد');
             }
         }
         
         // Load on page load
         window.addEventListener('load', () => {
-            console.log('Page loaded, initializing...');
             loadBalances();
             loadRevenues();
         });
