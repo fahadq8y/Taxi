@@ -282,7 +282,7 @@
         <h1>🚕 جدول السائقين الشامل</h1>
         <div class="header-buttons">
             <a href="admin-dashboard.html" class="btn btn-secondary">لوحة التحكم</a>
-            <button onclick="logout()" class="btn btn-primary">تسجيل الخروج</button>
+            <button onclick="refreshData()" class="btn btn-primary">تحديث البيانات</button>
         </div>
     </div>
 
@@ -360,7 +360,6 @@
         // Import Firebase modules
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getFirestore, collection, getDocs, doc, getDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
         // Firebase configuration
         const firebaseConfig = {
@@ -375,35 +374,21 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth(app);
 
         // Global variables
-        let currentUser = null;
         let drivers = [];
         let revenues = [];
         let expenses = [];
         let allTableData = [];
 
         // Make functions global
-        window.logout = logout;
         window.filterTable = filterTable;
         window.refreshData = refreshData;
         window.openDriverModal = openDriverModal;
 
-        // Authentication check
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                console.log('No user found, redirecting to login');
-                window.location.href = 'index.html';
-                return;
-            }
-
-            console.log('User authenticated:', user.uid);
-            currentUser = user;
-            
-            // Load data
-            await loadAllData();
-        });
+        // Start loading data immediately (no authentication required)
+        console.log('Starting to load data without authentication...');
+        loadAllData();
 
         // Load all data from Firebase
         async function loadAllData() {
@@ -667,16 +652,6 @@
         // Open driver modal
         function openDriverModal(driverId, driverName) {
             alert(`تفاصيل السائق: ${driverName}\nID: ${driverId}`);
-        }
-
-        // Logout function
-        function logout() {
-            signOut(auth).then(() => {
-                window.location.href = 'index.html';
-            }).catch((error) => {
-                console.error('Error signing out:', error);
-                alert('حدث خطأ في تسجيل الخروج');
-            });
         }
     </script>
 </body>
