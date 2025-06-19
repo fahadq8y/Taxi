@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دفعات السائق - نظام إدارة التاكسي</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            direction: rtl;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .driver-info {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .driver-info h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 8px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .info-value {
+            color: #666;
+        }
+
+        .debt-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .debt-item {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .debt-violations {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        }
+
+        .debt-residency {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        }
+
+        .debt-old {
+            background: linear-gradient(135deg, #45b7d1, #96c93d);
+        }
+
+        .payment-sections {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .payment-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-icon {
+            font-size: 2rem;
+            padding: 0.5rem;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .daily-collection .section-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .old-debt .section-icon {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+        }
+
+        .violations .section-icon {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+        }
+
+        .residency .section-icon {
+            background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+        }
+
+        .salary-fees .section-icon {
+            background: linear-gradient(135deg, #607D8B, #455A64);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .btn-payment {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-daily {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-old-debt {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-violation-pay {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+
+        .btn-violation-collect {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+        }
+
+        .btn-residency-pay {
+            background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+            color: white;
+        }
+
+        .btn-residency-collect {
+            background: linear-gradient(135deg, #673AB7, #512DA8);
+            color: white;
+        }
+
+        .btn-salary {
+            background: linear-gradient(135deg, #607D8B, #455A64);
+            color: white;
+        }
+
+        .btn-payment:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .operation-selector {
+            margin-bottom: 1rem;
+        }
+
+        .sub-form {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+        }
+
+        .sub-form.active {
+            display: block;
+        }
+
+        .payments-history {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .payments-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .payments-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .payments-table td {
+            padding: 0.75rem;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .payments-table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+
+        .amount-positive {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .amount-negative {
+            color: #f44336;
+            font-weight: 600;
+        }
+
+        .status-revenue {
+            background: #e8f5e8;
+            color: #4CAF50;
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-debt {
+            background: #ffebee;
+            color: #f44336;
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .debt-info {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .payments-table {
+                font-size: 0.8rem;
+            }
+
+            .payments-table th,
+            .payments-table td {
+                padding: 0.5rem 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💰 دفعات السائق</h1>
+        <div class="header-buttons">
+            <a href="drivers-overview.html" class="btn btn-secondary">العودة لجدول السائقين</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="driver-info">
+            <h2 id="driverTitle">دفعات السائق</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">الاسم:</span>
+                    <span class="info-value" id="driverName">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">الأجرة اليومية:</span>
+                    <span class="info-value" id="dailyWage">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">تاريخ بداية العقد:</span>
+                    <span class="info-value" id="contractStart">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">تاريخ آخر سداد:</span>
+                    <span class="info-value" id="lastPayment">-</span>
+                </div>
+            </div>
+            
+            <div class="debt-info">
+                <div class="debt-item debt-violations">
+                    <div>المخالفات</div>
+                    <div id="violationsAmount">0 د.ك</div>
+                </div>
+                <div class="debt-item debt-residency">
+                    <div>مصاريف الإقامة</div>
+                    <div id="residencyAmount">0 د.ك</div>
+                </div>
+                <div class="debt-item debt-old">
+                    <div>ديون قديمة</div>
+                    <div id="oldDebtsAmount">0 د.ك</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-sections">
+            <!-- Daily Collection Payment -->
+            <div class="payment-section daily-collection">
+                <div class="section-header">
+                    <div class="section-icon">💵</div>
+                    <div class="section-title">دفع التحصيل اليومي</div>
+                </div>
+                <form id="dailyPaymentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">المبلغ (د.ك)</label>
+                            <input type="number" class="form-input" id="dailyAmount" step="0.001" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">التاريخ</label>
+                            <input type="date" class="form-input" id="dailyDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ملاحظات</label>
+                        <textarea class="form-textarea" id="dailyNotes" placeholder="ملاحظات إضافية..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-payment btn-daily">تسجيل دفع التحصيل اليومي</button>
+                </form>
+            </div>
+
+            <!-- Old Debt Payment -->
+            <div class="payment-section old-debt">
+                <div class="section-header">
+                    <div class="section-icon">📋</div>
+                    <div class="section-title">دفع دين قديم</div>
+                </div>
+                <form id="oldDebtForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">المبلغ (د.ك)</label>
+                            <input type="number" class="form-input" id="oldDebtAmount" step="0.001" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">التاريخ</label>
+                            <input type="date" class="form-input" id="oldDebtDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">وصف الدين</label>
+                        <textarea class="form-textarea" id="oldDebtDescription" placeholder="وصف الدين المسدد..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-payment btn-old-debt">تسجيل دفع دين قديم</button>
+                </form>
+            </div>
+
+            <!-- Violations Management -->
+            <div class="payment-section violations">
+                <div class="section-header">
+                    <div class="section-icon">🚫</div>
+                    <div class="section-title">إدارة المخالفات</div>
+                </div>
+                <div class="operation-selector">
+                    <label class="form-label">نوع العملية</label>
+                    <select class="form-select" id="violationOperation" onchange="toggleViolationForms()">
+                        <option value="">اختر نوع العملية</option>
+                        <option value="pay">دفع مخالفة</option>
+                        <option value="collect">تحصيل مخالفة</option>
+                    </select>
+                </div>
+                
+                <!-- Pay Violation Form -->
+                <div id="payViolationForm" class="sub-form">
+                    <form id="violationPayForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">المبلغ (د.ك)</label>
+                                <input type="number" class="form-input" id="violationPayAmount" step="0.001" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">التاريخ</label>
+                                <input type="date" class="form-input" id="violationPayDate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">وصف المخالفة</label>
+                            <textarea class="form-textarea" id="violationPayDescription" placeholder="وصف المخالفة..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-payment btn-violation-pay">دفع مخالفة</button>
+                    </form>
+                </div>
+
+                <!-- Collect Violation Form -->
+                <div id="collectViolationForm" class="sub-form">
+                    <form id="violationCollectForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">المبلغ (د.ك)</label>
+                                <input type="number" class="form-input" id="violationCollectAmount" step="0.001" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">التاريخ</label>
+                                <input type="date" class="form-input" id="violationCollectDate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">وصف المخالفة</label>
+                            <textarea class="form-textarea" id="violationCollectDescription" placeholder="وصف المخالفة المحصلة..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-payment btn-violation-collect">تحصيل مخالفة</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Residency Management -->
+            <div class="payment-section residency">
+                <div class="section-header">
+                    <div class="section-icon">🏠</div>
+                    <div class="section-title">إدارة رسوم الإقامة</div>
+                </div>
+                <div class="operation-selector">
+                    <label class="form-label">نوع العملية</label>
+                    <select class="form-select" id="residencyOperation" onchange="toggleResidencyForms()">
+                        <option value="">اختر نوع العملية</option>
+                        <option value="pay">دفع رسوم إقامة</option>
+                        <option value="collect">تحصيل رسوم إقامة</option>
+                    </select>
+                </div>
+                
+                <!-- Pay Residency Form -->
+                <div id="payResidencyForm" class="sub-form">
+                    <form id="residencyPayForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">المبلغ (د.ك)</label>
+                                <input type="number" class="form-input" id="residencyPayAmount" step="0.001" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">التاريخ</label>
+                                <input type="date" class="form-input" id="residencyPayDate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">وصف الرسوم</label>
+                            <textarea class="form-textarea" id="residencyPayDescription" placeholder="وصف رسوم الإقامة..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-payment btn-residency-pay">دفع رسوم إقامة</button>
+                    </form>
+                </div>
+
+                <!-- Collect Residency Form -->
+                <div id="collectResidencyForm" class="sub-form">
+                    <form id="residencyCollectForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">المبلغ (د.ك)</label>
+                                <input type="number" class="form-input" id="residencyCollectAmount" step="0.001" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">التاريخ</label>
+                                <input type="date" class="form-input" id="residencyCollectDate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">وصف الرسوم</label>
+                            <textarea class="form-textarea" id="residencyCollectDescription" placeholder="وصف رسوم الإقامة المحصلة..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-payment btn-residency-collect">تحصيل رسوم إقامة</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Salary Fees Collection -->
+            <div class="payment-section salary-fees">
+                <div class="section-header">
+                    <div class="section-icon">💼</div>
+                    <div class="section-title">تحصيل رسوم الرواتب</div>
+                </div>
+                <form id="salaryFeesForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">المبلغ (د.ك)</label>
+                            <input type="number" class="form-input" id="salaryFeesAmount" step="0.001" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">التاريخ</label>
+                            <input type="date" class="form-input" id="salaryFeesDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ملاحظات</label>
+                        <textarea class="form-textarea" id="salaryFeesNotes" placeholder="ملاحظات حول رسوم الرواتب..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-payment btn-salary">تحصيل رسوم الرواتب</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Payments History -->
+        <div class="payments-history">
+            <h3>تاريخ الدفعات</h3>
+            <table class="payments-table">
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>نوع الدفعة</th>
+                        <th>المبلغ</th>
+                        <th>الوصف</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody id="paymentsHistoryBody">
+                    <tr>
+                        <td>18/06/2025</td>
+                        <td>تحصيل أجرة يومية</td>
+                        <td class="amount-positive">7.000 د.ك</td>
+                        <td>دفعة يومية</td>
+                        <td><span class="status-revenue">إيراد</span></td>
+                    </tr>
+                    <tr>
+                        <td>17/06/2025</td>
+                        <td>مخالفة</td>
+                        <td class="amount-negative">25.000 د.ك</td>
+                        <td>مخالفة سرعة</td>
+                        <td><span class="status-debt">دين على السائق</span></td>
+                    </tr>
+                    <tr>
+                        <td>15/06/2025</td>
+                        <td>رسوم إقامة</td>
+                        <td class="amount-negative">50.000 د.ك</td>
+                        <td>تجديد إقامة</td>
+                        <td><span class="status-debt">دين على السائق</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB8Q9CYIWXPmTdiz3vPiLlPYFxiJu0vE_g",
+            authDomain: "taxi-management-system-d8210.firebaseapp.com",
+            projectId: "taxi-management-system-d8210",
+            storageBucket: "taxi-management-system-d8210.firebasestorage.app",
+            messagingSenderId: "720874424166",
+            appId: "1:720874424166:web:25f9c6d126e792b2e5eaa7",
+            measurementId: "G-GY8820W410"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Global variables
+        let currentDriver = null;
+
+        // Load driver data
+        async function loadDriverData() {
+            try {
+                // Get driver data from localStorage
+                const driverData = localStorage.getItem('selectedDriver');
+                if (!driverData) {
+                    alert('لم يتم تحديد السائق');
+                    window.location.href = 'drivers-overview.html';
+                    return;
+                }
+
+                currentDriver = JSON.parse(driverData);
+                
+                // Verify driver exists in Firebase
+                const driverDoc = await getDoc(doc(db, 'drivers', currentDriver.id));
+                if (!driverDoc.exists()) {
+                    alert('السائق غير موجود');
+                    window.location.href = 'drivers-overview.html';
+                    return;
+                }
+
+                // Update driver data with latest from Firebase
+                currentDriver = { id: driverDoc.id, ...driverDoc.data() };
+                
+                displayDriverInfo();
+                setDefaultValues();
+            } catch (error) {
+                console.error('Error loading driver data:', error);
+                alert('خطأ في تحميل بيانات السائق');
+            }
+        }
+
+        // Display driver information
+        function displayDriverInfo() {
+            document.getElementById('driverTitle').textContent = `دفعات السائق: ${currentDriver.name || 'غير محدد'}`;
+            document.getElementById('driverName').textContent = currentDriver.name || 'غير محدد';
+            document.getElementById('dailyWage').textContent = `${parseFloat(currentDriver.dailyWage || 0).toFixed(3)} د.ك`;
+            document.getElementById('contractStart').textContent = formatDate(currentDriver.contractStartDate || currentDriver.createdAt);
+            document.getElementById('lastPayment').textContent = formatDate(currentDriver.lastPaymentDate || currentDriver.contractStartDate);
+            
+            // Display debt information
+            document.getElementById('violationsAmount').textContent = `${parseFloat(currentDriver.violations || 0).toFixed(3)} د.ك`;
+            document.getElementById('residencyAmount').textContent = `${parseFloat(currentDriver.residencyFees || 0).toFixed(3)} د.ك`;
+            document.getElementById('oldDebtsAmount').textContent = `${parseFloat(currentDriver.oldDebts || 0).toFixed(3)} د.ك`;
+        }
+
+        // Set default values for forms
+        function setDefaultValues() {
+            const today = new Date().toISOString().split('T')[0];
+            const dailyWage = parseFloat(currentDriver.dailyWage || 0);
+
+            // Set today's date for all date inputs
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                input.value = today;
+            });
+
+            // Set daily wage as default amount for daily collection
+            document.getElementById('dailyAmount').value = dailyWage.toFixed(3);
+        }
+
+        // Format date for display (Gregorian calendar)
+        function formatDate(dateValue) {
+            if (!dateValue) return 'غير محدد';
+            
+            let date;
+            if (dateValue instanceof Date) {
+                date = dateValue;
+            } else if (dateValue && typeof dateValue.toDate === 'function') {
+                date = dateValue.toDate();
+            } else {
+                date = new Date(dateValue);
+            }
+            
+            if (isNaN(date.getTime())) return 'غير محدد';
+            
+            return date.toLocaleDateString('en-GB', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
+
+        // Toggle violation forms
+        function toggleViolationForms() {
+            const operation = document.getElementById('violationOperation').value;
+            const payForm = document.getElementById('payViolationForm');
+            const collectForm = document.getElementById('collectViolationForm');
+            
+            payForm.classList.remove('active');
+            collectForm.classList.remove('active');
+            
+            if (operation === 'pay') {
+                payForm.classList.add('active');
+            } else if (operation === 'collect') {
+                collectForm.classList.add('active');
+            }
+        }
+
+        // Toggle residency forms
+        function toggleResidencyForms() {
+            const operation = document.getElementById('residencyOperation').value;
+            const payForm = document.getElementById('payResidencyForm');
+            const collectForm = document.getElementById('collectResidencyForm');
+            
+            payForm.classList.remove('active');
+            collectForm.classList.remove('active');
+            
+            if (operation === 'pay') {
+                payForm.classList.add('active');
+            } else if (operation === 'collect') {
+                collectForm.classList.add('active');
+            }
+        }
+
+        // Process daily payment
+        async function processDailyPayment(formData) {
+            try {
+                // Add to revenues
+                await addDoc(collection(db, 'revenues'), {
+                    driverId: currentDriver.id,
+                    driverName: currentDriver.name,
+                    amount: parseFloat(formData.amount),
+                    date: formData.date,
+                    description: `تحصيل أجرة يومية - ${currentDriver.name}`,
+                    notes: formData.notes,
+                    type: 'daily_collection',
+                    createdAt: new Date()
+                });
+
+                // Update driver's last payment date
+                await updateDoc(doc(db, 'drivers', currentDriver.id), {
+                    lastPaymentDate: formData.date,
+                    updatedAt: new Date()
+                });
+
+                alert('تم تسجيل دفع التحصيل اليومي بنجاح');
+                document.getElementById('dailyPaymentForm').reset();
+                setDefaultValues();
+            } catch (error) {
+                console.error('Error processing daily payment:', error);
+                alert('خطأ في تسجيل الدفعة');
+            }
+        }
+
+        // Process old debt payment
+        async function processOldDebtPayment(formData) {
+            try {
+                // Add to revenues
+                await addDoc(collection(db, 'revenues'), {
+                    driverId: currentDriver.id,
+                    driverName: currentDriver.name,
+                    amount: parseFloat(formData.amount),
+                    date: formData.date,
+                    description: `دفع دين قديم - ${currentDriver.name}: ${formData.description}`,
+                    type: 'old_debt_payment',
+                    createdAt: new Date()
+                });
+
+                // Update driver's old debts
+                const currentOldDebts = parseFloat(currentDriver.oldDebts || 0);
+                const newOldDebts = Math.max(0, currentOldDebts - parseFloat(formData.amount));
+                
+                await updateDoc(doc(db, 'drivers', currentDriver.id), {
+                    oldDebts: newOldDebts,
+                    updatedAt: new Date()
+                });
+
+                alert('تم تسجيل دفع الدين القديم بنجاح');
+                document.getElementById('oldDebtForm').reset();
+                setDefaultValues();
+                
+                // Refresh driver info
+                currentDriver.oldDebts = newOldDebts;
+                displayDriverInfo();
+            } catch (error) {
+                console.error('Error processing old debt payment:', error);
+                alert('خطأ في تسجيل الدفعة');
+            }
+        }
+
+        // Process violation payment
+        async function processViolationPayment(formData, isCollection = false) {
+            try {
+                if (isCollection) {
+                    // Add to revenues
+                    await addDoc(collection(db, 'revenues'), {
+                        driverId: currentDriver.id,
+                        driverName: currentDriver.name,
+                        amount: parseFloat(formData.amount),
+                        date: formData.date,
+                        description: `تحصيل مخالفة - ${currentDriver.name}: ${formData.description}`,
+                        type: 'violation_collection',
+                        createdAt: new Date()
+                    });
+
+                    // Reduce driver's violations debt
+                    const currentViolations = parseFloat(currentDriver.violations || 0);
+                    const newViolations = Math.max(0, currentViolations - parseFloat(formData.amount));
+                    
+                    await updateDoc(doc(db, 'drivers', currentDriver.id), {
+                        violations: newViolations,
+                        updatedAt: new Date()
+                    });
+
+                    currentDriver.violations = newViolations;
+                    alert('تم تسجيل تحصيل المخالفة بنجاح');
+                } else {
+                    // Add to expenses
+                    await addDoc(collection(db, 'expenses'), {
+                        driverId: currentDriver.id,
+                        driverName: currentDriver.name,
+                        amount: parseFloat(formData.amount),
+                        date: formData.date,
+                        description: `دفع مخالفة - ${currentDriver.name}: ${formData.description}`,
+                        category: 'violations',
+                        type: 'violation_payment',
+                        createdAt: new Date()
+                    });
+
+                    // Increase driver's violations debt
+                    const currentViolations = parseFloat(currentDriver.violations || 0);
+                    const newViolations = currentViolations + parseFloat(formData.amount);
+                    
+                    await updateDoc(doc(db, 'drivers', currentDriver.id), {
+                        violations: newViolations,
+                        updatedAt: new Date()
+                    });
+
+                    currentDriver.violations = newViolations;
+                    alert('تم تسجيل دفع المخالفة بنجاح');
+                }
+
+                // Reset forms and refresh display
+                document.getElementById('violationOperation').value = '';
+                toggleViolationForms();
+                displayDriverInfo();
+                setDefaultValues();
+            } catch (error) {
+                console.error('Error processing violation payment:', error);
+                alert('خطأ في تسجيل المعاملة');
+            }
+        }
+
+        // Process residency payment
+        async function processResidencyPayment(formData, isCollection = false) {
+            try {
+                if (isCollection) {
+                    // Add to revenues
+                    await addDoc(collection(db, 'revenues'), {
+                        driverId: currentDriver.id,
+                        driverName: currentDriver.name,
+                        amount: parseFloat(formData.amount),
+                        date: formData.date,
+                        description: `تحصيل رسوم إقامة - ${currentDriver.name}: ${formData.description}`,
+                        type: 'residency_collection',
+                        createdAt: new Date()
+                    });
+
+                    // Reduce driver's residency debt
+                    const currentResidency = parseFloat(currentDriver.residencyFees || 0);
+                    const newResidency = Math.max(0, currentResidency - parseFloat(formData.amount));
+                    
+                    await updateDoc(doc(db, 'drivers', currentDriver.id), {
+                        residencyFees: newResidency,
+                        updatedAt: new Date()
+                    });
+
+                    currentDriver.residencyFees = newResidency;
+                    alert('تم تسجيل تحصيل رسوم الإقامة بنجاح');
+                } else {
+                    // Add to expenses
+                    await addDoc(collection(db, 'expenses'), {
+                        driverId: currentDriver.id,
+                        driverName: currentDriver.name,
+                        amount: parseFloat(formData.amount),
+                        date: formData.date,
+                        description: `دفع رسوم إقامة - ${currentDriver.name}: ${formData.description}`,
+                        category: 'residency',
+                        type: 'residency_payment',
+                        createdAt: new Date()
+                    });
+
+                    // Increase driver's residency debt
+                    const currentResidency = parseFloat(currentDriver.residencyFees || 0);
+                    const newResidency = currentResidency + parseFloat(formData.amount);
+                    
+                    await updateDoc(doc(db, 'drivers', currentDriver.id), {
+                        residencyFees: newResidency,
+                        updatedAt: new Date()
+                    });
+
+                    currentDriver.residencyFees = newResidency;
+                    alert('تم تسجيل دفع رسوم الإقامة بنجاح');
+                }
+
+                // Reset forms and refresh display
+                document.getElementById('residencyOperation').value = '';
+                toggleResidencyForms();
+                displayDriverInfo();
+                setDefaultValues();
+            } catch (error) {
+                console.error('Error processing residency payment:', error);
+                alert('خطأ في تسجيل المعاملة');
+            }
+        }
+
+        // Process salary fees collection
+        async function processSalaryFeesCollection(formData) {
+            try {
+                // Add to revenues (salary fees balance)
+                await addDoc(collection(db, 'revenues'), {
+                    driverId: currentDriver.id,
+                    driverName: currentDriver.name,
+                    amount: parseFloat(formData.amount),
+                    date: formData.date,
+                    description: `تحصيل رسوم رواتب - ${currentDriver.name}`,
+                    notes: formData.notes,
+                    type: 'salary_fees_collection',
+                    balanceType: 'salary_fees',
+                    createdAt: new Date()
+                });
+
+                alert('تم تسجيل تحصيل رسوم الرواتب بنجاح');
+                document.getElementById('salaryFeesForm').reset();
+                setDefaultValues();
+            } catch (error) {
+                console.error('Error processing salary fees collection:', error);
+                alert('خطأ في تسجيل الدفعة');
+            }
+        }
+
+        // Form event listeners
+        document.getElementById('dailyPaymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                amount: document.getElementById('dailyAmount').value,
+                date: document.getElementById('dailyDate').value,
+                notes: document.getElementById('dailyNotes').value
+            };
+            await processDailyPayment(formData);
+        });
+
+        document.getElementById('oldDebtForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                amount: document.getElementById('oldDebtAmount').value,
+                date: document.getElementById('oldDebtDate').value,
+                description: document.getElementById('oldDebtDescription').value
+            };
+            await processOldDebtPayment(formData);
+        });
+
+        document.getElementById('violationPayForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                amount: document.getElementById('violationPayAmount').value,
+                date: document.getElementById('violationPayDate').value,
+                description: document.getElementById('violationPayDescription').value
+            };
+            await processViolationPayment(formData, false);
+        });
+
+        document.getElementById('violationCollectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                amount: document.getElementById('violationCollectAmount').value,
+                date: document.getElementById('violationCollectDate').value,
+                description: document.getElementById('violationCollectDescription').value
+            };
+            await processViolationPayment(formData, true);
+        });
+
+        document.getElementById('residencyPayForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                amount: document.getElementById('residencyPayAmount').value,
+                date: document.getElementById('residencyPayDate').value,
+                description: document.getElementById('residencyPayDescription').value
+            };
+            await processResidencyPayment(formData, false);
+        });
+
+        document.getElementById('residencyCollectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                amount: document.getElementById('residencyCollectAmount').value,
+                date: document.getElementById('residencyCollectDate').value,
+                description: document.getElementById('residencyCollectDescription').value
+            };
+            await processResidencyPayment(formData, true);
+        });
+
+        document.getElementById('salaryFeesForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                amount: document.getElementById('salaryFeesAmount').value,
+                date: document.getElementById('salaryFeesDate').value,
+                notes: document.getElementById('salaryFeesNotes').value
+            };
+            await processSalaryFeesCollection(formData);
+        });
+
+        // Make functions global
+        window.toggleViolationForms = toggleViolationForms;
+        window.toggleResidencyForms = toggleResidencyForms;
+
+        // Load driver data on page load
+        loadDriverData();
+    </script>
+</body>
+</html>
+

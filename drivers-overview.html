@@ -53,19 +53,30 @@
         }
 
         .btn-primary {
-            background: #28a745;
+            background: #4CAF50;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #218838;
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
         }
 
         .container {
             max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+            margin: 0 auto;
+            padding: 2rem;
         }
 
         .stats-grid {
@@ -83,6 +94,11 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
         }
 
         .stat-number {
@@ -96,21 +112,21 @@
             font-size: 0.9rem;
         }
 
-        .regular { color: #28a745; }
-        .late { color: #ffc107; }
-        .very-late { color: #dc3545; }
-        .debt { color: #17a2b8; }
+        .stat-card.regular .stat-number { color: #4CAF50; }
+        .stat-card.late .stat-number { color: #FF9800; }
+        .stat-card.very-late .stat-number { color: #f44336; }
+        .stat-card.debt .stat-number { color: #2196F3; }
 
         .controls {
             background: rgba(255, 255, 255, 0.95);
             padding: 1.5rem;
             border-radius: 15px;
             margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             display: flex;
             gap: 1rem;
             align-items: center;
             flex-wrap: wrap;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .search-input, .filter-select {
@@ -119,32 +135,12 @@
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s ease;
+            min-width: 200px;
         }
 
         .search-input:focus, .filter-select:focus {
             outline: none;
             border-color: #667eea;
-        }
-
-        .search-input {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .btn-refresh {
-            background: #667eea;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-refresh:hover {
-            background: #5a6fd8;
-            transform: translateY(-2px);
         }
 
         .table-container {
@@ -153,24 +149,29 @@
             overflow: hidden;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 0.9rem;
         }
 
         .table th {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 1rem;
+            padding: 1rem 0.75rem;
             text-align: center;
             font-weight: 600;
             border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .table td {
-            padding: 1rem;
+            padding: 1rem 0.75rem;
             text-align: center;
             border-bottom: 1px solid #e0e0e0;
             transition: background-color 0.3s ease;
@@ -189,51 +190,92 @@
         }
 
         .driver-name:hover {
-            color: #5a6fd8;
+            color: #764ba2;
         }
 
         .amount {
             font-weight: 600;
         }
 
-        .positive { color: #28a745; }
-        .negative { color: #dc3545; }
-        .zero { color: #6c757d; }
+        .amount.positive {
+            color: #4CAF50;
+        }
 
-        .loading {
-            text-align: center;
-            padding: 3rem;
+        .amount.negative {
+            color: #f44336;
+        }
+
+        .amount.zero {
             color: #666;
-            font-size: 1.1rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-regular {
+            background: #e8f5e8;
+            color: #4CAF50;
+        }
+
+        .status-late {
+            background: #fff3e0;
+            color: #FF9800;
+        }
+
+        .status-very-late {
+            background: #ffebee;
+            color: #f44336;
         }
 
         .no-data {
             text-align: center;
             padding: 3rem;
             color: #666;
-            font-size: 1.1rem;
+            font-style: italic;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #667eea;
         }
 
         @media (max-width: 768px) {
             .container {
-                padding: 0 0.5rem;
+                padding: 1rem;
             }
-            
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
             .controls {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
-            .search-input {
+
+            .search-input, .filter-select {
                 min-width: auto;
+                width: 100%;
             }
-            
+
             .table-container {
                 overflow-x: auto;
             }
-            
+
             .table {
                 min-width: 800px;
+            }
+
+            .table th, .table td {
+                padding: 0.5rem 0.25rem;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -242,39 +284,39 @@
     <div class="header">
         <h1>🚗 جدول السائقين</h1>
         <div class="header-buttons">
-            <a href="index.html" class="btn btn-primary">🏠 العودة للوحة التحكم</a>
+            <a href="index.html" class="btn btn-secondary">🏠 العودة للوحة التحكم</a>
         </div>
     </div>
 
     <div class="container">
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number regular" id="regularCount">0</div>
+            <div class="stat-card regular">
+                <div class="stat-number" id="regularCount">0</div>
                 <div class="stat-label">سائقين منتظمين</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number late" id="lateCount">0</div>
+            <div class="stat-card late">
+                <div class="stat-number" id="lateCount">0</div>
                 <div class="stat-label">سائقين متأخرين</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number very-late" id="veryLateCount">0</div>
+            <div class="stat-card very-late">
+                <div class="stat-number" id="veryLateCount">0</div>
                 <div class="stat-label">سائقين متأخرين جداً</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number debt" id="totalDebt">0.000 د.ك</div>
+            <div class="stat-card debt">
+                <div class="stat-number" id="totalDebt">0.000 د.ك</div>
                 <div class="stat-label">إجمالي الديون</div>
             </div>
         </div>
 
         <div class="controls">
-            <input type="text" class="search-input" id="searchInput" placeholder="البحث عن سائق...">
-            <select class="filter-select" id="statusFilter">
+            <input type="text" id="searchInput" class="search-input" placeholder="البحث عن سائق...">
+            <select id="statusFilter" class="filter-select">
                 <option value="">جميع الحالات</option>
                 <option value="regular">منتظم</option>
                 <option value="late">متأخر</option>
                 <option value="very-late">متأخر جداً</option>
             </select>
-            <button class="btn-refresh" onclick="loadData()">🔄 تحديث البيانات</button>
+            <button class="btn btn-primary" onclick="loadData()">🔄 تحديث البيانات</button>
         </div>
 
         <div class="table-container">
@@ -304,11 +346,12 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        // Firebase configuration - نفس إعدادات صفحة إدارة السائقين
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyB8Q9CYIWXPmTdiz3vPiLlPYFxiJu0vE_g",
             authDomain: "taxi-management-system-d8210.firebaseapp.com",
@@ -323,6 +366,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Global variables
         let drivers = [];
         let revenues = [];
         let expenses = [];
@@ -374,11 +418,11 @@
             // Calculate days since contract start
             const daysSinceStart = Math.floor((today - contractStart) / (1000 * 60 * 60 * 24));
             
-            // Calculate expected payment (daily wage * days)
+            // Calculate expected payment amount
             const dailyWage = parseFloat(driver.dailyWage || driver.dailyRent || 0);
             const expectedTotal = daysSinceStart * dailyWage;
             
-            // Calculate total paid from revenues
+            // Calculate total paid (from revenues)
             const driverRevenues = revenues.filter(rev => 
                 rev.driverId === driver.id || 
                 rev.driverName === driver.name ||
@@ -398,48 +442,58 @@
             
             // Calculate remaining payment for current day
             const dayProgress = (today.getHours() * 60 + today.getMinutes()) / (24 * 60);
-            const todayExpected = dailyWage * dayProgress;
-            const todayPaid = driverRevenues
-                .filter(rev => new Date(rev.date).toDateString() === today.toDateString())
-                .reduce((sum, rev) => sum + parseFloat(rev.amount || 0), 0);
-            const remainingToday = Math.max(0, todayExpected - todayPaid);
+            const currentDayAmount = dailyWage * dayProgress;
+            const remainingToday = Math.max(0, currentDayAmount - (totalPaid % dailyWage));
 
-            // Get debt amounts from driver data
+            // Get additional debts
             const violations = parseFloat(driver.violations || 0);
             const residencyFees = parseFloat(driver.residencyFees || 0);
             const oldDebts = parseFloat(driver.oldDebts || 0);
-            const totalDriverDebt = violations + residencyFees + oldDebts + currentDebt;
+            
+            // Calculate total debt
+            const totalDebt = currentDebt + violations + residencyFees + oldDebts;
 
             return {
-                dailyWage,
                 contractStart,
                 lastPayment,
                 paidUntilDate,
+                daysSinceStart,
                 daysLate,
+                dailyWage,
+                expectedTotal,
+                totalPaid,
+                currentDebt,
                 lateAmount,
                 remainingToday,
-                currentDebt,
                 violations,
                 residencyFees,
                 oldDebts,
-                totalDebt: totalDriverDebt,
-                status: daysLate === 0 ? 'regular' : daysLate <= 3 ? 'late' : 'very-late'
+                totalDebt,
+                status: daysLate === 0 ? 'regular' : daysLate <= 7 ? 'late' : 'very-late'
             };
         }
 
         // Display drivers in table
         function displayDrivers() {
             const tbody = document.getElementById('driversTableBody');
-            
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
             if (drivers.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="12" class="no-data">لا توجد بيانات سائقين</td></tr>';
                 return;
             }
 
-            const filteredDrivers = filterDrivers();
-            
+            const filteredDrivers = drivers.filter(driver => {
+                const stats = calculateDriverStats(driver);
+                const matchesSearch = driver.name?.toLowerCase().includes(searchTerm) || 
+                                    driver.phone?.includes(searchTerm);
+                const matchesStatus = !statusFilter || stats.status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+
             if (filteredDrivers.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="12" class="no-data">لا توجد نتائج للبحث</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="12" class="no-data">لا توجد نتائج مطابقة</td></tr>';
                 return;
             }
 
@@ -448,8 +502,12 @@
                 
                 return `
                     <tr>
-                        <td><span class="driver-name" onclick="openDriverPayments('${driver.id}')">${driver.name || 'غير محدد'}</span></td>
-                        <td class="amount">${stats.dailyWage.toFixed(3)} د.ك</td>
+                        <td>
+                            <span class="driver-name" onclick="openDriverPayments('${driver.id}')">
+                                ${driver.name || 'غير محدد'}
+                            </span>
+                        </td>
+                        <td class="amount positive">${stats.dailyWage.toFixed(3)} د.ك</td>
                         <td>${formatDate(stats.contractStart)}</td>
                         <td>${formatDate(stats.lastPayment)}</td>
                         <td>${formatDate(stats.paidUntilDate)}</td>
@@ -459,28 +517,10 @@
                         <td class="amount ${stats.violations > 0 ? 'negative' : 'zero'}">${stats.violations.toFixed(3)} د.ك</td>
                         <td class="amount ${stats.residencyFees > 0 ? 'negative' : 'zero'}">${stats.residencyFees.toFixed(3)} د.ك</td>
                         <td class="amount ${stats.oldDebts > 0 ? 'negative' : 'zero'}">${stats.oldDebts.toFixed(3)} د.ك</td>
-                        <td class="amount ${stats.totalDebt > 0 ? 'negative' : 'positive'}">${stats.totalDebt.toFixed(3)} د.ك</td>
+                        <td class="amount ${stats.totalDebt > 0 ? 'negative' : 'zero'}">${stats.totalDebt.toFixed(3)} د.ك</td>
                     </tr>
                 `;
             }).join('');
-        }
-
-        // Filter drivers based on search and status
-        function filterDrivers() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
-
-            return drivers.filter(driver => {
-                const matchesSearch = !searchTerm || 
-                    driver.name?.toLowerCase().includes(searchTerm) ||
-                    driver.phone?.includes(searchTerm) ||
-                    driver.carNumber?.includes(searchTerm);
-
-                const stats = calculateDriverStats(driver);
-                const matchesStatus = !statusFilter || stats.status === statusFilter;
-
-                return matchesSearch && matchesStatus;
-            });
         }
 
         // Update statistics
@@ -493,7 +533,7 @@
             drivers.forEach(driver => {
                 const stats = calculateDriverStats(driver);
                 totalDebt += stats.totalDebt;
-
+                
                 switch (stats.status) {
                     case 'regular':
                         regularCount++;
@@ -556,12 +596,13 @@
             if (driver) {
                 // Store driver data in localStorage
                 localStorage.setItem('selectedDriver', JSON.stringify(driver));
+                
                 // Navigate to payments page
-                window.location.href = 'driver-payments-fixed.html';
+                window.location.href = 'driver-payments.html';
             }
         }
 
-        // Search and filter functionality
+        // Event listeners
         document.getElementById('searchInput').addEventListener('input', displayDrivers);
         document.getElementById('statusFilter').addEventListener('change', displayDrivers);
 
