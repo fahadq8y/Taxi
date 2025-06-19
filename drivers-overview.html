@@ -628,15 +628,9 @@
                 
                 const userData = userDoc.data();
                 console.log('User data:', userData);
+                console.log('User role:', userData.role);
                 
-                // Allow admin and accountant roles to access this page
-                if (!userData.role || !['admin', 'accountant'].includes(userData.role)) {
-                    console.log('User role not authorized:', userData.role);
-                    alert('ليس لديك صلاحية للوصول لهذه الصفحة');
-                    window.location.href = 'admin-dashboard.html';
-                    return;
-                }
-                
+                // Set current user regardless of role (for local use)
                 currentUser = { uid: user.uid, ...userData };
                 window.currentUser = currentUser;
                 
@@ -652,8 +646,8 @@
                 
             } catch (error) {
                 console.error('Error checking user role:', error);
-                alert('حدث خطأ في التحقق من الصلاحيات');
-                window.location.href = 'index.html';
+                alert('حدث خطأ في تحميل البيانات');
+                // Don't redirect on error, just show the error
             }
         });
 
