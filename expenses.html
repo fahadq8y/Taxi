@@ -28,21 +28,40 @@
         .stat-number { font-size: 1.8rem; font-weight: bold; margin-bottom: 0.5rem; }
         .stat-label { color: #6b7280; font-size: 0.9rem; }
         
+        /* Filter Section */
+        .filter-section { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+        .filter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .filter-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .quick-filters { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .quick-filter-btn { padding: 0.5rem 1rem; border: 2px solid #e5e7eb; background: white; border-radius: 20px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s; }
+        .quick-filter-btn.active { background: #ef4444; color: white; border-color: #ef4444; }
+        .quick-filter-btn:hover { border-color: #ef4444; }
+        
         .add-form { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
         .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; }
         .form-group textarea { resize: vertical; min-height: 80px; }
-        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
         .btn-primary { background: #ef4444; color: white; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .btn-outline { background: white; color: #ef4444; border: 2px solid #ef4444; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        
         .expense-type-note { background: #fef3c7; border: 1px solid #f59e0b; padding: 1rem; border-radius: 8px; margin-top: 0.5rem; font-size: 0.9rem; color: #92400e; }
         .other-note { background: #e0f2fe; border: 1px solid #0288d1; padding: 1rem; border-radius: 8px; margin-top: 0.5rem; font-size: 0.9rem; color: #01579b; }
         .expenses-table { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .table-header { padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
         .table { width: 100%; border-collapse: collapse; }
         .table th, .table td { padding: 1rem; text-align: right; border-bottom: 1px solid #e5e7eb; }
         .table th { background: #f9fafb; font-weight: 600; }
         .delete-btn { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; }
         .hidden { display: none; }
+        .no-results { text-align: center; color: #6b7280; padding: 2rem; font-style: italic; }
+        
+        /* Results counter */
+        .results-info { background: #f0f9ff; border: 1px solid #0ea5e9; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; color: #0c4a6e; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -75,6 +94,72 @@
             <div class="stat-card">
                 <div class="stat-number" id="totalExpenses">0.000</div>
                 <div class="stat-label">إجمالي المصروفات (د.ك)</div>
+            </div>
+        </div>
+        
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h2 style="margin-bottom: 1rem;">🔍 البحث والفلتر</h2>
+            
+            <!-- Quick Filters -->
+            <div class="quick-filters">
+                <button class="quick-filter-btn" onclick="setQuickFilter('today')">اليوم</button>
+                <button class="quick-filter-btn" onclick="setQuickFilter('week')">هذا الأسبوع</button>
+                <button class="quick-filter-btn" onclick="setQuickFilter('month')">هذا الشهر</button>
+                <button class="quick-filter-btn" onclick="setQuickFilter('all')">الكل</button>
+            </div>
+            
+            <!-- Search and Filters -->
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label>🔍 البحث النصي</label>
+                    <input type="text" id="searchText" placeholder="ابحث في الوصف أو الملاحظة..." oninput="applyFilters()">
+                </div>
+                <div class="form-group">
+                    <label>📋 نوع المصروف</label>
+                    <select id="filterType" onchange="applyFilters()">
+                        <option value="">جميع الأنواع</option>
+                        <option value="الإيجارات">الإيجارات</option>
+                        <option value="رواتب الموظفين">رواتب الموظفين</option>
+                        <option value="مصاريف إيداعات الرواتب">مصاريف إيداعات الرواتب</option>
+                        <option value="بوفيه">بوفيه</option>
+                        <option value="نظافة">نظافة</option>
+                        <option value="شراء سيارات">شراء سيارات</option>
+                        <option value="شراء عداد">شراء عداد</option>
+                        <option value="تركيب عداد">تركيب عداد</option>
+                        <option value="صبغ سيارة">صبغ سيارة</option>
+                        <option value="صيانة سيارة">صيانة سيارة</option>
+                        <option value="مصاريف إدارية">مصاريف إدارية</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="filter-row">
+                <div class="form-group">
+                    <label>📅 من تاريخ</label>
+                    <input type="date" id="fromDate" onchange="applyFilters()">
+                </div>
+                <div class="form-group">
+                    <label>📅 إلى تاريخ</label>
+                    <input type="date" id="toDate" onchange="applyFilters()">
+                </div>
+            </div>
+            
+            <div class="filter-row">
+                <div class="form-group">
+                    <label>💰 المبلغ من (د.ك)</label>
+                    <input type="number" id="minAmount" step="0.001" placeholder="0.000" oninput="applyFilters()">
+                </div>
+                <div class="form-group">
+                    <label>💰 المبلغ إلى (د.ك)</label>
+                    <input type="number" id="maxAmount" step="0.001" placeholder="1000.000" oninput="applyFilters()">
+                </div>
+            </div>
+            
+            <div class="filter-buttons">
+                <button class="btn btn-outline" onclick="clearFilters()">🗑️ مسح الفلاتر</button>
+                <button class="btn btn-secondary" onclick="exportResults()">📊 تصدير النتائج</button>
             </div>
         </div>
         
@@ -126,7 +211,10 @@
         </div>
         
         <div class="expenses-table">
-            <h2 style="padding: 1rem;">المصروفات الحديثة</h2>
+            <div class="table-header">
+                <h2>المصروفات</h2>
+                <div id="resultsInfo" class="results-info hidden"></div>
+            </div>
             <table class="table">
                 <thead>
                     <tr>
@@ -162,8 +250,158 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
+        // Global variables
+        let allExpenses = [];
+        let filteredExpenses = [];
+        
         // Set today's date
         document.getElementById('date').value = new Date().toISOString().split('T')[0];
+        
+        // Quick filter functions
+        function setQuickFilter(period) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.quick-filter-btn').forEach(btn => btn.classList.remove('active'));
+            
+            const today = new Date();
+            let fromDate, toDate;
+            
+            switch(period) {
+                case 'today':
+                    fromDate = toDate = today.toISOString().split('T')[0];
+                    event.target.classList.add('active');
+                    break;
+                case 'week':
+                    const weekStart = new Date(today);
+                    weekStart.setDate(today.getDate() - today.getDay());
+                    fromDate = weekStart.toISOString().split('T')[0];
+                    toDate = today.toISOString().split('T')[0];
+                    event.target.classList.add('active');
+                    break;
+                case 'month':
+                    fromDate = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+                    toDate = today.toISOString().split('T')[0];
+                    event.target.classList.add('active');
+                    break;
+                case 'all':
+                    fromDate = toDate = '';
+                    event.target.classList.add('active');
+                    break;
+            }
+            
+            document.getElementById('fromDate').value = fromDate;
+            document.getElementById('toDate').value = toDate;
+            applyFilters();
+        }
+        
+        // Apply filters function
+        function applyFilters() {
+            const searchText = document.getElementById('searchText').value.toLowerCase();
+            const filterType = document.getElementById('filterType').value;
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const minAmount = parseFloat(document.getElementById('minAmount').value) || 0;
+            const maxAmount = parseFloat(document.getElementById('maxAmount').value) || Infinity;
+            
+            filteredExpenses = allExpenses.filter(expense => {
+                // Text search
+                const matchesText = !searchText || 
+                    expense.description?.toLowerCase().includes(searchText) ||
+                    expense.otherNote?.toLowerCase().includes(searchText) ||
+                    expense.type.toLowerCase().includes(searchText);
+                
+                // Type filter
+                const matchesType = !filterType || expense.type === filterType;
+                
+                // Date filter
+                const matchesDate = (!fromDate || expense.date >= fromDate) && 
+                                  (!toDate || expense.date <= toDate);
+                
+                // Amount filter
+                const matchesAmount = expense.amount >= minAmount && expense.amount <= maxAmount;
+                
+                return matchesText && matchesType && matchesDate && matchesAmount;
+            });
+            
+            displayExpenses(filteredExpenses);
+            updateResultsInfo();
+        }
+        
+        // Clear filters function
+        function clearFilters() {
+            document.getElementById('searchText').value = '';
+            document.getElementById('filterType').value = '';
+            document.getElementById('fromDate').value = '';
+            document.getElementById('toDate').value = '';
+            document.getElementById('minAmount').value = '';
+            document.getElementById('maxAmount').value = '';
+            
+            // Remove active class from quick filter buttons
+            document.querySelectorAll('.quick-filter-btn').forEach(btn => btn.classList.remove('active'));
+            
+            filteredExpenses = [...allExpenses];
+            displayExpenses(filteredExpenses);
+            updateResultsInfo();
+        }
+        
+        // Update results info
+        function updateResultsInfo() {
+            const resultsInfo = document.getElementById('resultsInfo');
+            const total = filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+            
+            if (filteredExpenses.length === allExpenses.length) {
+                resultsInfo.classList.add('hidden');
+            } else {
+                resultsInfo.classList.remove('hidden');
+                resultsInfo.textContent = `📊 عرض ${filteredExpenses.length} من ${allExpenses.length} مصروف | المجموع: ${total.toFixed(3)} د.ك`;
+            }
+        }
+        
+        // Export results function
+        function exportResults() {
+            if (filteredExpenses.length === 0) {
+                alert('لا توجد نتائج للتصدير');
+                return;
+            }
+            
+            let csvContent = "التاريخ,النوع,المبلغ,الوصف,الملاحظة\n";
+            filteredExpenses.forEach(expense => {
+                csvContent += `${expense.date},${expense.type},${expense.amount},"${expense.description || ''}","${expense.otherNote || ''}"\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `مصروفات_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Display expenses function
+        function displayExpenses(expenses) {
+            const tbody = document.getElementById('expensesTableBody');
+            
+            if (expenses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="no-results">لا توجد مصروفات تطابق معايير البحث</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            expenses.forEach(expense => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${expense.date}</td>
+                    <td>${expense.type}</td>
+                    <td>${expense.amount.toFixed(3)} د.ك</td>
+                    <td>${expense.description || '-'}</td>
+                    <td>${expense.otherNote || '-'}</td>
+                    <td><button class="delete-btn" onclick="deleteExpense('${expense.id}', ${expense.amount}, '${expense.type}')">حذف</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
         
         // Handle type change
         function handleTypeChange() {
@@ -211,34 +449,23 @@
         // Load expenses
         async function loadExpenses() {
             try {
-                const expensesSnapshot = await db.collection('expenses').orderBy('date', 'desc').limit(10).get();
-                const tbody = document.getElementById('expensesTableBody');
+                const expensesSnapshot = await db.collection('expenses').orderBy('date', 'desc').get();
                 
-                if (expensesSnapshot.empty) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #6b7280;">لا توجد مصروفات</td></tr>';
-                    return;
-                }
-                
-                let total = 0;
-                tbody.innerHTML = '';
-                
+                allExpenses = [];
                 expensesSnapshot.forEach(doc => {
-                    const expense = doc.data();
-                    total += expense.amount;
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${expense.date}</td>
-                        <td>${expense.type}</td>
-                        <td>${expense.amount.toFixed(3)} د.ك</td>
-                        <td>${expense.description || '-'}</td>
-                        <td>${expense.otherNote || '-'}</td>
-                        <td><button class="delete-btn" onclick="deleteExpense('${doc.id}', ${expense.amount}, '${expense.type}')">حذف</button></td>
-                    `;
-                    tbody.appendChild(row);
+                    allExpenses.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
                 });
                 
+                filteredExpenses = [...allExpenses];
+                displayExpenses(filteredExpenses);
+                
+                const total = allExpenses.reduce((sum, expense) => sum + expense.amount, 0);
                 document.getElementById('totalExpenses').textContent = total.toFixed(3);
+                
+                updateResultsInfo();
             } catch (error) {
                 console.error('Error loading expenses:', error);
             }
