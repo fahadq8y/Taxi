@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جدول السائقين الشامل - نظام إدارة التاكسي</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2563eb">
+    <title>جدول السائقين - نظام إدارة التاكسي</title>
     <style>
         * {
             margin: 0;
@@ -15,206 +13,236 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8fafc;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             direction: rtl;
         }
 
         .header {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .header h1 {
+            color: white;
             font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .nav-buttons {
+        .header-buttons {
             display: flex;
             gap: 1rem;
-            align-items: center;
         }
 
-        .nav-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: none;
+        .btn {
             padding: 0.5rem 1rem;
-            border-radius: 5px;
+            border: none;
+            border-radius: 8px;
             cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
             text-decoration: none;
-            transition: background 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .nav-btn:hover {
-            background: rgba(255,255,255,0.3);
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .container {
             max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+            margin: 0 auto;
+            padding: 2rem;
         }
 
-        .summary-cards {
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
-        .summary-card {
-            background: white;
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
             padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        .summary-card h3 {
-            color: #6b7280;
-            font-size: 0.9rem;
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color);
+        }
+
+        .stat-card.normal::before { background: #4CAF50; }
+        .stat-card.warning::before { background: #FF9800; }
+        .stat-card.overdue::before { background: #F44336; }
+        .stat-card.total::before { background: #2196F3; }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
             margin-bottom: 0.5rem;
         }
 
-        .summary-card .value {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #1f2937;
+        .stat-card.normal .stat-value { color: #4CAF50; }
+        .stat-card.warning .stat-value { color: #FF9800; }
+        .stat-card.overdue .stat-value { color: #F44336; }
+        .stat-card.total .stat-value { color: #2196F3; }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
         }
 
-        .summary-card.green .value { color: #059669; }
-        .summary-card.yellow .value { color: #d97706; }
-        .summary-card.red .value { color: #dc2626; }
-
         .controls {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
             margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
             gap: 1rem;
+            align-items: center;
         }
 
         .search-input {
             padding: 0.75rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
             font-size: 1rem;
-            width: 300px;
-            direction: rtl;
+            transition: border-color 0.3s ease;
         }
 
         .search-input:focus {
             outline: none;
-            border-color: #2563eb;
+            border-color: #667eea;
         }
 
         .filter-select {
             padding: 0.75rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
             font-size: 1rem;
-            direction: rtl;
+            background: white;
+            cursor: pointer;
         }
 
         .table-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .table-wrapper {
-            overflow-x: auto;
-        }
-
-        table {
+        .table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
         }
 
-        th {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: white;
-            padding: 1rem 0.75rem;
+        .table th,
+        .table td {
+            padding: 1rem;
             text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .table th {
+            background: #f8f9fa;
             font-weight: 600;
-            white-space: nowrap;
+            color: #333;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
-        td {
-            padding: 0.75rem;
-            text-align: center;
-            border-bottom: 1px solid #e5e7eb;
-            white-space: nowrap;
-        }
-
-        tr:hover {
-            background-color: #f8fafc;
+        .table tbody tr:hover {
+            background: #f8f9fa;
         }
 
         .status-normal {
-            background-color: #f0fdf4;
+            background: rgba(76, 175, 80, 0.1);
         }
 
         .status-warning {
-            background-color: #fffbeb;
+            background: rgba(255, 152, 0, 0.1);
         }
 
         .status-overdue {
-            background-color: #fef2f2;
-        }
-
-        .driver-name {
-            font-weight: 600;
-            color: #1f2937;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-
-        .driver-name:hover {
-            color: #2563eb;
+            background: rgba(244, 67, 54, 0.1);
         }
 
         .amount {
             font-weight: 600;
         }
 
-        .positive {
-            color: #059669;
+        .amount.positive {
+            color: #4CAF50;
         }
 
-        .negative {
-            color: #dc2626;
+        .amount.negative {
+            color: #F44336;
+        }
+
+        .driver-name {
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .driver-name:hover {
+            color: #764ba2;
         }
 
         .loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            text-align: center;
             padding: 3rem;
-            color: #6b7280;
+            color: white;
+            font-size: 1.2rem;
         }
 
-        .spinner {
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
             width: 40px;
             height: 40px;
-            border: 4px solid #e5e7eb;
-            border-top: 4px solid #2563eb;
-            border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
+            margin: 0 auto 1rem;
         }
 
         @keyframes spin {
@@ -222,329 +250,96 @@
             100% { transform: rotate(360deg); }
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 2% auto;
-            padding: 0;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 15px 15px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.3rem;
-        }
-
-        .close {
-            color: white;
-            font-size: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            line-height: 1;
-        }
-
-        .close:hover {
-            opacity: 0.7;
-        }
-
-        .tabs {
-            display: flex;
-            background: #f8fafc;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 1rem;
+        .no-data {
             text-align: center;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-
-        .tab:hover {
-            background: #e5e7eb;
-        }
-
-        .tab.active {
-            background: white;
-            border-bottom-color: #2563eb;
-            color: #2563eb;
-        }
-
-        .tab-content {
-            display: none;
-            padding: 2rem;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 1rem;
-            direction: rtl;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #2563eb;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .save-btn {
-            background: #2563eb;
-            color: white;
-        }
-
-        .save-btn:hover {
-            background: #1d4ed8;
-        }
-
-        .cancel-btn {
-            background: #6b7280;
-            color: white;
-        }
-
-        .cancel-btn:hover {
-            background: #4b5563;
-        }
-
-        .danger-btn {
-            background: #dc2626;
-            color: white;
-        }
-
-        .danger-btn:hover {
-            background: #b91c1c;
-        }
-
-        .success-btn {
-            background: #059669;
-            color: white;
-        }
-
-        .success-btn:hover {
-            background: #047857;
-        }
-
-        .warning-btn {
-            background: #d97706;
-            color: white;
-        }
-
-        .warning-btn:hover {
-            background: #b45309;
-        }
-
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border: 1px solid;
-        }
-
-        .alert-info {
-            background: #eff6ff;
-            border-color: #3b82f6;
-            color: #1e40af;
-        }
-
-        .alert-warning {
-            background: #fffbeb;
-            border-color: #f59e0b;
-            color: #92400e;
-        }
-
-        .alert-success {
-            background: #f0fdf4;
-            border-color: #10b981;
-            color: #065f46;
-        }
-
-        .alert-error {
-            background: #fef2f2;
-            border-color: #ef4444;
-            color: #991b1b;
+            padding: 3rem;
+            color: #666;
+            font-size: 1.1rem;
         }
 
         @media (max-width: 768px) {
-            .header {
+            .container {
                 padding: 1rem;
-                flex-direction: column;
+            }
+
+            .controls-grid {
+                grid-template-columns: 1fr;
                 gap: 1rem;
             }
 
-            .container {
-                margin: 1rem auto;
-                padding: 0 0.5rem;
+            .table-container {
+                overflow-x: auto;
             }
 
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .search-input {
-                width: 100%;
-            }
-
-            .summary-cards {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            table {
-                font-size: 0.8rem;
-            }
-
-            th, td {
-                padding: 0.5rem 0.25rem;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .tabs {
-                flex-wrap: wrap;
-            }
-
-            .tab {
-                flex: 1;
-                text-align: center;
-                padding: 0.5rem;
-                font-size: 0.9rem;
+            .table {
+                min-width: 800px;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>📊 جدول السائقين الشامل</h1>
-        <div class="nav-buttons">
-            <a href="admin-dashboard.html" class="nav-btn">لوحة التحكم</a>
-            <button class="nav-btn" onclick="logout()">تسجيل الخروج</button>
+        <h1>🚕 جدول السائقين الشامل</h1>
+        <div class="header-buttons">
+            <a href="admin-dashboard.html" class="btn btn-secondary">لوحة التحكم</a>
+            <button onclick="logout()" class="btn btn-primary">تسجيل الخروج</button>
         </div>
     </div>
 
     <div class="container">
-        <!-- ملخص إحصائي -->
-        <div class="summary-cards">
-            <div class="summary-card green">
-                <h3>سائقين منتظمين</h3>
-                <div class="value" id="normalDrivers">0</div>
-            </div>
-            <div class="summary-card yellow">
-                <h3>سائقين متأخرين</h3>
-                <div class="value" id="warningDrivers">0</div>
-            </div>
-            <div class="summary-card red">
-                <h3>سائقين متأخرين جداً</h3>
-                <div class="value" id="overdueDrivers">0</div>
-            </div>
-            <div class="summary-card">
-                <h3>إجمالي الديون</h3>
-                <div class="value" id="totalDebts">0.000 د.ك</div>
-            </div>
+        <!-- Loading -->
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            جاري تحميل بيانات السائقين...
         </div>
 
-        <!-- أدوات التحكم -->
-        <div class="controls">
-            <input type="text" class="search-input" id="searchInput" placeholder="البحث عن سائق..." onkeyup="filterTable()">
-            <select class="filter-select" id="statusFilter" onchange="filterTable()">
-                <option value="">جميع الحالات</option>
-                <option value="normal">منتظم</option>
-                <option value="warning">متأخر</option>
-                <option value="overdue">متأخر جداً</option>
-            </select>
-        </div>
-
-        <!-- جدول السائقين -->
-        <div class="table-container">
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>جاري تحميل بيانات السائقين...</p>
+        <!-- Content -->
+        <div id="content" style="display: none;">
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card normal">
+                    <div class="stat-value" id="normalCount">0</div>
+                    <div class="stat-label">سائقين منتظمين</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-value" id="warningCount">0</div>
+                    <div class="stat-label">سائقين متأخرين</div>
+                </div>
+                <div class="stat-card overdue">
+                    <div class="stat-value" id="overdueCount">0</div>
+                    <div class="stat-label">سائقين متأخرين جداً</div>
+                </div>
+                <div class="stat-card total">
+                    <div class="stat-value" id="totalDebts">0.000 د.ك</div>
+                    <div class="stat-label">إجمالي الديون</div>
+                </div>
             </div>
-            
-            <div class="table-wrapper" id="tableWrapper" style="display: none;">
-                <table>
+
+            <!-- Controls -->
+            <div class="controls">
+                <div class="controls-grid">
+                    <input type="text" id="searchInput" class="search-input" placeholder="البحث عن سائق..." onkeyup="filterTable()">
+                    <select id="statusFilter" class="filter-select" onchange="filterTable()">
+                        <option value="">جميع الحالات</option>
+                        <option value="normal">منتظم</option>
+                        <option value="warning">متأخر</option>
+                        <option value="overdue">متأخر جداً</option>
+                    </select>
+                    <button onclick="refreshData()" class="btn btn-primary">تحديث البيانات</button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>اسم السائق</th>
-                            <th>تاريخ آخر سداد</th>
-                            <th>سداد حتى تاريخ</th>
-                            <th>عدد أيام التأخير</th>
-                            <th>قيمة التأخير</th>
-                            <th>فرق السداد</th>
+                            <th>آخر دفعة</th>
+                            <th>مغطى حتى</th>
+                            <th>أيام التأخير</th>
+                            <th>مبلغ التأخير</th>
+                            <th>المبلغ المتبقي</th>
                             <th>المخالفات</th>
                             <th>رسوم الإقامة</th>
                             <th>رسوم الرواتب</th>
@@ -552,117 +347,75 @@
                             <th>إجمالي الدين</th>
                         </tr>
                     </thead>
-                    <tbody id="driversTableBody">
-                        <!-- سيتم ملء البيانات هنا -->
+                    <tbody id="tableBody">
+                        <!-- Data will be inserted here -->
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase Scripts -->
     <script type="module">
+        // Import Firebase modules
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, query, orderBy, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, getDocs, doc, getDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
+        // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDGpAHia_wEmrhnmYjrPf_aNy8aBTQAXtw",
+            apiKey: "AIzaSyDGpAHia_wEmrhnmYjrPf1n1TrAzwEMiAI",
             authDomain: "taxi-management-system-d8210.firebaseapp.com",
             projectId: "taxi-management-system-d8210",
             storageBucket: "taxi-management-system-d8210.appspot.com",
-            messagingSenderId: "1092588712674",
-            appId: "1:1092588712674:web:a6b2e3d8f9c4a5b6c7d8e9"
+            messagingSenderId: "1012226491785",
+            appId: "1:1012226491785:web:a6b2b8c8b8b8b8b8b8b8b8"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // Global variables
+        let currentUser = null;
         let drivers = [];
         let revenues = [];
         let expenses = [];
-        let currentUser = null;
         let allTableData = [];
 
-        // Make variables global for debugging
-        window.drivers = drivers;
-        window.revenues = revenues;
-        window.expenses = expenses;
-        window.currentUser = currentUser;
-        window.allTableData = allTableData;
-        
-        let selectedDriverId = null;
-        let selectedDriverName = null;
-
-        // Global functions
+        // Make functions global
         window.logout = logout;
         window.filterTable = filterTable;
+        window.refreshData = refreshData;
         window.openDriverModal = openDriverModal;
 
-        // Logout function
-        function logout() {
-            signOut(auth).then(() => {
-                window.location.href = 'index.html';
-            }).catch((error) => {
-                console.error('Error signing out:', error);
-            });
-        }
-
-        // Check authentication
+        // Authentication check
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
                 console.log('No user found, redirecting to login');
                 window.location.href = 'index.html';
                 return;
             }
+
+            console.log('User authenticated:', user.uid);
+            currentUser = user;
             
-            try {
-                console.log('User found:', user.uid);
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                if (!userDoc.exists()) {
-                    console.log('User document not found, redirecting to login');
-                    window.location.href = 'index.html';
-                    return;
-                }
-                
-                const userData = userDoc.data();
-                console.log('User data:', userData);
-                console.log('User role:', userData.role);
-                
-                // Set current user regardless of role (for local use)
-                currentUser = { uid: user.uid, ...userData };
-                window.currentUser = currentUser;
-                
-                console.log('User authenticated successfully, loading data...');
-                await loadData();
-                calculateAndDisplayTable();
-                
-                // Hide loading and show table
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('tableWrapper').style.display = 'block';
-                
-                console.log('Table displayed successfully');
-                
-            } catch (error) {
-                console.error('Error checking user role:', error);
-                alert('حدث خطأ في تحميل البيانات');
-                // Don't redirect on error, just show the error
-            }
+            // Load data
+            await loadAllData();
         });
 
-        // Load all data
-        async function loadData() {
+        // Load all data from Firebase
+        async function loadAllData() {
             try {
-                console.log('Starting to load data...');
-                
+                console.log('Loading data from Firebase...');
+
                 // Load drivers
                 const driversSnapshot = await getDocs(collection(db, 'drivers'));
                 drivers = [];
                 driversSnapshot.forEach(doc => {
                     drivers.push({ id: doc.id, ...doc.data() });
                 });
-                window.drivers = drivers;
                 console.log('Drivers loaded:', drivers.length);
 
                 // Load revenues
@@ -671,129 +424,111 @@
                 revenuesSnapshot.forEach(doc => {
                     revenues.push({ id: doc.id, ...doc.data() });
                 });
-                window.revenues = revenues;
                 console.log('Revenues loaded:', revenues.length);
 
                 // Load expenses
-                const expensesSnapshot = await getDocs(query(collection(db, 'expenses')));
+                const expensesSnapshot = await getDocs(collection(db, 'expenses'));
                 expenses = [];
                 expensesSnapshot.forEach(doc => {
                     expenses.push({ id: doc.id, ...doc.data() });
                 });
-                window.expenses = expenses;
                 console.log('Expenses loaded:', expenses.length);
+
+                // Calculate and display table
+                calculateTable();
                 
-                console.log('All data loaded successfully');
+                // Hide loading and show content
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+
+                console.log('Data loaded successfully');
+
             } catch (error) {
                 console.error('Error loading data:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div style="color: #F44336;">
+                        <h3>خطأ في تحميل البيانات</h3>
+                        <p>${error.message}</p>
+                        <button onclick="refreshData()" class="btn btn-primary" style="margin-top: 1rem;">إعادة المحاولة</button>
+                    </div>
+                `;
             }
         }
 
-        // Calculate and display table
-        function calculateAndDisplayTable() {
-            console.log('Starting to calculate and display table...');
+        // Calculate table data
+        function calculateTable() {
+            console.log('Calculating table data...');
             
-            const tableBody = document.getElementById('driversTableBody');
-            tableBody.innerHTML = '';
             allTableData = [];
-
-            let totalNormal = 0;
-            let totalWarning = 0;
-            let totalOverdue = 0;
+            let normalCount = 0;
+            let warningCount = 0;
+            let overdueCount = 0;
             let totalDebts = 0;
 
-            console.log('Processing drivers:', drivers.length);
-
             drivers.forEach(driver => {
-                console.log('Processing driver:', driver.name);
-                
-                // Validate driver data
                 if (!driver.name || !driver.id) {
                     console.warn('Invalid driver data:', driver);
                     return;
                 }
 
+                // Get driver-related data
                 const driverRevenues = revenues.filter(r => r.driverId === driver.id && r.type === 'daily_fee');
                 const driverViolations = expenses.filter(e => e.driverId === driver.id && e.type === 'violation');
                 const driverResidenceFees = expenses.filter(e => e.driverId === driver.id && e.type === 'residence_fee');
                 const driverSalaryFees = expenses.filter(e => e.driverId === driver.id && e.type === 'salary_deposit_fee');
-                
+
                 // Get daily fee
                 const dailyFee = parseFloat(driver.dailyRent) || parseFloat(driver.dailyFee) || 0;
-                console.log(`Driver ${driver.name} daily fee:`, dailyFee);
 
-                // Calculate contract dates
-                let contractStartDate;
+                // Calculate contract start date
+                let contractStartDate = new Date();
                 if (driver.contractStartDate) {
                     if (typeof driver.contractStartDate === 'string') {
                         if (driver.contractStartDate.includes('May')) {
                             contractStartDate = new Date('2025-05-01');
                         } else if (driver.contractStartDate.includes('June')) {
                             contractStartDate = new Date('2025-06-01');
-                        } else if (driver.contractStartDate.includes('July')) {
-                            contractStartDate = new Date('2025-07-01');
                         } else {
                             contractStartDate = new Date(driver.contractStartDate);
                         }
                     } else {
                         contractStartDate = new Date(driver.contractStartDate);
                     }
-                } else {
-                    contractStartDate = new Date();
                 }
-                
-                if (isNaN(contractStartDate.getTime())) {
-                    console.warn(`Invalid contract start date for driver ${driver.name}:`, driver.contractStartDate);
-                    contractStartDate = new Date();
-                }
-                
+
                 const today = new Date();
-                
-                // Calculate total days from contract start to today
                 const totalDaysFromStart = Math.floor((today - contractStartDate) / (1000 * 60 * 60 * 24));
-                
-                // Calculate total debt required
                 const totalDebtRequired = totalDaysFromStart * dailyFee;
-                
+
                 // Calculate total paid amount
                 let totalPaidAmount = 0;
                 let lastPaymentDate = null;
-                
+
                 if (driverRevenues.length > 0) {
                     const sortedRevenues = driverRevenues.sort((a, b) => {
                         const dateA = a.date?.seconds ? new Date(a.date.seconds * 1000) : new Date(a.date);
                         const dateB = b.date?.seconds ? new Date(b.date.seconds * 1000) : new Date(b.date);
                         return dateB - dateA;
                     });
-                    
-                    const lastRevenue = sortedRevenues[0];
-                    lastPaymentDate = lastRevenue.date?.seconds ? 
-                        new Date(lastRevenue.date.seconds * 1000) : 
-                        new Date(lastRevenue.date);
+
+                    lastPaymentDate = sortedRevenues[0].date?.seconds ? 
+                        new Date(sortedRevenues[0].date.seconds * 1000) : 
+                        new Date(sortedRevenues[0].date);
 
                     sortedRevenues.forEach(revenue => {
                         totalPaidAmount += parseFloat(revenue.amount) || 0;
                     });
                 }
-                
+
                 // Calculate remaining debt
                 const remainingDebt = Math.max(0, totalDebtRequired - totalPaidAmount);
-                
-                // Calculate covered days
+
+                // Calculate covered days and last covered date
                 const paidDays = dailyFee > 0 ? Math.floor(totalPaidAmount / dailyFee) : 0;
-                
-                // Calculate last covered date
-                let lastCoveredDate;
-                if (paidDays > 0) {
-                    lastCoveredDate = new Date(contractStartDate.getTime() + (paidDays * 24 * 60 * 60 * 1000));
-                } else {
-                    lastCoveredDate = new Date(contractStartDate);
-                }
-                
-                // Calculate overdue days
+                const lastCoveredDate = new Date(contractStartDate.getTime() + (paidDays * 24 * 60 * 60 * 1000));
                 const overdueDays = Math.max(0, Math.floor((today - lastCoveredDate) / (1000 * 60 * 60 * 1000)));
-                
-                // Calculate violations
+
+                // Calculate other amounts
                 let violationsAmount = 0;
                 driverViolations.forEach(violation => {
                     if (!violation.collected) {
@@ -801,7 +536,6 @@
                     }
                 });
 
-                // Calculate residence fees
                 let residenceFeesAmount = 0;
                 driverResidenceFees.forEach(fee => {
                     if (!fee.collected) {
@@ -809,7 +543,6 @@
                     }
                 });
 
-                // Calculate salary fees
                 let salaryFeesAmount = 0;
                 driverSalaryFees.forEach(fee => {
                     if (!fee.collected) {
@@ -817,29 +550,27 @@
                     }
                 });
 
-                // Calculate old debts
                 const oldDebts = parseFloat(driver.oldDebts) || 0;
-
-                // Calculate total debt
                 const totalDebt = remainingDebt + violationsAmount + residenceFeesAmount + salaryFeesAmount + oldDebts;
 
                 // Determine status
                 let status = 'normal';
                 if (overdueDays > 7) {
                     status = 'overdue';
-                    totalOverdue++;
+                    overdueCount++;
                 } else if (overdueDays > 0) {
                     status = 'warning';
-                    totalWarning++;
+                    warningCount++;
                 } else {
-                    totalNormal++;
+                    normalCount++;
                 }
 
                 totalDebts += totalDebt;
 
-                const rowData = {
+                // Add to table data
+                allTableData.push({
                     id: driver.id,
-                    name: driver.name || 'غير محدد',
+                    name: driver.name,
                     lastPaymentDate: lastPaymentDate,
                     coveredUntilDate: lastCoveredDate,
                     overdueDays: overdueDays,
@@ -852,73 +583,49 @@
                     totalDebt: totalDebt,
                     status: status,
                     dailyFee: dailyFee
-                };
-
-                allTableData.push(rowData);
-                console.log(`Driver ${driver.name} processed:`, rowData);
+                });
             });
 
-            // Update summary cards
-            document.getElementById('normalDrivers').textContent = totalNormal;
-            document.getElementById('warningDrivers').textContent = totalWarning;
-            document.getElementById('overdueDrivers').textContent = totalOverdue;
-            document.getElementById('totalDebts').textContent = (isNaN(totalDebts) ? 0 : totalDebts).toFixed(3) + ' د.ك';
-
-            console.log('Summary updated:', { totalNormal, totalWarning, totalOverdue, totalDebts });
+            // Update statistics
+            document.getElementById('normalCount').textContent = normalCount;
+            document.getElementById('warningCount').textContent = warningCount;
+            document.getElementById('overdueCount').textContent = overdueCount;
+            document.getElementById('totalDebts').textContent = totalDebts.toFixed(3) + ' د.ك';
 
             // Display table
             displayTable(allTableData);
-            console.log('Table calculation completed');
         }
 
         // Display table
         function displayTable(data) {
-            console.log('Displaying table with data:', data.length);
-            
-            const tableBody = document.getElementById('driversTableBody');
+            const tableBody = document.getElementById('tableBody');
             tableBody.innerHTML = '';
 
             if (data.length === 0) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = '<td colspan="11" style="text-align: center; padding: 2rem; color: #6b7280;">لا توجد بيانات سائقين</td>';
-                tableBody.appendChild(tr);
+                tableBody.innerHTML = '<tr><td colspan="11" class="no-data">لا توجد بيانات سائقين</td></tr>';
                 return;
             }
 
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.className = `status-${row.status}`;
-                
-                const driverName = row.name || 'غير محدد';
-                const lastPaymentDate = formatDate(row.lastPaymentDate);
-                const coveredUntilDate = formatDate(row.coveredUntilDate);
-                const overdueDays = isNaN(row.overdueDays) ? 0 : row.overdueDays;
-                const overdueAmount = isNaN(row.overdueAmount) ? 0 : row.overdueAmount;
-                const remainingAmount = isNaN(row.remainingAmount) ? 0 : row.remainingAmount;
-                const violationsAmount = isNaN(row.violationsAmount) ? 0 : row.violationsAmount;
-                const residenceFeesAmount = isNaN(row.residenceFeesAmount) ? 0 : row.residenceFeesAmount;
-                const salaryFeesAmount = isNaN(row.salaryFeesAmount) ? 0 : row.salaryFeesAmount;
-                const oldDebts = isNaN(row.oldDebts) ? 0 : row.oldDebts;
-                const totalDebt = isNaN(row.totalDebt) ? 0 : row.totalDebt;
 
                 tr.innerHTML = `
-                    <td><span class="driver-name" onclick="openDriverModal('${row.id}', '${driverName}')">${driverName}</span></td>
-                    <td>${lastPaymentDate}</td>
-                    <td>${coveredUntilDate}</td>
-                    <td>${overdueDays}</td>
-                    <td class="amount ${overdueAmount > 0 ? 'negative' : 'positive'}">${overdueAmount.toFixed(3)} د.ك</td>
-                    <td class="amount">${remainingAmount.toFixed(3)} د.ك</td>
-                    <td class="amount ${violationsAmount > 0 ? 'negative' : 'positive'}">${violationsAmount.toFixed(3)} د.ك</td>
-                    <td class="amount ${residenceFeesAmount > 0 ? 'negative' : 'positive'}">${residenceFeesAmount.toFixed(3)} د.ك</td>
-                    <td class="amount ${salaryFeesAmount > 0 ? 'negative' : 'positive'}">${salaryFeesAmount.toFixed(3)} د.ك</td>
-                    <td class="amount ${oldDebts > 0 ? 'negative' : 'positive'}">${oldDebts.toFixed(3)} د.ك</td>
-                    <td class="amount ${totalDebt > 0 ? 'negative' : 'positive'}">${totalDebt.toFixed(3)} د.ك</td>
+                    <td><span class="driver-name" onclick="openDriverModal('${row.id}', '${row.name}')">${row.name}</span></td>
+                    <td>${formatDate(row.lastPaymentDate)}</td>
+                    <td>${formatDate(row.coveredUntilDate)}</td>
+                    <td>${row.overdueDays}</td>
+                    <td class="amount ${row.overdueAmount > 0 ? 'negative' : 'positive'}">${row.overdueAmount.toFixed(3)} د.ك</td>
+                    <td class="amount">${row.remainingAmount.toFixed(3)} د.ك</td>
+                    <td class="amount ${row.violationsAmount > 0 ? 'negative' : 'positive'}">${row.violationsAmount.toFixed(3)} د.ك</td>
+                    <td class="amount ${row.residenceFeesAmount > 0 ? 'negative' : 'positive'}">${row.residenceFeesAmount.toFixed(3)} د.ك</td>
+                    <td class="amount ${row.salaryFeesAmount > 0 ? 'negative' : 'positive'}">${row.salaryFeesAmount.toFixed(3)} د.ك</td>
+                    <td class="amount ${row.oldDebts > 0 ? 'negative' : 'positive'}">${row.oldDebts.toFixed(3)} د.ك</td>
+                    <td class="amount ${row.totalDebt > 0 ? 'negative' : 'positive'}">${row.totalDebt.toFixed(3)} د.ك</td>
                 `;
-                
+
                 tableBody.appendChild(tr);
             });
-            
-            console.log('Table displayed successfully');
         }
 
         // Format date
@@ -940,20 +647,36 @@
         function filterTable() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value;
-            
-            let filteredData = allTableData.filter(row => {
+
+            const filteredData = allTableData.filter(row => {
                 const matchesSearch = row.name.toLowerCase().includes(searchTerm);
                 const matchesStatus = !statusFilter || row.status === statusFilter;
                 return matchesSearch && matchesStatus;
             });
-            
+
             displayTable(filteredData);
         }
 
-        // Open driver modal (placeholder)
+        // Refresh data
+        function refreshData() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('content').style.display = 'none';
+            loadAllData();
+        }
+
+        // Open driver modal
         function openDriverModal(driverId, driverName) {
-            console.log('Opening modal for driver:', driverName);
-            alert(`فتح نافذة السائق: ${driverName}\nID: ${driverId}`);
+            alert(`تفاصيل السائق: ${driverName}\nID: ${driverId}`);
+        }
+
+        // Logout function
+        function logout() {
+            signOut(auth).then(() => {
+                window.location.href = 'index.html';
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+                alert('حدث خطأ في تسجيل الخروج');
+            });
         }
     </script>
 </body>
