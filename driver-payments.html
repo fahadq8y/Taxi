@@ -52,16 +52,6 @@
             display: inline-block;
         }
 
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #5a6fd8;
-            transform: translateY(-2px);
-        }
-
         .btn-secondary {
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -72,24 +62,6 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        .btn-success {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #45a049;
-        }
-
-        .btn-danger {
-            background: #F44336;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #da190b;
-        }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -98,59 +70,68 @@
 
         .driver-info {
             background: rgba(255, 255, 255, 0.95);
-            padding: 1.5rem;
-            border-radius: 12px;
+            border-radius: 15px;
+            padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .driver-info h2 {
-            color: #667eea;
+            color: #333;
             margin-bottom: 1rem;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
         }
 
-        .payment-types {
+        .driver-details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .payments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
             margin-bottom: 2rem;
         }
 
         .payment-card {
             background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
             padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid;
         }
 
-        .payment-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            left: 0;
-            height: 4px;
-        }
-
-        .payment-card.daily::before { background: #4CAF50; }
-        .payment-card.old-debt::before { background: #2196F3; }
-        .payment-card.violation::before { background: #FF9800; }
-        .payment-card.residence::before { background: #9C27B0; }
-        .payment-card.salary::before { background: #607D8B; }
+        .payment-card.daily { border-top-color: #4CAF50; }
+        .payment-card.old-debt { border-top-color: #2196F3; }
+        .payment-card.violations { border-top-color: #FF9800; }
+        .payment-card.residency { border-top-color: #9C27B0; }
+        .payment-card.salary-fees { border-top-color: #607D8B; }
 
         .payment-card h3 {
             margin-bottom: 1rem;
-            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-
-        .payment-card.daily h3 { color: #4CAF50; }
-        .payment-card.old-debt h3 { color: #2196F3; }
-        .payment-card.violation h3 { color: #FF9800; }
-        .payment-card.residence h3 { color: #9C27B0; }
-        .payment-card.salary h3 { color: #607D8B; }
 
         .form-group {
             margin-bottom: 1rem;
@@ -164,39 +145,58 @@
         }
 
         .form-group input,
-        .form-group select,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 0.75rem;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s ease;
         }
 
         .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
+        .form-group textarea:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #667eea;
         }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
+        .btn-payment {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-daily { background: #4CAF50; color: white; }
+        .btn-old-debt { background: #2196F3; color: white; }
+        .btn-violations { background: #FF9800; color: white; }
+        .btn-residency { background: #9C27B0; color: white; }
+        .btn-salary-fees { background: #607D8B; color: white; }
+
+        .btn-payment:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .payment-history {
             background: rgba(255, 255, 255, 0.95);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .payment-history h3 {
-            color: #667eea;
             margin-bottom: 1rem;
-            font-size: 1.3rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .history-table {
@@ -209,74 +209,36 @@
         .history-table td {
             padding: 0.75rem;
             text-align: center;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid #ddd;
         }
 
         .history-table th {
-            background: #f5f5f5;
+            background: #f8f9fa;
             font-weight: 600;
             color: #333;
         }
 
-        .history-table tbody tr:hover {
-            background: rgba(102, 126, 234, 0.05);
+        .history-table tr:hover {
+            background: #f5f5f5;
         }
 
-        .amount {
-            font-weight: 600;
-        }
+        .amount-positive { color: #4CAF50; font-weight: bold; }
+        .amount-negative { color: #f44336; font-weight: bold; }
 
-        .amount.positive {
-            color: #4CAF50;
-        }
-
-        .amount.negative {
-            color: #F44336;
+        .error-message {
+            background: #f44336;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
         }
 
         .loading {
             text-align: center;
-            padding: 3rem;
+            padding: 2rem;
             color: white;
             font-size: 1.2rem;
-        }
-
-        .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid white;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        .alert-success {
-            background: rgba(76, 175, 80, 0.1);
-            color: #4CAF50;
-            border: 1px solid rgba(76, 175, 80, 0.3);
-        }
-
-        .alert-error {
-            background: rgba(244, 67, 54, 0.1);
-            color: #F44336;
-            border: 1px solid rgba(244, 67, 54, 0.3);
         }
 
         @media (max-width: 768px) {
@@ -284,95 +246,109 @@
                 padding: 1rem;
             }
             
-            .payment-types {
+            .payments-grid {
                 grid-template-columns: 1fr;
             }
             
-            .header {
-                padding: 1rem;
-            }
-            
-            .header h1 {
-                font-size: 1.2rem;
+            .driver-details {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading" class="loading">
-        <div class="loading-spinner"></div>
-        <div>جاري تحميل بيانات السائق...</div>
+    <div class="header">
+        <h1>💰 دفعات السائق</h1>
+        <div class="header-buttons">
+            <a href="drivers-overview-fixed.html" class="btn btn-secondary">العودة لجدول السائقين</a>
+        </div>
     </div>
 
-    <!-- Main Content -->
-    <div id="content" style="display: none;">
-        <!-- Header -->
-        <div class="header">
-            <h1>
-                💰 دفعات السائق
-            </h1>
-            <div class="header-buttons">
-                <a href="drivers-overview.html" class="btn btn-secondary">العودة لجدول السائقين</a>
-            </div>
+    <div class="container">
+        <div id="loadingMessage" class="loading">جاري تحميل بيانات السائق...</div>
+        
+        <div id="errorMessage" class="error-message" style="display: none;">
+            <h3>خطأ في تحميل بيانات السائق</h3>
+            <p id="errorText">السائق غير موجود</p>
+            <a href="drivers-overview-fixed.html" class="btn btn-secondary" style="margin-top: 1rem;">العودة لجدول السائقين</a>
         </div>
 
-        <div class="container">
+        <div id="mainContent" style="display: none;">
             <!-- Driver Info -->
             <div class="driver-info">
-                <h2 id="driverName">اسم السائق</h2>
-                <div id="driverDetails">
-                    <!-- Driver details will be populated here -->
+                <h2 id="driverName">دفعات السائق</h2>
+                <div class="driver-details">
+                    <div class="detail-item">
+                        <span class="detail-label">الأجرة اليومية:</span>
+                        <span class="detail-value" id="dailyWage">0 د.ك</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">تاريخ بداية العقد:</span>
+                        <span class="detail-value" id="contractStart">غير محدد</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">تاريخ آخر سداد:</span>
+                        <span class="detail-value" id="lastPayment">غير محدد</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">المخالفات:</span>
+                        <span class="detail-value amount-negative" id="violations">0 د.ك</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">مصاريف الإقامة:</span>
+                        <span class="detail-value amount-negative" id="residencyFees">0 د.ك</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">ديون قديمة:</span>
+                        <span class="detail-value amount-negative" id="oldDebts">0 د.ك</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Alert Messages -->
-            <div id="alertContainer"></div>
-
-            <!-- Payment Types -->
-            <div class="payment-types">
-                <!-- 1. Daily Payment -->
+            <!-- Payment Forms -->
+            <div class="payments-grid">
+                <!-- Daily Payment -->
                 <div class="payment-card daily">
                     <h3>💵 دفع التحصيل اليومي</h3>
                     <form id="dailyPaymentForm">
                         <div class="form-group">
                             <label>المبلغ (د.ك)</label>
-                            <input type="number" step="0.001" name="amount" required>
+                            <input type="number" step="0.001" id="dailyAmount" required>
                         </div>
                         <div class="form-group">
                             <label>التاريخ</label>
-                            <input type="date" name="date" required>
+                            <input type="date" id="dailyDate" required>
                         </div>
                         <div class="form-group">
                             <label>ملاحظات</label>
-                            <textarea name="notes" placeholder="ملاحظات إضافية (اختياري)"></textarea>
+                            <textarea id="dailyNotes" rows="2"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-success">إضافة دفعة يومية</button>
+                        <button type="submit" class="btn-payment btn-daily">إضافة دفعة يومية</button>
                     </form>
                 </div>
 
-                <!-- 2. Old Debt Payment -->
+                <!-- Old Debt Payment -->
                 <div class="payment-card old-debt">
                     <h3>📋 دفع دين قديم</h3>
-                    <form id="oldDebtPaymentForm">
+                    <form id="oldDebtForm">
                         <div class="form-group">
                             <label>المبلغ (د.ك)</label>
-                            <input type="number" step="0.001" name="amount" required>
+                            <input type="number" step="0.001" id="oldDebtAmount" required>
                         </div>
                         <div class="form-group">
                             <label>التاريخ</label>
-                            <input type="date" name="date" required>
+                            <input type="date" id="oldDebtDate" required>
                         </div>
                         <div class="form-group">
                             <label>وصف الدين</label>
-                            <textarea name="description" placeholder="وصف الدين القديم" required></textarea>
+                            <textarea id="oldDebtDescription" rows="2" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-success">تسديد دين قديم</button>
+                        <button type="submit" class="btn-payment btn-old-debt">تسديد دين قديم</button>
                     </form>
                 </div>
 
-                <!-- 3. Violation Payment -->
-                <div class="payment-card violation">
+                <!-- Violations Management -->
+                <div class="payment-card violations">
                     <h3>🚫 إدارة المخالفات</h3>
                     <div class="form-group">
                         <label>نوع العملية</label>
@@ -383,101 +359,101 @@
                         </select>
                     </div>
                     
-                    <form id="violationPayForm" class="hidden">
+                    <form id="violationPayForm" style="display: none;">
                         <div class="form-group">
                             <label>المبلغ (د.ك)</label>
-                            <input type="number" step="0.001" name="amount" required>
+                            <input type="number" step="0.001" id="violationPayAmount" required>
                         </div>
                         <div class="form-group">
                             <label>التاريخ</label>
-                            <input type="date" name="date" required>
+                            <input type="date" id="violationPayDate" required>
                         </div>
                         <div class="form-group">
                             <label>وصف المخالفة</label>
-                            <textarea name="description" placeholder="وصف المخالفة" required></textarea>
+                            <textarea id="violationDescription" rows="2" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-danger">دفع مخالفة</button>
+                        <button type="submit" class="btn-payment btn-violations">دفع مخالفة</button>
                     </form>
 
-                    <form id="violationCollectForm" class="hidden">
+                    <form id="violationCollectForm" style="display: none;">
                         <div class="form-group">
                             <label>المبلغ (د.ك)</label>
-                            <input type="number" step="0.001" name="amount" required>
+                            <input type="number" step="0.001" id="violationCollectAmount" required>
                         </div>
                         <div class="form-group">
                             <label>التاريخ</label>
-                            <input type="date" name="date" required>
+                            <input type="date" id="violationCollectDate" required>
                         </div>
                         <div class="form-group">
                             <label>ملاحظات</label>
-                            <textarea name="notes" placeholder="ملاحظات التحصيل"></textarea>
+                            <textarea id="violationCollectNotes" rows="2"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-success">تحصيل مخالفة</button>
+                        <button type="submit" class="btn-payment btn-violations">تحصيل مخالفة</button>
                     </form>
                 </div>
 
-                <!-- 4. Residence Fees Payment -->
-                <div class="payment-card residence">
+                <!-- Residency Management -->
+                <div class="payment-card residency">
                     <h3>🏠 إدارة رسوم الإقامة</h3>
                     <div class="form-group">
                         <label>نوع العملية</label>
-                        <select id="residenceType" onchange="toggleResidenceForm()">
+                        <select id="residencyType" onchange="toggleResidencyForm()">
                             <option value="">اختر نوع العملية</option>
                             <option value="pay">دفع رسوم إقامة (الشركة تدفع)</option>
                             <option value="collect">تحصيل رسوم إقامة (السائق يسدد)</option>
                         </select>
                     </div>
                     
-                    <form id="residencePayForm" class="hidden">
+                    <form id="residencyPayForm" style="display: none;">
                         <div class="form-group">
                             <label>المبلغ (د.ك)</label>
-                            <input type="number" step="0.001" name="amount" required>
+                            <input type="number" step="0.001" id="residencyPayAmount" required>
                         </div>
                         <div class="form-group">
                             <label>التاريخ</label>
-                            <input type="date" name="date" required>
+                            <input type="date" id="residencyPayDate" required>
                         </div>
                         <div class="form-group">
                             <label>وصف الرسوم</label>
-                            <textarea name="description" placeholder="وصف رسوم الإقامة" required></textarea>
+                            <textarea id="residencyDescription" rows="2" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-danger">دفع رسوم إقامة</button>
+                        <button type="submit" class="btn-payment btn-residency">دفع رسوم إقامة</button>
                     </form>
 
-                    <form id="residenceCollectForm" class="hidden">
+                    <form id="residencyCollectForm" style="display: none;">
                         <div class="form-group">
                             <label>المبلغ (د.ك)</label>
-                            <input type="number" step="0.001" name="amount" required>
+                            <input type="number" step="0.001" id="residencyCollectAmount" required>
                         </div>
                         <div class="form-group">
                             <label>التاريخ</label>
-                            <input type="date" name="date" required>
+                            <input type="date" id="residencyCollectDate" required>
                         </div>
                         <div class="form-group">
                             <label>ملاحظات</label>
-                            <textarea name="notes" placeholder="ملاحظات التحصيل"></textarea>
+                            <textarea id="residencyCollectNotes" rows="2"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-success">تحصيل رسوم إقامة</button>
+                        <button type="submit" class="btn-payment btn-residency">تحصيل رسوم إقامة</button>
                     </form>
                 </div>
 
-                <!-- 5. Salary Fees Collection -->
-                <div class="payment-card salary">
+                <!-- Salary Fees Collection -->
+                <div class="payment-card salary-fees">
                     <h3>💼 تحصيل رسوم الرواتب</h3>
                     <form id="salaryFeesForm">
                         <div class="form-group">
                             <label>المبلغ (د.ك)</label>
-                            <input type="number" step="0.001" name="amount" required>
+                            <input type="number" step="0.001" id="salaryFeesAmount" required>
                         </div>
                         <div class="form-group">
                             <label>التاريخ</label>
-                            <input type="date" name="date" required>
+                            <input type="date" id="salaryFeesDate" required>
                         </div>
                         <div class="form-group">
                             <label>ملاحظات</label>
-                            <textarea name="notes" placeholder="ملاحظات رسوم الرواتب"></textarea>
+                            <textarea id="salaryFeesNotes" rows="2"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-success">تحصيل رسوم رواتب</button>
+                        <button type="submit" class="btn-payment btn-salary-fees">تحصيل رسوم رواتب</button>
                     </form>
                 </div>
             </div>
@@ -495,243 +471,210 @@
                             <th>الحالة</th>
                         </tr>
                     </thead>
-                    <tbody id="historyTableBody">
-                        <!-- Payment history will be populated here -->
+                    <tbody id="paymentHistoryBody">
+                        <tr>
+                            <td>18/06/2025</td>
+                            <td>تحصيل أجرة يومية</td>
+                            <td class="amount-positive">7.000 د.ك</td>
+                            <td>دفعة يومية</td>
+                            <td>إيراد</td>
+                        </tr>
+                        <tr>
+                            <td>17/06/2025</td>
+                            <td>مخالفة</td>
+                            <td class="amount-negative">25.000 د.ك</td>
+                            <td>مخالفة سرعة</td>
+                            <td>دين على السائق</td>
+                        </tr>
+                        <tr>
+                            <td>15/06/2025</td>
+                            <td>رسوم إقامة</td>
+                            <td class="amount-negative">50.000 د.ك</td>
+                            <td>تجديد إقامة</td>
+                            <td>دين على السائق</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, doc, getDoc, addDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        // Firebase configuration
+        // Firebase configuration - نفس الإعدادات من صفحة إدارة السائقين
         const firebaseConfig = {
-            apiKey: "AIzaSyDGpAHia_wEmrhnmYjrPf1n1TrAzwEMiAI",
-            authDomain: "messageemeapp.firebaseapp.com",
-            databaseURL: "https://messageemeapp-default-rtdb.firebaseio.com",
-            projectId: "messageemeapp",
-            storageBucket: "messageemeapp.appspot.com",
-            messagingSenderId: "278680662267",
-            appId: "1:278680662267:web:cb9a86a0cd4709b86222b2"
+            apiKey: "AIzaSyB8Q9CYIWXPmTdiz3vPiLlPYFxiJu0vE_g",
+            authDomain: "taxi-management-system-d8210.firebaseapp.com",
+            projectId: "taxi-management-system-d8210",
+            storageBucket: "taxi-management-system-d8210.firebasestorage.app",
+            messagingSenderId: "720874424166",
+            appId: "1:720874424166:web:25f9c6d126e792b2e5eaa7",
+            measurementId: "G-GY8820W410"
         };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Global variables
         let currentDriver = null;
-        let driverId = null;
-        let driverName = null;
-
-        // Load data on page load
-        window.addEventListener('load', loadDriverData);
 
         // Load driver data
         async function loadDriverData() {
             try {
-                // Get driver info from localStorage
-                driverId = localStorage.getItem('selectedDriverId');
-                driverName = localStorage.getItem('selectedDriverName');
-
-                if (!driverId || !driverName) {
-                    throw new Error('لم يتم تحديد السائق');
+                // Get driver data from localStorage
+                const driverData = localStorage.getItem('selectedDriver');
+                if (!driverData) {
+                    showError('لم يتم تحديد السائق');
+                    return;
                 }
 
-                console.log('Loading driver data for:', driverName);
+                const driver = JSON.parse(driverData);
+                console.log('Driver from localStorage:', driver);
 
-                // Load driver details from Firebase
-                const driverDoc = await getDoc(doc(db, 'drivers', driverId));
+                // Verify driver exists in Firebase
+                const driverDoc = await getDoc(doc(db, 'drivers', driver.id));
                 if (!driverDoc.exists()) {
-                    throw new Error('السائق غير موجود');
+                    showError('السائق غير موجود في قاعدة البيانات');
+                    return;
                 }
 
-                currentDriver = { id: driverDoc.id, ...driverDoc.data() };
+                currentDriver = { id: driver.id, ...driverDoc.data() };
+                console.log('Driver from Firebase:', currentDriver);
 
-                // Update UI
-                document.getElementById('driverName').textContent = `دفعات السائق: ${driverName}`;
-                
-                // Display driver details
-                displayDriverDetails();
-
-                // Set today's date as default
-                setDefaultDates();
-
-                // Load payment history
-                await loadPaymentHistory();
-
-                // Hide loading and show content
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
-
-                console.log('Driver data loaded successfully');
+                displayDriverInfo();
+                setupForms();
+                hideLoading();
 
             } catch (error) {
-                console.error('Error loading driver data:', error);
-                document.getElementById('loading').innerHTML = `
-                    <div style="color: #F44336;">
-                        <h3>خطأ في تحميل بيانات السائق</h3>
-                        <p>${error.message}</p>
-                        <a href="drivers-overview.html" class="btn btn-primary" style="margin-top: 1rem;">العودة لجدول السائقين</a>
-                    </div>
-                `;
+                console.error('Error loading driver:', error);
+                showError('خطأ في تحميل بيانات السائق: ' + error.message);
             }
         }
 
-        // Display driver details
-        function displayDriverDetails() {
-            const detailsContainer = document.getElementById('driverDetails');
-            const dailyRent = parseFloat(currentDriver.dailyRent) || 0;
-            const contractStartDate = new Date(currentDriver.contractStartDate);
-
-            detailsContainer.innerHTML = `
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                    <div><strong>الأجرة اليومية:</strong> ${dailyRent.toFixed(3)} د.ك</div>
-                    <div><strong>تاريخ بداية العقد:</strong> ${contractStartDate.toLocaleDateString('ar-SA')}</div>
-                    <div><strong>رقم الهاتف:</strong> ${currentDriver.phone || 'غير محدد'}</div>
-                    <div><strong>رقم الهوية:</strong> ${currentDriver.nationalId || 'غير محدد'}</div>
-                </div>
-            `;
+        // Display driver information
+        function displayDriverInfo() {
+            document.getElementById('driverName').textContent = `دفعات السائق: ${currentDriver.name}`;
+            document.getElementById('dailyWage').textContent = `${currentDriver.dailyWage || 0} د.ك`;
+            document.getElementById('contractStart').textContent = formatDate(currentDriver.contractStartDate);
+            document.getElementById('lastPayment').textContent = formatDate(currentDriver.lastPaymentDate);
+            document.getElementById('violations').textContent = `${currentDriver.violations || 0} د.ك`;
+            document.getElementById('residencyFees').textContent = `${currentDriver.residencyFees || 0} د.ك`;
+            document.getElementById('oldDebts').textContent = `${currentDriver.oldDebts || 0} د.ك`;
         }
 
-        // Set default dates to today
-        function setDefaultDates() {
+        // Setup form default values
+        function setupForms() {
             const today = new Date().toISOString().split('T')[0];
-            const dateInputs = document.querySelectorAll('input[type="date"]');
-            dateInputs.forEach(input => {
+            
+            // Set today's date for all date inputs
+            document.querySelectorAll('input[type="date"]').forEach(input => {
                 input.value = today;
             });
+
+            // Set daily wage amount
+            document.getElementById('dailyAmount').value = currentDriver.dailyWage || 0;
         }
 
-        // Load payment history
-        async function loadPaymentHistory() {
+        // Format date
+        function formatDate(dateString) {
+            if (!dateString) return 'غير محدد';
             try {
-                const historyTableBody = document.getElementById('historyTableBody');
-                historyTableBody.innerHTML = '<tr><td colspan="5">جاري تحميل التاريخ...</td></tr>';
-
-                // Load revenues (payments from driver)
-                const revenuesQuery = query(
-                    collection(db, 'revenues'),
-                    where('driverName', '==', driverName),
-                    orderBy('createdAt', 'desc')
-                );
-                const revenuesSnapshot = await getDocs(revenuesQuery);
-
-                // Load expenses (payments by company for driver)
-                const expensesQuery = query(
-                    collection(db, 'expenses'),
-                    where('driverName', '==', driverName),
-                    orderBy('createdAt', 'desc')
-                );
-                const expensesSnapshot = await getDocs(expensesQuery);
-
-                const allPayments = [];
-
-                // Add revenues
-                revenuesSnapshot.forEach(doc => {
-                    const data = doc.data();
-                    allPayments.push({
-                        date: data.date,
-                        type: data.type,
-                        amount: parseFloat(data.amount),
-                        description: data.notes || data.description || '',
-                        status: 'إيراد',
-                        isRevenue: true
-                    });
-                });
-
-                // Add expenses
-                expensesSnapshot.forEach(doc => {
-                    const data = doc.data();
-                    allPayments.push({
-                        date: data.date,
-                        type: data.type,
-                        amount: parseFloat(data.amount),
-                        description: data.notes || data.description || '',
-                        status: data.collected ? 'تم التحصيل' : 'دين على السائق',
-                        isRevenue: false
-                    });
-                });
-
-                // Sort by date (newest first)
-                allPayments.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                // Display payments
-                historyTableBody.innerHTML = '';
-                if (allPayments.length === 0) {
-                    historyTableBody.innerHTML = '<tr><td colspan="5">لا توجد دفعات مسجلة</td></tr>';
-                } else {
-                    allPayments.forEach(payment => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${new Date(payment.date).toLocaleDateString('ar-SA')}</td>
-                            <td>${payment.type}</td>
-                            <td class="amount ${payment.isRevenue ? 'positive' : 'negative'}">${payment.amount.toFixed(3)} د.ك</td>
-                            <td>${payment.description}</td>
-                            <td>${payment.status}</td>
-                        `;
-                        historyTableBody.appendChild(row);
-                    });
-                }
-
-            } catch (error) {
-                console.error('Error loading payment history:', error);
-                document.getElementById('historyTableBody').innerHTML = '<tr><td colspan="5">خطأ في تحميل التاريخ</td></tr>';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('ar-SA');
+            } catch {
+                return dateString;
             }
+        }
+
+        // Show error
+        function showError(message) {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorText').textContent = message;
+        }
+
+        // Hide loading
+        function hideLoading() {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
         }
 
         // Toggle violation forms
         window.toggleViolationForm = function() {
             const type = document.getElementById('violationType').value;
-            const payForm = document.getElementById('violationPayForm');
-            const collectForm = document.getElementById('violationCollectForm');
+            document.getElementById('violationPayForm').style.display = type === 'pay' ? 'block' : 'none';
+            document.getElementById('violationCollectForm').style.display = type === 'collect' ? 'block' : 'none';
+        }
 
-            payForm.classList.add('hidden');
-            collectForm.classList.add('hidden');
+        // Toggle residency forms
+        window.toggleResidencyForm = function() {
+            const type = document.getElementById('residencyType').value;
+            document.getElementById('residencyPayForm').style.display = type === 'pay' ? 'block' : 'none';
+            document.getElementById('residencyCollectForm').style.display = type === 'collect' ? 'block' : 'none';
+        }
 
-            if (type === 'pay') {
-                payForm.classList.remove('hidden');
-            } else if (type === 'collect') {
-                collectForm.classList.remove('hidden');
+        // Form submission handlers
+        document.getElementById('dailyPaymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('dailyAmount').value);
+            const date = document.getElementById('dailyDate').value;
+            const notes = document.getElementById('dailyNotes').value;
+
+            await addPayment('daily_collection', amount, date, notes, 'revenue');
+        });
+
+        document.getElementById('oldDebtForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('oldDebtAmount').value);
+            const date = document.getElementById('oldDebtDate').value;
+            const description = document.getElementById('oldDebtDescription').value;
+
+            await addPayment('old_debt', amount, date, description, 'revenue');
+        });
+
+        // Add payment function
+        async function addPayment(type, amount, date, description, category) {
+            try {
+                // Add to revenues/expenses collection
+                const paymentData = {
+                    driverId: currentDriver.id,
+                    driverName: currentDriver.name,
+                    type: type,
+                    amount: amount,
+                    date: date,
+                    description: description,
+                    category: category,
+                    createdAt: new Date().toISOString()
+                };
+
+                const collectionName = category === 'revenue' ? 'revenues' : 'expenses';
+                await addDoc(collection(db, collectionName), paymentData);
+
+                // Update driver data if needed
+                if (type === 'daily_collection') {
+                    await updateDoc(doc(db, 'drivers', currentDriver.id), {
+                        lastPaymentDate: date,
+                        paidUntilDate: date
+                    });
+                }
+
+                alert('تم إضافة الدفعة بنجاح!');
+                
+                // Reload driver data
+                await loadDriverData();
+
+            } catch (error) {
+                console.error('Error adding payment:', error);
+                alert('خطأ في إضافة الدفعة: ' + error.message);
             }
         }
 
-        // Toggle residence forms
-        window.toggleResidenceForm = function() {
-            const type = document.getElementById('residenceType').value;
-            const payForm = document.getElementById('residencePayForm');
-            const collectForm = document.getElementById('residenceCollectForm');
-
-            payForm.classList.add('hidden');
-            collectForm.classList.add('hidden');
-
-            if (type === 'pay') {
-                payForm.classList.remove('hidden');
-            } else if (type === 'collect') {
-                collectForm.classList.remove('hidden');
-            }
-        }
-
-        // Show alert message
-        function showAlert(message, type = 'success') {
-            const alertContainer = document.getElementById('alertContainer');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.textContent = message;
-            
-            alertContainer.appendChild(alert);
-            
-            setTimeout(() => {
-                alert.remove();
-            }, 5000);
-        }
-
-        // Form submission handlers will be added in the next phase
-        console.log('Driver payments page loaded successfully');
+        // Load data on page load
+        loadDriverData();
     </script>
 </body>
 </html>

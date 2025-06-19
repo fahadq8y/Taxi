@@ -53,29 +53,19 @@
         }
 
         .btn-primary {
-            background: #667eea;
+            background: #28a745;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #5a6fd8;
+            background: #218838;
             transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.3);
         }
 
         .container {
             max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
+            margin: 2rem auto;
+            padding: 0 1rem;
         }
 
         .stats-grid {
@@ -88,58 +78,42 @@
         .stat-card {
             background: rgba(255, 255, 255, 0.95);
             padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            height: 4px;
-            background: var(--accent-color);
-        }
-
-        .stat-card.normal::before { background: #4CAF50; }
-        .stat-card.warning::before { background: #FF9800; }
-        .stat-card.overdue::before { background: #F44336; }
-        .stat-card.total::before { background: #2196F3; }
-
-        .stat-value {
-            font-size: 2rem;
+        .stat-number {
+            font-size: 2.5rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
         }
 
-        .stat-card.normal .stat-value { color: #4CAF50; }
-        .stat-card.warning .stat-value { color: #FF9800; }
-        .stat-card.overdue .stat-value { color: #F44336; }
-        .stat-card.total .stat-value { color: #2196F3; }
-
         .stat-label {
             color: #666;
-            font-weight: 500;
+            font-size: 0.9rem;
         }
+
+        .regular { color: #28a745; }
+        .late { color: #ffc107; }
+        .very-late { color: #dc3545; }
+        .debt { color: #17a2b8; }
 
         .controls {
             background: rgba(255, 255, 255, 0.95);
             padding: 1.5rem;
-            border-radius: 12px;
+            border-radius: 15px;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .controls-grid {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
+            display: flex;
             gap: 1rem;
             align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
-        .search-input {
+        .search-input, .filter-select {
             padding: 0.75rem;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
@@ -147,122 +121,111 @@
             transition: border-color 0.3s ease;
         }
 
-        .search-input:focus {
+        .search-input:focus, .filter-select:focus {
             outline: none;
             border-color: #667eea;
         }
 
-        .filter-select {
-            padding: 0.75rem;
-            border: 2px solid #e0e0e0;
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .btn-refresh {
+            background: #667eea;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
             border-radius: 8px;
-            font-size: 1rem;
-            background: white;
             cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-refresh:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
         }
 
         .table-container {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
         }
 
         .table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
         }
 
         .table th {
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 1rem 0.5rem;
+            padding: 1rem;
             text-align: center;
             font-weight: 600;
-            white-space: nowrap;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .table td {
-            padding: 0.75rem 0.5rem;
+            padding: 1rem;
             text-align: center;
             border-bottom: 1px solid #e0e0e0;
-            white-space: nowrap;
+            transition: background-color 0.3s ease;
         }
 
         .table tbody tr:hover {
-            background: rgba(102, 126, 234, 0.05);
+            background-color: rgba(102, 126, 234, 0.1);
         }
 
-        .status-normal {
-            background: rgba(76, 175, 80, 0.1);
+        .driver-name {
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.3s ease;
         }
 
-        .status-warning {
-            background: rgba(255, 152, 0, 0.1);
-        }
-
-        .status-overdue {
-            background: rgba(244, 67, 54, 0.1);
+        .driver-name:hover {
+            color: #5a6fd8;
         }
 
         .amount {
             font-weight: 600;
         }
 
-        .amount.positive {
-            color: #4CAF50;
-        }
-
-        .amount.negative {
-            color: #F44336;
-        }
-
-        .driver-name {
-            color: #667eea;
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: underline;
-        }
-
-        .driver-name:hover {
-            color: #764ba2;
-        }
+        .positive { color: #28a745; }
+        .negative { color: #dc3545; }
+        .zero { color: #6c757d; }
 
         .loading {
             text-align: center;
             padding: 3rem;
-            color: white;
-            font-size: 1.2rem;
+            color: #666;
+            font-size: 1.1rem;
         }
 
-        .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid white;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-size: 1.1rem;
         }
 
         @media (max-width: 768px) {
             .container {
-                padding: 1rem;
+                padding: 0 0.5rem;
             }
             
-            .stats-grid {
-                grid-template-columns: 1fr;
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
             }
             
-            .controls-grid {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
+            .search-input {
+                min-width: auto;
             }
             
             .table-container {
@@ -270,126 +233,105 @@
             }
             
             .table {
-                min-width: 1200px;
+                min-width: 800px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading" class="loading">
-        <div class="loading-spinner"></div>
-        <div>جاري تحميل بيانات السائقين...</div>
-    </div>
-
-    <!-- Main Content -->
-    <div id="content" style="display: none;">
-        <!-- Header -->
-        <div class="header">
-            <h1>
-                🚗 جدول السائقين
-            </h1>
-            <div class="header-buttons">
-                <a href="admin-dashboard.html" class="btn btn-secondary">العودة للوحة التحكم</a>
-            </div>
-        </div>
-
-        <div class="container">
-            <!-- Statistics -->
-            <div class="stats-grid">
-                <div class="stat-card normal">
-                    <div class="stat-value" id="normalCount">0</div>
-                    <div class="stat-label">سائقين منتظمين</div>
-                </div>
-                <div class="stat-card warning">
-                    <div class="stat-value" id="warningCount">0</div>
-                    <div class="stat-label">سائقين متأخرين</div>
-                </div>
-                <div class="stat-card overdue">
-                    <div class="stat-value" id="overdueCount">0</div>
-                    <div class="stat-label">سائقين متأخرين جداً</div>
-                </div>
-                <div class="stat-card total">
-                    <div class="stat-value" id="totalDebts">0.000 د.ك</div>
-                    <div class="stat-label">إجمالي الديون</div>
-                </div>
-            </div>
-
-            <!-- Controls -->
-            <div class="controls">
-                <div class="controls-grid">
-                    <input type="text" id="searchInput" class="search-input" placeholder="البحث عن سائق..." onkeyup="filterTable()">
-                    <select id="statusFilter" class="filter-select" onchange="filterTable()">
-                        <option value="">جميع الحالات</option>
-                        <option value="normal">منتظم</option>
-                        <option value="warning">متأخر</option>
-                        <option value="overdue">متأخر جداً</option>
-                    </select>
-                    <button onclick="refreshData()" class="btn btn-primary">تحديث البيانات</button>
-                </div>
-            </div>
-
-            <!-- Table -->
-            <div class="table-container">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>اسم السائق</th>
-                            <th>الأجرة اليومية</th>
-                            <th>تاريخ بداية العقد</th>
-                            <th>تاريخ آخر سداد</th>
-                            <th>سداد حتى تاريخ</th>
-                            <th>عدد أيام التأخير</th>
-                            <th>قيمة التأخير</th>
-                            <th>فرق السداد</th>
-                            <th>المخالفات</th>
-                            <th>مصاريف الإقامة</th>
-                            <th>ديون قديمة</th>
-                            <th>إجمالي الدين</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <!-- Data will be populated here -->
-                    </tbody>
-                </table>
-            </div>
+    <div class="header">
+        <h1>🚗 جدول السائقين</h1>
+        <div class="header-buttons">
+            <a href="index.html" class="btn btn-primary">🏠 العودة للوحة التحكم</a>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number regular" id="regularCount">0</div>
+                <div class="stat-label">سائقين منتظمين</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number late" id="lateCount">0</div>
+                <div class="stat-label">سائقين متأخرين</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number very-late" id="veryLateCount">0</div>
+                <div class="stat-label">سائقين متأخرين جداً</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number debt" id="totalDebt">0.000 د.ك</div>
+                <div class="stat-label">إجمالي الديون</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <input type="text" class="search-input" id="searchInput" placeholder="البحث عن سائق...">
+            <select class="filter-select" id="statusFilter">
+                <option value="">جميع الحالات</option>
+                <option value="regular">منتظم</option>
+                <option value="late">متأخر</option>
+                <option value="very-late">متأخر جداً</option>
+            </select>
+            <button class="btn-refresh" onclick="loadData()">🔄 تحديث البيانات</button>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>اسم السائق</th>
+                        <th>الأجرة اليومية</th>
+                        <th>تاريخ بداية العقد</th>
+                        <th>تاريخ آخر سداد</th>
+                        <th>سداد حتى تاريخ</th>
+                        <th>عدد أيام التأخير</th>
+                        <th>قيمة التأخير</th>
+                        <th>فرق السداد</th>
+                        <th>المخالفات</th>
+                        <th>مصاريف الإقامة</th>
+                        <th>ديون قديمة</th>
+                        <th>إجمالي الدين</th>
+                    </tr>
+                </thead>
+                <tbody id="driversTableBody">
+                    <tr>
+                        <td colspan="12" class="loading">جاري تحميل البيانات...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-        import { getFirestore, collection, getDocs, query, orderBy, where } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        // Firebase configuration
+        // Firebase configuration - نفس إعدادات صفحة إدارة السائقين
         const firebaseConfig = {
-            apiKey: "AIzaSyDGpAHia_wEmrhnmYjrPf1n1TrAzwEMiAI",
-            authDomain: "messageemeapp.firebaseapp.com",
-            databaseURL: "https://messageemeapp-default-rtdb.firebaseio.com",
-            projectId: "messageemeapp",
-            storageBucket: "messageemeapp.appspot.com",
-            messagingSenderId: "278680662267",
-            appId: "1:278680662267:web:cb9a86a0cd4709b86222b2"
+            apiKey: "AIzaSyB8Q9CYIWXPmTdiz3vPiLlPYFxiJu0vE_g",
+            authDomain: "taxi-management-system-d8210.firebaseapp.com",
+            projectId: "taxi-management-system-d8210",
+            storageBucket: "taxi-management-system-d8210.firebasestorage.app",
+            messagingSenderId: "720874424166",
+            appId: "1:720874424166:web:25f9c6d126e792b2e5eaa7",
+            measurementId: "G-GY8820W410"
         };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Global variables
         let drivers = [];
         let revenues = [];
         let expenses = [];
-        let allTableData = [];
 
-        // Load data on page load
-        window.addEventListener('load', loadAllData);
-
-        // Load all data from Firebase
-        async function loadAllData() {
+        // Load data from Firebase
+        async function loadData() {
             try {
                 console.log('Loading data from Firebase...');
-
+                
                 // Load drivers
                 const driversSnapshot = await getDocs(collection(db, 'drivers'));
                 drivers = [];
@@ -399,7 +341,7 @@
                 console.log('Drivers loaded:', drivers.length);
 
                 // Load revenues
-                const revenuesSnapshot = await getDocs(query(collection(db, 'revenues'), orderBy('createdAt', 'desc')));
+                const revenuesSnapshot = await getDocs(collection(db, 'revenues'));
                 revenues = [];
                 revenuesSnapshot.forEach(doc => {
                     revenues.push({ id: doc.id, ...doc.data() });
@@ -414,224 +356,221 @@
                 });
                 console.log('Expenses loaded:', expenses.length);
 
-                // Calculate and display table
-                calculateTable();
-                
-                // Hide loading and show content
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
-
-                console.log('Data loaded successfully');
-
+                displayDrivers();
+                updateStats();
             } catch (error) {
                 console.error('Error loading data:', error);
-                document.getElementById('loading').innerHTML = `
-                    <div style="color: #F44336;">
-                        <h3>خطأ في تحميل البيانات</h3>
-                        <p>${error.message}</p>
-                        <button onclick="refreshData()" class="btn btn-primary" style="margin-top: 1rem;">إعادة المحاولة</button>
-                    </div>
-                `;
+                document.getElementById('driversTableBody').innerHTML = 
+                    '<tr><td colspan="12" class="no-data">خطأ في تحميل البيانات</td></tr>';
             }
         }
 
-        // Calculate table data
-        function calculateTable() {
-            console.log('Calculating table data...');
-            
-            allTableData = [];
-            let normalCount = 0;
-            let warningCount = 0;
-            let overdueCount = 0;
-            let totalDebtsSum = 0;
-
+        // Calculate driver statistics
+        function calculateDriverStats(driver) {
             const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            const contractStart = parseDate(driver.contractStartDate || driver.createdAt);
+            const lastPayment = parseDate(driver.lastPaymentDate || driver.contractStartDate || driver.createdAt);
+            
+            // Calculate days since contract start
+            const daysSinceStart = Math.floor((today - contractStart) / (1000 * 60 * 60 * 24));
+            
+            // Calculate expected payment (daily wage * days)
+            const dailyWage = parseFloat(driver.dailyWage || driver.dailyRent || 0);
+            const expectedTotal = daysSinceStart * dailyWage;
+            
+            // Calculate total paid from revenues
+            const driverRevenues = revenues.filter(rev => 
+                rev.driverId === driver.id || 
+                rev.driverName === driver.name ||
+                rev.description?.includes(driver.name)
+            );
+            const totalPaid = driverRevenues.reduce((sum, rev) => sum + parseFloat(rev.amount || 0), 0);
+            
+            // Calculate debt
+            const currentDebt = Math.max(0, expectedTotal - totalPaid);
+            
+            // Calculate days late
+            const paidUntilDate = new Date(lastPayment.getTime() + (totalPaid / dailyWage) * 24 * 60 * 60 * 1000);
+            const daysLate = Math.max(0, Math.floor((today - paidUntilDate) / (1000 * 60 * 60 * 24)));
+            
+            // Calculate late amount
+            const lateAmount = daysLate * dailyWage;
+            
+            // Calculate remaining payment for current day
+            const dayProgress = (today.getHours() * 60 + today.getMinutes()) / (24 * 60);
+            const todayExpected = dailyWage * dayProgress;
+            const todayPaid = driverRevenues
+                .filter(rev => new Date(rev.date).toDateString() === today.toDateString())
+                .reduce((sum, rev) => sum + parseFloat(rev.amount || 0), 0);
+            const remainingToday = Math.max(0, todayExpected - todayPaid);
 
-            drivers.forEach(driver => {
-                // Basic driver info
-                const dailyFee = parseFloat(driver.dailyRent) || 0;
-                const contractStartDate = new Date(driver.contractStartDate);
-                
-                // Calculate days since contract start
-                const daysSinceStart = Math.floor((today - contractStartDate) / (1000 * 60 * 60 * 24));
-                const totalDebtRequired = daysSinceStart * dailyFee;
+            // Get debt amounts from driver data
+            const violations = parseFloat(driver.violations || 0);
+            const residencyFees = parseFloat(driver.residencyFees || 0);
+            const oldDebts = parseFloat(driver.oldDebts || 0);
+            const totalDriverDebt = violations + residencyFees + oldDebts + currentDebt;
 
-                // Get driver revenues (payments)
-                const driverRevenues = revenues.filter(revenue => 
-                    revenue.driverName === driver.name && 
-                    revenue.type === 'تحصيل أجرة يومية'
-                );
-
-                // Calculate total paid amount and last payment date
-                let totalPaidAmount = 0;
-                let lastPaymentDate = null;
-
-                if (driverRevenues.length > 0) {
-                    const sortedRevenues = driverRevenues.sort((a, b) => new Date(b.date) - new Date(a.date));
-                    lastPaymentDate = new Date(sortedRevenues[0].date);
-
-                    sortedRevenues.forEach(revenue => {
-                        totalPaidAmount += parseFloat(revenue.amount) || 0;
-                    });
-                }
-
-                // Calculate remaining debt (فرق السداد)
-                const remainingDebt = Math.max(0, totalDebtRequired - totalPaidAmount);
-
-                // Calculate covered days and last covered date
-                const paidDays = dailyFee > 0 ? Math.floor(totalPaidAmount / dailyFee) : 0;
-                const lastCoveredDate = new Date(contractStartDate.getTime() + (paidDays * 24 * 60 * 60 * 1000));
-                const overdueDays = Math.max(0, Math.floor((today - lastCoveredDate) / (1000 * 60 * 60 * 24)));
-
-                // Calculate overdue amount (قيمة التأخير)
-                const overdueAmount = overdueDays * dailyFee;
-
-                // Get driver debts from expenses
-                const driverViolations = expenses.filter(expense => 
-                    expense.driverName === driver.name && 
-                    expense.type === 'مخالفات'
-                );
-
-                const driverResidenceFees = expenses.filter(expense => 
-                    expense.driverName === driver.name && 
-                    expense.type === 'رسوم إقامة'
-                );
-
-                // Calculate debt amounts
-                let violationsAmount = 0;
-                driverViolations.forEach(violation => {
-                    if (!violation.collected) {
-                        violationsAmount += parseFloat(violation.amount) || 0;
-                    }
-                });
-
-                let residenceFeesAmount = 0;
-                driverResidenceFees.forEach(fee => {
-                    if (!fee.collected) {
-                        residenceFeesAmount += parseFloat(fee.amount) || 0;
-                    }
-                });
-
-                const oldDebts = parseFloat(driver.oldDebts) || 0;
-                const totalDebt = remainingDebt + violationsAmount + residenceFeesAmount + oldDebts;
-
-                // Determine status
-                let status = 'normal';
-                if (overdueDays > 7) {
-                    status = 'overdue';
-                    overdueCount++;
-                } else if (overdueDays > 0) {
-                    status = 'warning';
-                    warningCount++;
-                } else {
-                    normalCount++;
-                }
-
-                totalDebtsSum += totalDebt;
-
-                // Add to table data
-                allTableData.push({
-                    id: driver.id,
-                    name: driver.name,
-                    dailyFee: dailyFee,
-                    contractStartDate: contractStartDate,
-                    lastPaymentDate: lastPaymentDate,
-                    coveredUntilDate: lastCoveredDate,
-                    overdueDays: overdueDays,
-                    overdueAmount: overdueAmount,
-                    remainingAmount: remainingDebt,
-                    violationsAmount: violationsAmount,
-                    residenceFeesAmount: residenceFeesAmount,
-                    oldDebts: oldDebts,
-                    totalDebt: totalDebt,
-                    status: status
-                });
-            });
-
-            // Update statistics
-            document.getElementById('normalCount').textContent = normalCount;
-            document.getElementById('warningCount').textContent = warningCount;
-            document.getElementById('overdueCount').textContent = overdueCount;
-            document.getElementById('totalDebts').textContent = totalDebtsSum.toFixed(3) + ' د.ك';
-
-            // Display table
-            displayTable(allTableData);
+            return {
+                dailyWage,
+                contractStart,
+                lastPayment,
+                paidUntilDate,
+                daysLate,
+                lateAmount,
+                remainingToday,
+                currentDebt,
+                violations,
+                residencyFees,
+                oldDebts,
+                totalDebt: totalDriverDebt,
+                status: daysLate === 0 ? 'regular' : daysLate <= 3 ? 'late' : 'very-late'
+            };
         }
 
-        // Display table
-        function displayTable(data) {
-            const tableBody = document.getElementById('tableBody');
-            tableBody.innerHTML = '';
+        // Display drivers in table
+        function displayDrivers() {
+            const tbody = document.getElementById('driversTableBody');
+            
+            if (drivers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="12" class="no-data">لا توجد بيانات سائقين</td></tr>';
+                return;
+            }
 
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.className = `status-${row.status}`;
+            const filteredDrivers = filterDrivers();
+            
+            if (filteredDrivers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="12" class="no-data">لا توجد نتائج للبحث</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filteredDrivers.map(driver => {
+                const stats = calculateDriverStats(driver);
                 
-                tr.innerHTML = `
-                    <td><span class="driver-name" onclick="openDriverPayments('${row.id}', '${row.name}')">${row.name}</span></td>
-                    <td>${row.dailyFee.toFixed(3)} د.ك</td>
-                    <td>${formatDate(row.contractStartDate)}</td>
-                    <td>${formatDate(row.lastPaymentDate)}</td>
-                    <td>${formatDate(row.coveredUntilDate)}</td>
-                    <td>${row.overdueDays}</td>
-                    <td class="amount ${row.overdueAmount > 0 ? 'negative' : 'positive'}">${row.overdueAmount.toFixed(3)} د.ك</td>
-                    <td class="amount ${row.remainingAmount > 0 ? 'negative' : 'positive'}">${row.remainingAmount.toFixed(3)} د.ك</td>
-                    <td class="amount ${row.violationsAmount > 0 ? 'negative' : 'positive'}">${row.violationsAmount.toFixed(3)} د.ك</td>
-                    <td class="amount ${row.residenceFeesAmount > 0 ? 'negative' : 'positive'}">${row.residenceFeesAmount.toFixed(3)} د.ك</td>
-                    <td class="amount ${row.oldDebts > 0 ? 'negative' : 'positive'}">${row.oldDebts.toFixed(3)} د.ك</td>
-                    <td class="amount ${row.totalDebt > 0 ? 'negative' : 'positive'}">${row.totalDebt.toFixed(3)} د.ك</td>
+                return `
+                    <tr>
+                        <td><span class="driver-name" onclick="openDriverPayments('${driver.id}')">${driver.name || 'غير محدد'}</span></td>
+                        <td class="amount">${stats.dailyWage.toFixed(3)} د.ك</td>
+                        <td>${formatDate(stats.contractStart)}</td>
+                        <td>${formatDate(stats.lastPayment)}</td>
+                        <td>${formatDate(stats.paidUntilDate)}</td>
+                        <td>${stats.daysLate}</td>
+                        <td class="amount ${stats.lateAmount > 0 ? 'negative' : 'zero'}">${stats.lateAmount.toFixed(3)} د.ك</td>
+                        <td class="amount ${stats.remainingToday > 0 ? 'negative' : 'zero'}">${stats.remainingToday.toFixed(3)} د.ك</td>
+                        <td class="amount ${stats.violations > 0 ? 'negative' : 'zero'}">${stats.violations.toFixed(3)} د.ك</td>
+                        <td class="amount ${stats.residencyFees > 0 ? 'negative' : 'zero'}">${stats.residencyFees.toFixed(3)} د.ك</td>
+                        <td class="amount ${stats.oldDebts > 0 ? 'negative' : 'zero'}">${stats.oldDebts.toFixed(3)} د.ك</td>
+                        <td class="amount ${stats.totalDebt > 0 ? 'negative' : 'positive'}">${stats.totalDebt.toFixed(3)} د.ك</td>
+                    </tr>
                 `;
-
-                tableBody.appendChild(tr);
-            });
+            }).join('');
         }
 
-        // Format date
-        function formatDate(date) {
-            if (!date) return 'لا يوجد';
-            
-            if (typeof date === 'string') {
-                date = new Date(date);
-            }
-            
-            if (isNaN(date.getTime())) {
-                return 'تاريخ غير صحيح';
-            }
-            
-            return date.toLocaleDateString('ar-SA');
-        }
-
-        // Filter table
-        window.filterTable = function() {
+        // Filter drivers based on search and status
+        function filterDrivers() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value;
 
-            const filteredData = allTableData.filter(row => {
-                const matchesSearch = row.name.toLowerCase().includes(searchTerm);
-                const matchesStatus = !statusFilter || row.status === statusFilter;
+            return drivers.filter(driver => {
+                const matchesSearch = !searchTerm || 
+                    driver.name?.toLowerCase().includes(searchTerm) ||
+                    driver.phone?.includes(searchTerm) ||
+                    driver.carNumber?.includes(searchTerm);
+
+                const stats = calculateDriverStats(driver);
+                const matchesStatus = !statusFilter || stats.status === statusFilter;
+
                 return matchesSearch && matchesStatus;
             });
-
-            displayTable(filteredData);
         }
 
-        // Refresh data
-        window.refreshData = function() {
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('content').style.display = 'none';
-            loadAllData();
+        // Update statistics
+        function updateStats() {
+            let regularCount = 0;
+            let lateCount = 0;
+            let veryLateCount = 0;
+            let totalDebt = 0;
+
+            drivers.forEach(driver => {
+                const stats = calculateDriverStats(driver);
+                totalDebt += stats.totalDebt;
+
+                switch (stats.status) {
+                    case 'regular':
+                        regularCount++;
+                        break;
+                    case 'late':
+                        lateCount++;
+                        break;
+                    case 'very-late':
+                        veryLateCount++;
+                        break;
+                }
+            });
+
+            document.getElementById('regularCount').textContent = regularCount;
+            document.getElementById('lateCount').textContent = lateCount;
+            document.getElementById('veryLateCount').textContent = veryLateCount;
+            document.getElementById('totalDebt').textContent = totalDebt.toFixed(3) + ' د.ك';
+        }
+
+        // Parse date from various formats
+        function parseDate(dateValue) {
+            if (!dateValue) return new Date();
+            
+            // If it's already a Date object
+            if (dateValue instanceof Date) return dateValue;
+            
+            // If it's a Firebase Timestamp
+            if (dateValue && typeof dateValue.toDate === 'function') {
+                return dateValue.toDate();
+            }
+            
+            // If it's a string, try to parse it
+            if (typeof dateValue === 'string') {
+                // Try different date formats
+                const date = new Date(dateValue);
+                if (!isNaN(date.getTime())) return date;
+                
+                // Try ISO format
+                const isoDate = new Date(dateValue + 'T00:00:00');
+                if (!isNaN(isoDate.getTime())) return isoDate;
+            }
+            
+            // If all else fails, return current date
+            return new Date();
+        }
+
+        // Format date for display (Gregorian calendar)
+        function formatDate(date) {
+            const parsedDate = parseDate(date);
+            return parsedDate.toLocaleDateString('en-GB', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
         }
 
         // Open driver payments page
-        window.openDriverPayments = function(driverId, driverName) {
-            // Store driver info in localStorage for the payments page
-            localStorage.setItem('selectedDriverId', driverId);
-            localStorage.setItem('selectedDriverName', driverName);
-            
-            // Navigate to driver payments page
-            window.location.href = 'driver-payments.html';
+        function openDriverPayments(driverId) {
+            const driver = drivers.find(d => d.id === driverId);
+            if (driver) {
+                // Store driver data in localStorage
+                localStorage.setItem('selectedDriver', JSON.stringify(driver));
+                // Navigate to payments page
+                window.location.href = 'driver-payments-fixed.html';
+            }
         }
+
+        // Search and filter functionality
+        document.getElementById('searchInput').addEventListener('input', displayDrivers);
+        document.getElementById('statusFilter').addEventListener('change', displayDrivers);
+
+        // Make functions global
+        window.loadData = loadData;
+        window.openDriverPayments = openDriverPayments;
+
+        // Load data on page load
+        loadData();
     </script>
 </body>
 </html>
