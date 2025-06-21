@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>جدول السائقين - نظام إدارة التاكسي</title>
+    
+    <!-- Cache Control Meta Tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
         * {
             margin: 0;
@@ -454,10 +459,11 @@
             const residencyFees = calculateDebtByType(driver.id, ['دفع رسوم إقامة', 'تحصيل رسوم إقامة']);
             const oldDebts = calculateDebtByType(driver.id, ['دين قديم']);
             
-            // Calculate total debt properly (without remainingToday)
-            const totalDriverDebt = violations + residencyFees + oldDebts;
-            // Calculate driver balance using the new smart system
+            // Calculate driver balance using the new smart system first
             const driverBalance = calculateDriverBalance(driver.id, dailyWage);
+            
+            // Calculate total debt properly (including all components)
+            const totalDriverDebt = Math.max(0, lateAmount + violations + residencyFees + oldDebts - driverBalance);
 
             return {
                 dailyWage,
