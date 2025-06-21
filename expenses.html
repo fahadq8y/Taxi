@@ -4,75 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>المصروفات - نظام إدارة التاكسي</title>
-    
-    <!-- Cache Control Meta Tags -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    
-    <link rel="manifest" href="manifest.json?v=20250620">
-    <meta name="theme-color" content="#667eea">
-    <link rel="stylesheet" href="unified-design-system.css?v=20250620">
-</head>
-<body>
-    <div class="header">
-        <h1>💸 إدارة المصروفات</h1>
-        <div class="header-buttons">
-            <a href="revenues.html" class="btn btn-secondary">💰 الإيرادات</a>
-            <a href="drivers.html" class="btn btn-secondary">👥 السائقين</a>
-            <a href="index.html" class="btn btn-secondary">🏠 الرئيسية</a>
-        </div>
-    </div>
-
-    <div class="container">
-        <!-- بطاقات الإحصائيات -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number debt" id="totalExpenses">0.000 د.ك</div>
-                <div class="stat-label">إجمالي المصروفات</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number regular" id="expenseBalance">0.000 د.ك</div>
-                <div class="stat-label">الرصيد المتبقي</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number late" id="pendingExpenses">0.000 د.ك</div>
-                <div class="stat-label">مصروفات معلقة</div>
-            </div>
-        </div>
-
-        <!-- نموذج إضافة مصروف -->
-        <div class="controls">
-            <h3 style="width: 100%; margin-bottom: 1rem; color: #667eea;">➕ إضافة مصروف جديد</h3>
-            <form id="expenseForm" style="width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
-                <div class="form-group">
-                    <label>📅 التاريخ</label>
-                    <input type="date" id="expenseDate" required>
-                </div>
-                <div class="form-group">
-                    <label>📋 نوع المصروف</label>
-                    <select id="expenseType" required>
-                        <option value="">اختر نوع المصروف</option>
-                        <option value="وقود">وقود</option>
-                        <option value="صيانة">صيانة</option>
-                        <option value="تأمين">تأمين</option>
-                        <option value="رسوم">رسوم</option>
-                        <option value="أخرى">أخرى</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>💰 المبلغ (د.ك)</label>
-                    <input type="number" id="expenseAmount" step="0.001" required>
-                </div>
-                <div class="form-group">
-                    <label>📝 الوصف</label>
-                    <textarea id="expenseDescription" rows="1" placeholder="وصف تفصيلي للمصروف..."></textarea>
-                </div>
-                <button type="submit" class="btn-save">💾 حفظ المصروف</button>
-            </form>
-        </div>
-
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
         .nav-buttons {
             display: flex;
             gap: 10px;
@@ -249,104 +219,32 @@
             gap: 10px;
         }
 
-        /* ========== الجداول المتجاوبة ========== */
-        .table-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
-            margin-bottom: 2rem;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
         .expense-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .expense-table th,
+        .expense-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #e9ecef;
         }
 
         .expense-table th {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 1rem;
-            text-align: center;
             font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .expense-table td {
-            padding: 1rem;
-            text-align: center;
-            border-bottom: 1px solid #e5e7eb;
-            vertical-align: middle;
         }
 
         .expense-table tr:hover {
-            background-color: #fef2f2;
+            background-color: #f8f9fa;
         }
 
         .amount {
             font-weight: bold;
-            color: #dc2626;
-        }
-
-        /* للهواتف المحمولة */
-        @media (max-width: 768px) {
-            .table-responsive {
-                font-size: 0.8rem;
-            }
-            
-            .expense-table th,
-            .expense-table td {
-                padding: 0.5rem;
-                min-width: 80px;
-            }
-            
-            /* إخفاء أعمدة غير مهمة في الهاتف */
-            .hide-mobile {
-                display: none;
-            }
-            
-            /* تحويل الجدول لعرض بطاقات */
-            .mobile-card-view .expense-table,
-            .mobile-card-view .expense-table tbody,
-            .mobile-card-view .expense-table tr,
-            .mobile-card-view .expense-table td {
-                display: block;
-            }
-            
-            .mobile-card-view .expense-table thead {
-                display: none;
-            }
-            
-            .mobile-card-view .expense-table tr {
-                background: white;
-                border: 1px solid #e5e7eb;
-                border-radius: 10px;
-                margin-bottom: 1rem;
-                padding: 1rem;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-            
-            .mobile-card-view .expense-table td {
-                border: none;
-                padding: 0.25rem 0;
-                text-align: right;
-                position: relative;
-                padding-right: 40%;
-            }
-            
-            .mobile-card-view .expense-table td:before {
-                content: attr(data-label);
-                position: absolute;
-                right: 0;
-                width: 35%;
-                font-weight: 600;
-                color: #6b7280;
-            }
+            color: #dc3545;
         }
 
         .delete-btn {
@@ -664,27 +562,23 @@
                     </select>
                 </div>
             </div>
-            <div class="table-container">
-                <div class="table-responsive">
-                    <table class="expense-table">
-                        <thead>
-                            <tr>
-                                <th>التاريخ</th>
-                                <th>النوع</th>
-                                <th>المبلغ</th>
-                                <th class="hide-mobile">الوصف</th>
-                                <th class="hide-mobile">الملاحظة</th>
-                                <th>الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="expenseTableBody">
-                            <tr>
-                                <td colspan="6" class="no-data">جاري تحميل المصروفات...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <table class="expense-table">
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>النوع</th>
+                        <th>المبلغ</th>
+                        <th>الوصف</th>
+                        <th>الملاحظة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="expenseTableBody">
+                    <tr>
+                        <td colspan="6" class="no-data">جاري تحميل المصروفات...</td>
+                    </tr>
+                </tbody>
+            </table>
             <div class="pagination-footer">
                 <div class="pagination-info">
                     <span id="paginationInfo">عرض 0 من 0 عمليات</span>

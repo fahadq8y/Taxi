@@ -4,71 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إدارة الإيرادات - نظام إدارة التاكسي</title>
-    
-    <!-- Cache Control Meta Tags -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    
-    <link rel="manifest" href="manifest.json?v=20250620">
-    <meta name="theme-color" content="#667eea">
-    <link rel="stylesheet" href="unified-design-system.css?v=20250620">
-</head>
-<body>
-    <div class="header">
-        <h1>💰 إدارة الإيرادات</h1>
-        <div class="header-buttons">
-            <a href="expenses.html" class="btn btn-secondary">💸 المصروفات</a>
-            <a href="drivers.html" class="btn btn-secondary">👥 السائقين</a>
-            <a href="index.html" class="btn btn-secondary">🏠 الرئيسية</a>
-        </div>
-    </div>
-
-    <div class="container">
-        <!-- بطاقات الإحصائيات -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number debt" id="totalRevenues">0.000 د.ك</div>
-                <div class="stat-label">إجمالي الإيرادات</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number regular" id="revenueBalance">0.000 د.ك</div>
-                <div class="stat-label">الرصيد المتاح</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number late" id="debtOnDrivers">0.000 د.ك</div>
-                <div class="stat-label">ديون على السائقين</div>
-            </div>
-        </div>
-
-        <!-- نموذج إضافة إيراد -->
-        <div class="controls">
-            <h3 style="width: 100%; margin-bottom: 1rem; color: #667eea;">➕ إضافة إيراد جديد</h3>
-            <form id="revenueForm" style="width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
-                <div class="form-group">
-                    <label>📅 التاريخ</label>
-                    <input type="date" id="revenueDate" required>
-                </div>
-                <div class="form-group">
-                    <label>📋 نوع الإيراد</label>
-                    <select id="revenueType" required>
-                        <option value="">اختر نوع الإيراد</option>
-                        <option value="أخرى">أخرى</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>💰 المبلغ (د.ك)</label>
-                    <input type="number" id="revenueAmount" step="0.001" required>
-                </div>
-                <div class="form-group">
-                    <label>📝 الوصف</label>
-                    <textarea id="revenueDescription" rows="1" placeholder="وصف تفصيلي للإيراد..."></textarea>
-                </div>
-                <button type="submit" class="btn-save">💾 حفظ الإيراد</button>
-            </form>
-        </div>
-
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
         .nav-buttons {
             display: flex;
             gap: 10px;
@@ -245,104 +219,32 @@
             gap: 10px;
         }
 
-        /* ========== الجداول المتجاوبة ========== */
-        .table-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
-            margin-bottom: 2rem;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
         .revenue-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .revenue-table th,
+        .revenue-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #e9ecef;
         }
 
         .revenue-table th {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 1rem;
-            text-align: center;
             font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .revenue-table td {
-            padding: 1rem;
-            text-align: center;
-            border-bottom: 1px solid #e5e7eb;
-            vertical-align: middle;
         }
 
         .revenue-table tr:hover {
-            background-color: #f8fafc;
+            background-color: #f8f9fa;
         }
 
         .amount {
             font-weight: bold;
-            color: #10b981;
-        }
-
-        /* للهواتف المحمولة */
-        @media (max-width: 768px) {
-            .table-responsive {
-                font-size: 0.8rem;
-            }
-            
-            .revenue-table th,
-            .revenue-table td {
-                padding: 0.5rem;
-                min-width: 80px;
-            }
-            
-            /* إخفاء أعمدة غير مهمة في الهاتف */
-            .hide-mobile {
-                display: none;
-            }
-            
-            /* تحويل الجدول لعرض بطاقات */
-            .mobile-card-view .revenue-table,
-            .mobile-card-view .revenue-table tbody,
-            .mobile-card-view .revenue-table tr,
-            .mobile-card-view .revenue-table td {
-                display: block;
-            }
-            
-            .mobile-card-view .revenue-table thead {
-                display: none;
-            }
-            
-            .mobile-card-view .revenue-table tr {
-                background: white;
-                border: 1px solid #e5e7eb;
-                border-radius: 10px;
-                margin-bottom: 1rem;
-                padding: 1rem;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-            
-            .mobile-card-view .revenue-table td {
-                border: none;
-                padding: 0.25rem 0;
-                text-align: right;
-                position: relative;
-                padding-right: 40%;
-            }
-            
-            .mobile-card-view .revenue-table td:before {
-                content: attr(data-label);
-                position: absolute;
-                right: 0;
-                width: 35%;
-                font-weight: 600;
-                color: #6b7280;
-            }
+            color: #28a745;
         }
 
         .delete-btn {
@@ -805,27 +707,23 @@
                     </select>
                 </div>
             </div>
-            <div class="table-container">
-                <div class="table-responsive">
-                    <table class="revenue-table">
-                        <thead>
-                            <tr>
-                                <th>التاريخ</th>
-                                <th>النوع</th>
-                                <th>المصدر</th>
-                                <th>المبلغ</th>
-                                <th class="hide-mobile">الوصف التفصيلي</th>
-                                <th>الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="revenueTableBody">
-                            <tr>
-                                <td colspan="6" class="no-data">جاري تحميل الإيرادات...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <table class="revenue-table">
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>النوع</th>
+                        <th>المصدر</th>
+                        <th>المبلغ</th>
+                        <th>الوصف التفصيلي</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="revenueTableBody">
+                    <tr>
+                        <td colspan="6" class="no-data">جاري تحميل الإيرادات...</td>
+                    </tr>
+                </tbody>
+            </table>
             <div class="pagination-footer">
                 <div class="pagination-info">
                     <span id="paginationInfo">عرض 0 من 0 عمليات</span>
