@@ -489,32 +489,16 @@
                 payment.type === 'أجرة يومية'
             );
 
-            // Sort payments by date (oldest first)
-            dailyWagePayments.sort((a, b) => {
-                const dateA = parseDate(a.date);
-                const dateB = parseDate(b.date);
-                return dateA.getTime() - dateB.getTime();
-            });
-
-            let currentBalance = 0;
-            let totalDaysPaid = 0;
-
-            // Process each payment
-            dailyWagePayments.forEach(payment => {
-                const amount = parseFloat(payment.amount) || 0;
-                currentBalance += amount;
-
-                // Check if balance can complete full daily wages
-                while (currentBalance >= dailyWage) {
-                    currentBalance -= dailyWage;
-                    totalDaysPaid++;
-                    // Here we record that a full day was paid
-                }
-            });
-
-            // Balance should never exceed daily wage
-            // Return the remaining balance (what the driver has credit for)
-            return Math.min(currentBalance, dailyWage - 0.001); // Keep it just under daily wage
+            // Calculate total paid
+            const totalPaid = dailyWagePayments.reduce((sum, payment) => sum + parseFloat(payment.amount || 0), 0);
+            
+            // Calculate how many complete days this covers
+            const completeDays = Math.floor(totalPaid / dailyWage);
+            
+            // Calculate the remaining balance (what the driver has credit for)
+            const remainingBalance = totalPaid - (completeDays * dailyWage);
+            
+            return remainingBalance;
         }
 
         // Calculate debt by payment type
@@ -544,6 +528,64 @@
             });
 
             return Math.max(0, debt);
+        }
+
+        // Oil status functions for maintenance data (updated logic based on date)
+        function getOilStatusColor(driver) {
+            const lastOilChangeDate = parseDate(driver.lastOilChangeDate);
+            if (!lastOilChangeDate) {
+                return { bgColor: '#f8d7da', color: '#721c24' }; // Red if no date
+            }
+            
+            const today = new Date();
+            const daysSinceOilChange = Math.floor((today - lastOilChangeDate) / (1000 * 60 * 60 * 24));
+            
+            if (daysSinceOilChange < 15) { // Less than 15 days
+                return { bgColor: '#d4edda', color: '#155724' }; // Green
+            } else if (daysSinceOilChange <= 20) { // 15-20 days
+                return { bgColor: '#fff3cd', color: '#856404' }; // Yellow
+            } else {
+                return { bgColor: '#f8d7da', color: '#721c24' }; // Red
+            }
+        }
+        
+        function getOilStatusText(driver) {
+            const lastOilChangeDate = parseDate(driver.lastOilChangeDate);
+            if (!lastOilChangeDate) {
+                return 'غير محدد ❓';
+            }
+            
+            const today = new Date();
+            const daysSinceOilChange = Math.floor((today - lastOilChangeDate) / (1000 * 60 * 60 * 24));
+            
+            if (daysSinceOilChange < 15) {
+                return 'جيد ✅';
+            } else if (daysSinceOilChange <= 20) {
+                return 'تحذير ⚠️';
+            } else {
+                return 'خطر ❌';
+            }
+        }
+        
+        function getOilDistanceInfo(driver) {
+            const lastOilChangeDate = parseDate(driver.lastOilChangeDate);
+            if (!lastOilChangeDate) {
+                return 'لم يتم تحديد تاريخ آخر تغيير';
+            }
+            
+            const today = new Date();
+            const daysSinceOilChange = Math.floor((today - lastOilChangeDate) / (1000 * 60 * 60 * 24));
+            
+            if (daysSinceOilChange < 15) {
+                const remaining = 15 - daysSinceOilChange;
+                return `متبقي ${remaining} يوم للتحذير`;
+            } else if (daysSinceOilChange <= 20) {
+                const remaining = 20 - daysSinceOilChange;
+                return `متبقي ${remaining} يوم للخطر`;
+            } else {
+                const overdue = daysSinceOilChange - 20;
+                return `متأخر ${overdue} يوم`;
+            }
         }
 
         // Display drivers in table
@@ -675,7 +717,10 @@
         }
 
         // Show driver details modal
-        function showDriverDetails(driverId) {
+        async function showDriverDetails(driverId) {
+            // Reload driver data to get latest information
+            await loadData();
+            
             const driver = drivers.find(d => d.id === driverId);
             if (!driver) return;
 
@@ -834,6 +879,26 @@
                                     <strong>انتهاء جواز السفر:</strong><br>
                                     <span style="font-size: 14px;">${formatDate(driver.passportExpiry) || 'غير محدد'}</span><br>
                                     <small>${passportStatus.status}</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- بيانات الصيانة -->
+                        <div style="margin-bottom: 25px;">
+                            <h3 style="color: #17a2b8; border-bottom: 2px solid #17a2b8; padding-bottom: 8px; margin-bottom: 15px;">🔧 بيانات الصيانة</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                                <div style="background: #f8f9fa; padding: 12px; border-radius: 8px;">
+                                    <strong style="color: #666;">تاريخ آخر تغيير زيت:</strong><br>
+                                    <span style="font-size: 16px; color: #333;">${formatDate(driver.lastOilChangeDate) || 'غير محدد'}</span>
+                                </div>
+                                <div style="background: #f8f9fa; padding: 12px; border-radius: 8px;">
+                                    <strong style="color: #666;">كيلومترات آخر تغيير:</strong><br>
+                                    <span style="font-size: 16px; color: #333;">${(driver.lastOilChangeKm || 0).toLocaleString()} كم</span>
+                                </div>
+                                <div style="background: ${getOilStatusColor(driver).bgColor}; color: ${getOilStatusColor(driver).color}; padding: 12px; border-radius: 8px; border-left: 4px solid #17a2b8;">
+                                    <strong>حالة الزيت:</strong><br>
+                                    <span style="font-size: 14px;">${getOilStatusText(driver)}</span><br>
+                                    <small>${getOilDistanceInfo(driver)}</small>
                                 </div>
                             </div>
                         </div>
@@ -1096,3 +1161,4 @@
     </script>
 </body>
 </html>
+

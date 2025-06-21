@@ -754,6 +754,22 @@
                     }
                 });
 
+                // Check oil change status
+                if (driver.lastOilChangeDate) {
+                    const lastChange = driver.lastOilChangeDate.seconds ? 
+                        new Date(driver.lastOilChangeDate.seconds * 1000) : 
+                        new Date(driver.lastOilChangeDate);
+                    const daysSinceOilChange = Math.floor((today - lastChange) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysSinceOilChange > 15) {
+                        alerts.push({ type: 'urgent', text: `لم يتم تغيير الزيت منذ ${daysSinceOilChange} يوم - عاجل!` });
+                    } else if (daysSinceOilChange > 10) {
+                        alerts.push({ type: 'warning', text: `تغيير الزيت مطلوب خلال ${15 - daysSinceOilChange} أيام` });
+                    }
+                } else {
+                    alerts.push({ type: 'warning', text: 'لم يتم تحديد تاريخ تغيير الزيت' });
+                }
+
                 // Get car info
                 const car = cars.find(c => c.id === driver.assignedCar);
                 const carInfo = car ? `${car.plateNumber} - ${car.model}` : 'غير محدد';
@@ -773,6 +789,40 @@
                                 <div class="info-row">
                                     <span class="info-label">الأجرة اليومية:</span>
                                     <span class="info-value">${driver.dailyRent || 0} د.ك</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">الكيلومترات:</span>
+                                    <span class="info-value">${(driver.currentKilometers || 0).toLocaleString()} كم</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">آخر تغيير زيت:</span>
+                                    <span class="info-value">${driver.lastOilChangeDate ? 
+                                        (driver.lastOilChangeDate.seconds ? 
+                                            new Date(driver.lastOilChangeDate.seconds * 1000).toLocaleDateString('en-GB') :
+                                            new Date(driver.lastOilChangeDate).toLocaleDateString('en-GB')
+                                        ) : 'غير محدد'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">حالة الزيت:</span>
+                                    <span class="info-value">
+                                        ${(() => {
+                                            if (!driver.lastOilChangeDate) {
+                                                return '<span style="color: #6b7280;">غير محدد</span>';
+                                            }
+                                            const lastChange = driver.lastOilChangeDate.seconds ? 
+                                                new Date(driver.lastOilChangeDate.seconds * 1000) : 
+                                                new Date(driver.lastOilChangeDate);
+                                            const daysDiff = Math.floor((new Date() - lastChange) / (1000 * 60 * 60 * 24));
+                                            
+                                            if (daysDiff <= 10) {
+                                                return '<span style="color: #10b981;">🟢 جيد</span>';
+                                            } else if (daysDiff <= 15) {
+                                                return '<span style="color: #f59e0b;">🟡 تحذير</span>';
+                                            } else {
+                                                return '<span style="color: #ef4444;">🔴 متأخر</span>';
+                                            }
+                                        })()}
+                                    </span>
                                 </div>
                                 ${driver.contractEndDate ? `
                                     <div class="info-row">
